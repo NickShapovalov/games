@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Спасение мира от пчёл</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
@@ -14,63 +14,79 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
 <style>
-html,body{margin:0;height:100%;overflow:hidden;background:#120b35;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
-canvas{position:fixed;inset:0;width:100vw;height:100vh;display:block}
-#hud{position:fixed;top:8px;left:8px;right:8px;display:flex;gap:8px;align-items:flex-start;justify-content:space-between;pointer-events:none;flex-wrap:wrap;z-index:2}
-.grp{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.pill{background:rgba(255,255,255,.88);border-radius:14px;padding:6px 12px;font-size:20px;font-weight:800;color:#3a2a10;box-shadow:0 2px 6px rgba(0,0,0,.25);white-space:nowrap}
-#dayBar{width:110px;height:10px;background:#ddd;border-radius:6px;overflow:hidden;display:inline-block;vertical-align:middle;margin-left:6px}
+:root{--b:clamp(56px,13vmin,84px);--t:clamp(40px,8.5vmin,58px);--m:clamp(34px,7vmin,44px);
+  --sl:env(safe-area-inset-left,0px);--sr:env(safe-area-inset-right,0px);--st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px)}
+html,body{margin:0;height:100%;height:100dvh;overflow:hidden;overscroll-behavior:none;background:#120b35;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
+canvas{position:fixed;inset:0;width:100vw;height:100%;display:block}
+button{font-family:inherit}
+/* статус — слева сверху */
+#hud{position:fixed;top:calc(6px + var(--st));left:calc(8px + var(--sl));right:calc(3*var(--m) + 30px + var(--sr));display:flex;gap:6px;align-items:center;flex-wrap:wrap;pointer-events:none;z-index:2}
+.pill{background:rgba(255,255,255,.9);border-radius:12px;padding:4px 10px;font-size:clamp(13px,3.2vmin,20px);font-weight:800;color:#3a2a10;box-shadow:0 2px 6px rgba(0,0,0,.25);white-space:nowrap}
+#dayBar{width:clamp(50px,12vmin,110px);height:8px;background:#ddd;border-radius:6px;overflow:hidden;display:inline-block;vertical-align:middle;margin-left:6px}
 #dayFill{height:100%;width:0;background:#ffb400;display:block}
-#tools{display:flex;gap:6px;pointer-events:auto;flex-wrap:wrap;justify-content:flex-end}
-.tool{width:60px;height:60px;border-radius:14px;border:none;background:rgba(255,255,255,.88);font-size:26px;line-height:1;box-shadow:0 2px 6px rgba(0,0,0,.25);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0;cursor:pointer;touch-action:none;color:#3a2a10}
-.tool small{font-size:11px;font-weight:800;color:#5a3a10;margin-top:2px}
-.tool.sel{outline:4px solid #ffcc00;background:#fff3c4}
+/* меню — справа сверху */
+#menu{position:fixed;top:calc(6px + var(--st));right:calc(8px + var(--sr));display:flex;gap:6px;z-index:3}
+.mbtn{width:var(--m);height:var(--m);border-radius:50%;border:none;background:rgba(255,255,255,.85);font-size:calc(var(--m)*.48);box-shadow:0 2px 6px rgba(0,0,0,.25);padding:0;cursor:pointer;touch-action:none;color:#3a2a10;display:flex;align-items:center;justify-content:center}
+/* инструменты — внизу по центру, между кнопками управления */
+#dock{position:fixed;bottom:calc(10px + var(--sb));left:50%;transform:translateX(-50%);display:flex;gap:5px;flex-wrap:wrap-reverse;justify-content:center;width:max-content;max-width:calc(100vw - 4*var(--b) - 70px - var(--sl) - var(--sr));z-index:2}
+.tool{width:var(--t);height:var(--t);border-radius:12px;border:none;background:rgba(255,255,255,.88);font-size:calc(var(--t)*.42);line-height:1;box-shadow:0 2px 6px rgba(0,0,0,.25);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0;cursor:pointer;touch-action:none;color:#3a2a10}
+.tool small{font-size:calc(var(--t)*.17);font-weight:800;color:#5a3a10;margin-top:2px;white-space:nowrap}
+.tool.sel{outline:3px solid #ffcc00;background:#fff3c4}
 .tool.pulse{animation:pulse 1s infinite}
 @keyframes pulse{50%{transform:scale(1.12);background:#ffe27a}}
-#reset{width:44px;height:44px;font-size:20px}
-#furnPanel{position:fixed;top:80px;right:8px;background:rgba(255,248,230,.97);border-radius:18px;padding:10px;box-shadow:0 4px 14px rgba(0,0,0,.35);z-index:4;display:grid;grid-template-columns:repeat(3,96px);gap:8px}
+#furnPanel{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--t) + 22px + var(--sb));background:rgba(255,248,230,.97);border-radius:18px;padding:10px;box-shadow:0 4px 14px rgba(0,0,0,.35);z-index:4;display:grid;grid-template-columns:repeat(3,minmax(78px,96px));gap:8px;max-height:calc(100dvh - var(--t) - 90px);overflow:auto;touch-action:pan-y}
 #furnPanel.hide{display:none}
-#furnPanel .ttl{grid-column:1/-1;font-weight:900;font-size:18px;color:#5a3a10;text-align:center}
-.fitem{border:none;border-radius:14px;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.2);padding:6px 2px;cursor:pointer;font-weight:800;color:#3a2a10;font-size:13px;touch-action:none}
-.fitem .ic{font-size:30px;display:block}
+#furnPanel .ttl{grid-column:1/-1;font-weight:900;font-size:16px;color:#5a3a10;text-align:center}
+.fitem{border:none;border-radius:14px;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.2);padding:6px 2px;cursor:pointer;font-weight:800;color:#3a2a10;font-size:12px;touch-action:none}
+.fitem .ic{font-size:26px;display:block}
 .fitem.locked{opacity:.45}
 .fitem.poor{background:#ffe1e1}
-.btn{position:fixed;width:84px;height:84px;border-radius:50%;background:rgba(255,255,255,.5);border:3px solid rgba(255,255,255,.9);font-size:38px;display:flex;align-items:center;justify-content:center;touch-action:none;z-index:2;cursor:pointer;color:#3a2a10}
+/* кнопки управления */
+.btn{position:fixed;width:var(--b);height:var(--b);border-radius:50%;background:rgba(255,255,255,.5);border:3px solid rgba(255,255,255,.9);font-size:calc(var(--b)*.45);display:flex;align-items:center;justify-content:center;touch-action:none;z-index:2;cursor:pointer;color:#3a2a10;box-sizing:border-box}
 .btn.on{background:rgba(255,220,100,.9)}
-#bLeft{left:16px;bottom:16px}#bRight{left:112px;bottom:16px}#bJump{right:16px;bottom:16px}#bAct{right:112px;bottom:16px}
-#toast{position:fixed;top:30%;left:50%;transform:translate(-50%,-50%);font-size:30px;font-weight:900;color:#fff;text-shadow:0 3px 0 #4b2a7a,0 0 14px #000;text-align:center;pointer-events:none;opacity:0;transition:opacity .35s;z-index:3;width:90vw}
-.overlay{position:fixed;inset:0;background:rgba(40,20,70,.88);display:flex;align-items:center;justify-content:center;color:#fff;text-align:center;padding:20px;z-index:5}
+#bLeft{left:calc(12px + var(--sl));bottom:calc(12px + var(--sb))}
+#bRight{left:calc(22px + var(--sl) + var(--b));bottom:calc(12px + var(--sb))}
+#bJump{right:calc(12px + var(--sr));bottom:calc(12px + var(--sb))}
+#bAct{right:calc(22px + var(--sr) + var(--b));bottom:calc(12px + var(--sb))}
+#toast{position:fixed;top:32%;left:50%;transform:translate(-50%,-50%);font-size:clamp(17px,4.5vmin,30px);font-weight:900;color:#fff;text-shadow:0 3px 0 #4b2a7a,0 0 14px #000;text-align:center;pointer-events:none;opacity:0;transition:opacity .35s;z-index:3;width:86vw}
+/* окна поверх игры: прокручиваются, ничего не обрезается */
+.overlay{position:fixed;inset:0;background:rgba(40,20,70,.92);display:flex;overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;color:#fff;text-align:center;z-index:5;
+  padding:calc(12px + var(--st)) calc(16px + var(--sr)) calc(12px + var(--sb)) calc(16px + var(--sl));box-sizing:border-box}
 .overlay.hide{display:none}
-.card{max-width:600px}
-.card h1{font-size:40px;margin:0 0 10px}
-.card p{font-size:19px;line-height:1.4;margin:9px 0}
-.card .small{font-size:15px;opacity:.85}
-button.big{font-size:28px;padding:14px 36px;border-radius:20px;border:none;background:#ffb400;color:#3a2000;font-weight:900;margin:8px;cursor:pointer}
-button.big.grey{background:#ccc}
-#ver{position:fixed;left:50%;bottom:6px;transform:translateX(-50%);color:rgba(255,255,255,.6);font-size:12px;z-index:2;pointer-events:none}
+.card{max-width:620px;margin:auto}
+.card h1{font-size:clamp(24px,6.5vmin,40px);margin:0 0 6px;line-height:1.15}
+.card p{font-size:clamp(14px,3.6vmin,19px);line-height:1.35;margin:7px 0}
+.card .small{font-size:clamp(12px,3vmin,15px);opacity:.85}
+.card details{margin-top:6px}
+.card summary{cursor:pointer;font-weight:800;font-size:clamp(14px,3.6vmin,18px);opacity:.9}
+button.big{font-size:clamp(20px,5.5vmin,28px);padding:clamp(8px,2.4vmin,14px) clamp(26px,7vmin,40px);border-radius:20px;border:none;background:#ffb400;color:#3a2000;font-weight:900;margin:clamp(4px,1.6vmin,10px);cursor:pointer;box-shadow:0 4px 0 #b37a00}
+button.big.grey{background:#ccc;box-shadow:0 4px 0 #999}
+#rotate .ph{font-size:72px;display:inline-block;animation:rot 2s ease-in-out infinite}
+@keyframes rot{0%,30%{transform:rotate(0)}60%,100%{transform:rotate(-90deg)}}
+#ver{position:fixed;left:calc(10px + var(--sl));top:calc(var(--st) + 50px);color:rgba(255,255,255,.5);font-size:11px;z-index:1;pointer-events:none}
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
 
 <div id="hud">
-  <div class="grp">
-    <div class="pill" id="hearts"></div>
-    <div class="pill" id="res"></div>
-    <div class="pill"><span id="day"></span><span id="dayBar"><span id="dayFill"></span></span></div>
-  </div>
-  <div class="grp" id="tools">
-    <button class="tool" data-tool="dig">⛏️<small>копать</small></button>
-    <button class="tool" data-tool="wood">🟫<small>1🪵</small></button>
-    <button class="tool" data-tool="stone">⬜<small>1🪨</small></button>
-    <button class="tool" data-tool="hatch">🚪<small>люк 2🪵</small></button>
-    <button class="tool" data-tool="ladder">🪜<small>1🪵</small></button>
-    <button class="tool" id="homeBtn">🏠<small>нора</small></button>
-    <button class="tool" data-tool="erase">❌<small>убрать</small></button>
-    <button class="tool" id="sndBtn" style="width:44px;height:44px;font-size:22px">🔊</button>
-    <button class="tool" id="fsBtn" style="width:44px;height:44px;font-size:22px">⛶</button>
-    <button class="tool" id="reset">🔄</button>
-  </div>
+  <div class="pill" id="hearts"></div>
+  <div class="pill" id="res"></div>
+  <div class="pill"><span id="day"></span><span id="dayBar"><span id="dayFill"></span></span></div>
+</div>
+<div id="menu">
+  <button class="mbtn" id="sndBtn">🔊</button>
+  <button class="mbtn" id="fsBtn">⛶</button>
+  <button class="mbtn" id="reset">🔄</button>
+</div>
+<div id="dock">
+  <button class="tool" data-tool="dig">⛏️<small>копать</small></button>
+  <button class="tool" data-tool="wood">🟫<small>1🪵</small></button>
+  <button class="tool" data-tool="stone">⬜<small>1🪨</small></button>
+  <button class="tool" data-tool="hatch">🚪<small>люк 2🪵</small></button>
+  <button class="tool" data-tool="ladder">🪜<small>1🪵</small></button>
+  <button class="tool" id="homeBtn">🏠<small>нора</small></button>
+  <button class="tool" data-tool="erase">❌<small>убрать</small></button>
 </div>
 <div id="furnPanel" class="hide"></div>
 
@@ -80,16 +96,28 @@ button.big.grey{background:#ccc}
 <div class="btn" id="bJump">⬆</div>
 
 <div id="toast"></div>
-<div id="ver">v3.3</div>
+<div id="ver">v3.4</div>
 
 <div class="overlay" id="start">
   <div class="card">
     <h1>🐝 Спасение мира от пчёл 🦊</h1>
-    <p>Выкопай <b>нору</b> ⛏️ в холме или под землёй и закрой вход <b>люком</b> 🚪 — лисёнок через него пролезает, а звери и мёд нет. Чтобы вылезти из глубокой норы, поставь <b>лестницу</b> 🪜.</p>
-    <p>Ночью злые пчёлы 🐝 капают <b style="color:#d9a6ff">фиолетовым мёдом</b>. Звери, на которых он попал, становятся фиолетовыми и гоняются за лисёнком.</p>
-    <p>Руби деревья 🌳 и камни 🪨 и <b>обустраивай нору</b> 🏠: каждый новый день открывается новая вещь — кухня, кровать, телевизор…</p>
-    <p class="small">Компьютер: ← → ходить, пробел — прыжок, ↑/↓ — лезть по лестнице, E — рубить и толкать, 1 копать, 2–3 блоки, 4 люк, 5 лестница, 6 нора, 7 убрать, Esc — выйти.<br>Планшет: кнопки на экране; выбери инструмент сверху и нажимай рядом с лисёнком.</p>
     <button class="big" id="play">Играть!</button>
+    <p>Выкопай <b>нору</b> ⛏️, закрой вход <b>люком</b> 🚪 и поставь <b>лестницу</b> 🪜. Ночью злые пчёлы 🐝 капают <b style="color:#d9a6ff">фиолетовым мёдом</b> — звери становятся злыми. Прячься!</p>
+    <details>
+      <summary>Как играть</summary>
+      <p>Руби деревья 🌳 и камни 🪨 (🪓) и <b>обустраивай нору</b> 🏠: каждый новый день открывается новая вещь — кухня, кровать, телевизор…</p>
+      <p>Через люк лисёнок пролезает, а звери и мёд — нет. По лестнице: встань и держи ⬆.</p>
+      <p class="small">Компьютер: ← → ходить, пробел — прыжок, ↑/↓ — лестница, E — рубить и толкать, 1 копать, 2–3 блоки, 4 люк, 5 лестница, 6 нора, 7 убрать, Esc — выйти.<br>Телефон и планшет: кнопки на экране; выбери инструмент внизу и нажимай рядом с лисёнком.</p>
+    </details>
+  </div>
+</div>
+
+<div class="overlay hide" id="rotate">
+  <div class="card">
+    <div class="ph">📱</div>
+    <h1>Поверни телефон боком</h1>
+    <p>Так видно больше поляны и удобнее управлять лисёнком.</p>
+    <button class="big grey" id="rotOk">Играть так</button>
   </div>
 </div>
 
@@ -125,12 +153,18 @@ const FBY=Object.fromEntries(FURN.map(f=>[f.id,f]));
 // grid: null air, 'e' earth, 'b' bedrock, 'n' tunnel, {t:'wood'|'stone'|'hatch',under:null|'n'}
 let grid,res,furn,fox,animals,bees,honey,nodes,particles,floats,day,phase,ptime,warned,spawnLeft,spawnTimer,beesLeft;
 let tool=null,running=false,camX=0,hover=null,painting=false,lastCell='';
-let dpr=1,cssW=0,cssH=0,scale=1,viewW=0;
+let dpr=1,cssW=0,cssH=0,scale=1,viewW=0,camY=0,visH=600;
 const keys={left:false,right:false,jump:false,down:false};
 const stars=Array.from({length:70},()=>({x:Math.random(),y:Math.random()*0.6,s:Math.random()*2+1}));
 
-function resize(){dpr=window.devicePixelRatio||1;cssW=innerWidth;cssH=innerHeight;cv.width=cssW*dpr;cv.height=cssH*dpr;scale=cssH/H;viewW=cssW/scale;}
-addEventListener('resize',resize);resize();
+function resize(){dpr=Math.min(window.devicePixelRatio||1,2.5);cssW=innerWidth;cssH=innerHeight;cv.width=Math.round(cssW*dpr);cv.height=Math.round(cssH*dpr);
+  // на низких экранах (телефон боком) прячем верх неба — герой и нора крупнее
+  visH=cssH<520?480:cssW/cssH<0.8?520:600;camY=H-visH;scale=cssH/visH;viewW=cssW/scale;updRotate()}
+let rotDismissed=false;
+function updRotate(){const el=document.getElementById('rotate');if(!el)return;
+  const phonePortrait=cssH>cssW&&cssW<600;el.classList.toggle('hide',!phonePortrait||rotDismissed)}
+addEventListener('resize',resize);addEventListener('orientationchange',()=>setTimeout(resize,200));
+if(window.visualViewport)visualViewport.addEventListener('resize',resize);
 
 function hillTop(c){if(c>=28&&c<=32)return 9;if((c>=25&&c<=27)||(c>=33&&c<=35))return 10;if((c>=22&&c<=24)||(c>=36&&c<=38))return 11;return SURF}
 function newWorld(){
@@ -575,10 +609,10 @@ function draw(t){
   else{circ(sx,sy,28,'#f3efd8');circ(sx+12,sy-8,24,mix('#5cb8ff','#120b35',n))}
   ctx.fillStyle=mix('#7cc97a','#2d1d55',n);
   ctx.beginPath();ctx.moveTo(0,cssH);
-  for(let x=0;x<=cssW+20;x+=20){const wx=x/scale+camX*.4;ctx.lineTo(x,(SURF*T-110-50*Math.sin(wx/170)-25*Math.sin(wx/63))*scale)}
+  for(let x=0;x<=cssW+20;x+=20){const wx=x/scale+camX*.4;ctx.lineTo(x,(SURF*T-110-50*Math.sin(wx/170)-25*Math.sin(wx/63)-camY)*scale)}
   ctx.lineTo(cssW,cssH);ctx.fill();
 
-  ctx.setTransform(dpr*scale,0,0,dpr*scale,-camX*dpr*scale,0);
+  ctx.setTransform(dpr*scale,0,0,dpr*scale,-camX*dpr*scale,-camY*dpr*scale);
   for(const nd of nodes){
     const sh=nd.shake>0?Math.sin(nd.shake*80)*4:0;
     if(nd.kind==='tree'){
@@ -694,7 +728,7 @@ document.querySelectorAll('.tool[data-tool]').forEach(b=>b.addEventListener('poi
 function togglePanel(){renderPanel();panel.classList.toggle('hide');document.getElementById('homeBtn').classList.remove('pulse')}
 document.getElementById('homeBtn').addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();togglePanel()});
 
-function toWorld(e){return{x:e.clientX/scale+camX,y:e.clientY/scale}}
+function toWorld(e){return{x:e.clientX/scale+camX,y:e.clientY/scale+camY}}
 cv.addEventListener('pointerdown',e=>{panel.classList.add('hide');if(!tool||!running)return;e.preventDefault();hover=toWorld(e);painting=true;const{c,r}=cellAt(hover.x,hover.y);lastCell=c+','+r;buildAt(c,r,false)});
 cv.addEventListener('pointermove',e=>{hover=toWorld(e);if(painting&&tool&&!tool.startsWith('furn:')){const{c,r}=cellAt(hover.x,hover.y);const k=c+','+r;if(k!==lastCell){lastCell=k;buildAt(c,r,true)}}});
 addEventListener('pointerup',()=>{painting=false});
@@ -714,7 +748,7 @@ fsBtn.addEventListener('click',async e=>{e.preventDefault();e.stopPropagation();
   try{
     if(fsEl()){(document.exitFullscreen||document.webkitExitFullscreen).call(document)}
     else{const el=document.documentElement;const req=el.requestFullscreen||el.webkitRequestFullscreen;
-      if(!req)throw new Error('no');await req.call(el)}
+      if(!req)throw new Error('no');await req.call(el);try{await screen.orientation.lock('landscape')}catch(e2){}}
   }catch(err){toast('Браузер не разрешил полный экран 😕 Попробуй открыть игру с главного экрана',2.8)}
   setTimeout(()=>{resize();updFs()},300)});
 fsBtn.addEventListener('pointerdown',e=>e.stopPropagation());
@@ -722,7 +756,8 @@ document.getElementById('reset').addEventListener('pointerdown',e=>{e.preventDef
 document.getElementById('no').onclick=()=>{document.getElementById('ask').classList.add('hide');running=true};
 document.getElementById('yes').onclick=()=>{document.getElementById('ask').classList.add('hide');newWorld();initRun();save();setTool(null);renderPanel();running=true;toast('Новая игра! Копай нору ⛏️')};
 
-newWorld();const loaded=load();initRun();renderPanel();
+document.getElementById('rotOk').onclick=()=>{rotDismissed=true;updRotate()};
+resize();newWorld();const loaded=load();initRun();renderPanel();
 document.getElementById('play').onclick=()=>{audioInit();document.getElementById('start').classList.add('hide');running=true;
   toast(loaded?'С возвращением, лисёнок! 🦊 Загляни в 🏠 — там мебель для норы':'Ты на холме! Выбери ⛏️ и выкопай нору',3.2)};
 requestAnimationFrame(loop);
