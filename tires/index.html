@@ -17,37 +17,31 @@ html,body{margin:0;height:100%;overflow:hidden;background:#7fcf5a;font-family:sy
 canvas{position:fixed;inset:0;width:100vw;height:100vh;display:block}
 #hud{position:fixed;top:8px;left:8px;right:8px;display:flex;gap:8px;align-items:flex-start;justify-content:space-between;pointer-events:none;z-index:2;flex-wrap:wrap}
 .grp{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.pill{background:rgba(255,255,255,.92);border-radius:14px;padding:6px 12px;font-size:20px;font-weight:800;box-shadow:0 2px 6px rgba(0,0,0,.25);white-space:nowrap}
+.pill{background:rgba(255,255,255,.92);border-radius:14px;padding:6px 12px;font-size:20px;font-weight:800;box-shadow:0 2px 6px rgba(0,0,0,.25);white-space:nowrap;transition:transform .12s}
+.pill.bump{transform:scale(1.18);background:#fff3b0}
 #dateBar{width:90px;height:10px;background:#ddd;border-radius:6px;overflow:hidden;display:inline-block;vertical-align:middle;margin-left:6px}
 #dateFill{height:100%;width:0;background:#ff9a1f;display:block}
-.hbtn{pointer-events:auto;width:54px;height:54px;border-radius:14px;border:none;background:rgba(255,255,255,.92);font-size:28px;box-shadow:0 2px 6px rgba(0,0,0,.25);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+.hbtn{pointer-events:auto;width:54px;height:54px;border-radius:14px;border:none;background:rgba(255,255,255,.92);font-size:28px;box-shadow:0 2px 6px rgba(0,0,0,.25);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;color:#2a2a2a}
 #shopBtn{width:auto;padding:0 14px;font-size:24px;font-weight:900;gap:6px}
 #shopBtn.ready{animation:pulse 1s infinite}
 @keyframes pulse{50%{transform:scale(1.1);background:#ffe27a}}
 #hint:empty{display:none}
-#hint{position:fixed;left:50%;bottom:12px;transform:translateX(-50%);background:rgba(255,255,255,.95);border-radius:18px;padding:10px 20px;font-size:21px;font-weight:800;box-shadow:0 3px 10px rgba(0,0,0,.3);pointer-events:none;z-index:2;text-align:center;max-width:70vw}
-#toast{position:fixed;top:28%;left:50%;transform:translate(-50%,-50%);font-size:32px;font-weight:900;color:#fff;text-shadow:0 3px 0 #7a3a00,0 0 14px #000;text-align:center;pointer-events:none;opacity:0;transition:opacity .3s;z-index:6;width:90vw}
-#work{position:fixed;inset:0;pointer-events:none;z-index:3}
-#work.hide{display:none}
-#backBtn{position:fixed;left:10px;top:76px;pointer-events:auto;font-size:22px;font-weight:900;padding:12px 18px;border-radius:16px;border:none;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.3);cursor:pointer}
-#tools{position:fixed;right:12px;bottom:12px;display:flex;gap:10px;pointer-events:auto}
-.tool{width:96px;height:96px;border-radius:20px;border:none;background:#fff;font-size:44px;box-shadow:0 3px 8px rgba(0,0,0,.3);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;padding:0;color:#2a2a2a}
-.tool small{font-size:13px;font-weight:900;margin-top:2px}
-.tool.sel{outline:5px solid #ff9a1f;background:#fff1d6}
-.tool.pulse{animation:pulse 0.8s infinite}
-.overlay{position:fixed;inset:0;background:rgba(20,40,60,.88);display:flex;align-items:center;justify-content:center;color:#fff;text-align:center;padding:20px;z-index:8}
+#hint{position:fixed;left:50%;bottom:12px;transform:translateX(-50%);background:rgba(255,255,255,.95);border-radius:18px;padding:10px 20px;font-size:21px;font-weight:800;box-shadow:0 3px 10px rgba(0,0,0,.3);pointer-events:none;z-index:2;text-align:center;max-width:80vw}
+#toast{position:fixed;top:24%;left:50%;transform:translate(-50%,-50%);font-size:30px;font-weight:900;color:#fff;text-shadow:0 3px 0 #7a3a00,0 0 14px #000;text-align:center;pointer-events:none;opacity:0;transition:opacity .3s;z-index:6;width:90vw}
+.overlay{position:fixed;inset:0;background:rgba(20,40,60,.88);display:flex;align-items:center;justify-content:center;color:#fff;text-align:center;padding:20px;z-index:8;overflow:auto}
 .overlay.hide{display:none}
-.card{max-width:640px}
-.card h1{font-size:44px;margin:0 0 10px}
-.card p{font-size:20px;line-height:1.4;margin:8px 0}
+.card{max-width:680px}
+.card h1{font-size:42px;margin:0 0 10px}
+.card p{font-size:19px;line-height:1.4;margin:7px 0}
 .card .small{font-size:15px;opacity:.8}
+.steps{font-size:18px;line-height:1.5;margin:6px 0;background:rgba(255,255,255,.1);border-radius:14px;padding:8px 14px;text-align:left;display:inline-block}
 button.big{font-size:28px;padding:14px 36px;border-radius:20px;border:none;background:#ff9a1f;color:#3a1a00;font-weight:900;margin:8px;cursor:pointer}
-.shopList{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:16px 0}
-.item{background:#fff;color:#2a2a2a;border-radius:22px;padding:16px;width:230px;box-shadow:0 4px 12px rgba(0,0,0,.3)}
-.item .ic{font-size:56px}
-.item b{display:block;font-size:22px;margin:4px 0}
-.item span{display:block;font-size:15px;min-height:40px}
-.item button{margin-top:10px;font-size:22px;font-weight:900;padding:10px 18px;border-radius:14px;border:none;background:#6cc04a;color:#fff;cursor:pointer}
+.shopList{display:grid;grid-template-columns:repeat(2,240px);gap:14px;justify-content:center;margin:14px 0}
+.item{background:#fff;color:#2a2a2a;border-radius:22px;padding:12px;box-shadow:0 4px 12px rgba(0,0,0,.3)}
+.item .ic{font-size:46px}
+.item b{display:block;font-size:20px;margin:2px 0}
+.item span{display:block;font-size:14px;min-height:36px}
+.item button{margin-top:8px;font-size:21px;font-weight:900;padding:8px 18px;border-radius:14px;border:none;background:#6cc04a;color:#fff;cursor:pointer}
 .item button:disabled{background:#bbb;cursor:default}
 .stars{font-size:56px;letter-spacing:6px}
 #ver{position:fixed;right:8px;bottom:4px;color:rgba(0,0,0,.35);font-size:12px;z-index:2;pointer-events:none}
@@ -58,10 +52,10 @@ button.big{font-size:28px;padding:14px 36px;border-radius:20px;border:none;backg
 
 <div id="hud">
   <div class="grp">
-    <div class="pill">💰 <span id="coins">0</span></div>
-    <div class="pill">🚗 <span id="served">0</span>/<span id="goal">10</span></div>
+    <div class="pill" id="coinPill">💰 <span id="coins">0</span></div>
+    <div class="pill">🚗 <span id="served">0</span>/<span id="goal">7</span></div>
     <div class="pill">📅 <span id="date"></span><span id="dateBar"><span id="dateFill"></span></span></div>
-    <div class="pill" id="queuePill">⏳ 0</div>
+    <div class="pill" id="queuePill">Очередь: 0</div>
   </div>
   <div class="grp">
     <button class="hbtn" id="shopBtn">🛒</button>
@@ -71,22 +65,21 @@ button.big{font-size:28px;padding:14px 36px;border-radius:20px;border:none;backg
 <div id="hint"></div>
 <div id="toast"></div>
 
-<div id="work" class="hide">
-  <button id="backBtn">⬅ В гараж</button>
-  <div id="tools">
-    <button class="tool sel" id="tWrench"><span id="wrIc">🔧</span><small id="wrName">Ключ</small></button>
-    <button class="tool" id="tExt">🪛<small>Экстрактор</small></button>
-  </div>
-</div>
-
 <div class="overlay" id="intro">
   <div class="card">
     <h1>🛞 Шиномонтаж</h1>
-    <p>Ты — хозяин шиномонтажа! Наступила <b>весна</b>, и все едут менять зимние шины на летние.</p>
-    <p>👆 Нажми на машину в очереди — она заедет в бокс.<br>🔩 Нажми на машину в боксе — открути болты, сними старую шину, поставь новую, закрути болты.</p>
-    <p>😀 Клиенты не любят долго ждать. 😠 Злые уезжают!</p>
-    <p>🛒 На монеты покупай новые штуки для шиномонтажа.</p>
-    <p><b>Цель сезона:</b> обслужить 10 машин до конца апреля.</p>
+    <p>Ты — хозяин шиномонтажа! Наступила <b>весна</b>, все едут менять зимние шины на летние.</p>
+    <div class="steps">
+      🚗 Нажми на машину в очереди — она заедет в бокс<br>
+      🔧 Сними с машины колёса<br>
+      🛠️ Шиномонтажный станок снимет старую резину<br>
+      📦 На складе поменяй зимние шины на летние<br>
+      🛠️ Станок наденет летние шины<br>
+      ⚖️ Балансировка — чтобы колесо не трясло<br>
+      🚗 Поставь колёса обратно — и получи монетки! 💰
+    </div>
+    <p>Нажимай туда, куда нужно бежать. 👇 подскажет, куда дальше.</p>
+    <p><b>Цель сезона:</b> обслужить 7 машин до конца апреля.</p>
     <button class="big" id="startBtn">Открыть шиномонтаж!</button>
     <p class="small">Придумал Гоша · сделали вместе с папой</p>
   </div>
@@ -110,11 +103,11 @@ button.big{font-size:28px;padding:14px 36px;border-radius:20px;border:none;backg
     <button class="big" id="againBtn">Ещё раз</button>
   </div>
 </div>
-<div id="ver">v1</div>
+<div id="ver">v2</div>
 
 <script>
 'use strict';
-// ====== Экран и масштаб: рисуем в «виртуальном» поле 1200×800 ======
+// ====== Экран: рисуем в «виртуальном» поле 1200×800 ======
 const V = {w: 1200, h: 800};
 const cvs = document.getElementById('c'), ctx = cvs.getContext('2d');
 let dpr = 1, scale = 1, offX = 0, offY = 0;
@@ -128,9 +121,8 @@ addEventListener('resize', resize); resize();
 function toV(cx, cy) { return [(cx - offX) / scale, (cy - offY) / scale]; }
 
 // ====== Изометрия (вид три четверти) ======
-const C30 = Math.cos(Math.PI / 6), S30 = 0.5, S = 34;
-let OX = 0, OY = 0;
-(function () { const rx = (-6 - 3.25) * C30 * S, ry = (-6 + 3.25) * S30 * S; OX = 600 - rx; OY = 385 - ry; })();
+const C30 = Math.cos(Math.PI / 6), S30 = 0.5, S = 42;
+const OX = 571, OY = 263;
 function iso(x, y, z = 0) { return [OX + (x - y) * C30 * S, OY + (x + y) * S30 * S - z * S]; }
 function poly(pts, fill, stroke, lw) {
   ctx.beginPath();
@@ -142,8 +134,7 @@ function poly(pts, fill, stroke, lw) {
 function shade(hex, a) {
   const n = parseInt(hex.slice(1), 16); let r = n >> 16, g = (n >> 8) & 255, b = n & 255;
   const t = a < 0 ? 0 : 255, k = Math.abs(a);
-  r = Math.round(r + (t - r) * k); g = Math.round(g + (t - g) * k); b = Math.round(b + (t - b) * k);
-  return `rgb(${r},${g},${b})`;
+  return `rgb(${Math.round(r + (t - r) * k)},${Math.round(g + (t - g) * k)},${Math.round(b + (t - b) * k)})`;
 }
 // Коробка: видны верх, грань +y (слева-спереди) и грань +x (справа-спереди)
 function box(x, y, z, dx, dy, dz, col) {
@@ -153,6 +144,13 @@ function box(x, y, z, dx, dy, dz, col) {
   poly([iso(x, y, z + dz), iso(x + dx, y, z + dz), iso(x + dx, y + dy, z + dz), iso(x, y + dy, z + dz)], col, ol);
 }
 function circlePts(fn, n = 18) { const p = []; for (let i = 0; i < n; i++) { const t = i / n * Math.PI * 2; p.push(fn(Math.cos(t), Math.sin(t))); } return p; }
+function roundRect(x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+function pillText(px, py, txt, font, bg, col) {
+  ctx.font = font; const w = ctx.measureText(txt).width + 20;
+  ctx.fillStyle = bg; roundRect(px - w / 2, py - 17, w, 34, 12); ctx.fill();
+  ctx.fillStyle = col; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(txt, px, py + 1);
+  return w;
+}
 
 // ====== Звуки (синтез, без файлов) ======
 let actx = null, muted = false;
@@ -165,83 +163,105 @@ function tone(f1, f2, dur, type = 'sine', vol = 0.15, delay = 0) {
   o.connect(g).connect(actx.destination); o.start(t); o.stop(t + dur + 0.02);
 }
 const SND = {
-  ratchet() { for (let i = 0; i < 4; i++) tone(1400, 900, 0.04, 'square', 0.06, i * 0.15); },
-  gun() { tone(160, 520, 0.2, 'sawtooth', 0.09); },
-  drill() { tone(300, 200, 0.12, 'sawtooth', 0.08); },
-  pop() { tone(500, 1300, 0.09, 'sine', 0.15); },
-  coin() { tone(988, 988, 0.08, 'square', 0.07); tone(1319, 1319, 0.2, 'square', 0.07, 0.08); },
+  ratchet() { for (let i = 0; i < 4; i++) tone(1400, 900, 0.04, 'square', 0.05, i * 0.13); },
+  gun() { tone(160, 520, 0.25, 'sawtooth', 0.08); },
+  drill() { for (let i = 0; i < 3; i++) tone(320, 200, 0.15, 'sawtooth', 0.07, i * 0.2); },
+  pop() { tone(500, 1300, 0.09, 'sine', 0.14); },
+  put() { tone(300, 180, 0.12, 'triangle', 0.14); },
+  coin() { tone(1319, 1760, 0.08, 'square', 0.05); },
   horn() { tone(330, 320, 0.22, 'square', 0.07); tone(330, 320, 0.22, 'square', 0.07, 0.3); },
-  whoosh() { tone(700, 150, 0.35, 'triangle', 0.12); },
+  machine() { tone(110, 220, 0.4, 'sawtooth', 0.05); },
   bad() { tone(220, 150, 0.25, 'square', 0.06); },
-  ding() { tone(1046, 1046, 0.15, 'sine', 0.15); tone(1568, 1568, 0.3, 'sine', 0.12, 0.12); },
+  ding() { tone(1046, 1046, 0.12, 'sine', 0.12); tone(1568, 1568, 0.25, 'sine', 0.1, 0.1); },
   win() { [523, 659, 784, 1046].forEach((f, i) => tone(f, f, 0.25, 'triangle', 0.14, i * 0.15)); },
   click() { tone(800, 600, 0.05, 'sine', 0.08); },
 };
 
 // ====== Настройки игры ======
-const SEASON_LEN = 300;     // сезон длится 5 минут
-const GOAL = 10;            // цель: обслужить 10 машин
-const STAR2 = 13, STAR3 = 16;
-const PATIENCE = 45;        // сколько секунд клиент ждёт в очереди
-const QUEUE_X = [-3.5, -8.5, -13.5, -18.5], QUEUE_Y = 8.6, ROAD_Y = 10.5;
-const BAYS = [{cx: 2.5, cy: 3.2}, {cx: 7.5, cy: 3.2}];
-const PRICES = {bay2: 200, gun: 150};
+const SEASON_LEN = 300;     // сезон: 5 минут
+const GOAL = 7, STAR2 = 10, STAR3 = 13;
+const PATIENCE = 60;        // сколько секунд клиент ждёт в очереди
+const LOT = [[-2.8, 1.5], [-2.8, 4.5], [-2.8, 7.5]], LANE_X = -6.0, DRIVE_Y = 9.0, ROAD_Y = 12; // стоянка-очередь слева
+const BAYS = [{cx: 2.5, cy: 3.4}, {cx: 7.5, cy: 3.4}];
+const CORR = 6.2, LANE = 4.5; // проходы для человечка
 const CAR_COLORS = ['#e8403a', '#2f7de1', '#f5c518', '#3bb273', '#9b59d0', '#ff8a2a', '#e94f9b', '#20b5c4', '#f0f0f0', '#555b66'];
+const HAND = {
+  winter: {ic: '🛞❄️', name: 'зимние колёса'},
+  old: {ic: '⭕❄️', name: 'старые шины'},
+  fresh: {ic: '⭕☀️', name: 'летние шины'},
+  summer: {ic: '🛞☀️', name: 'колёса'},
+  balanced: {ic: '🛞✅', name: 'готовые колёса'},
+  ext: {ic: '🪛', name: 'экстрактор'},
+};
 
 let G; // всё состояние игры
 function newGame() {
   G = {
-    t: 0, coins: 0, served: 0, angry: 0, running: false, ended: false, goalShown: false,
-    cars: [], queue: [], bays: [null, null], bay2: false, gun: false,
-    nextArrival: 2, mode: 'garage', job: null, tool: 'wrench', fx: [], seenStrip: false,
-    carId: 0, stripCars: 0,
+    t: 0, coins: 0, served: 0, angry: 0, running: false, goalShown: false,
+    cars: [], queue: [], bays: [null, null], bayOpen: [true, false],
+    up: {gun: false, fast: false, shoes: false},
+    nextArrival: 2, fx: [], coinsFly: [], carId: 0,
+    man: {x: 13, y: 5.8, path: [], goal: null, act: null, hand: null, wait: null, step: 0},
+    st: {
+      changer: {x: 11.6, y: 3.0, ax: 11.6, ay: LANE, name: 'Шиномонтаж', ic: '🛠️', state: 'empty', car: null, t: 0, dur: 1},
+      balancer: {x: 14.2, y: 3.0, ax: 14.0, ay: LANE, name: 'Балансировка', ic: '⚖️', state: 'empty', car: null, t: 0, dur: 1},
+      rack: {x: 13.1, y: 0.4, ax: 12.95, ay: 1.4, name: 'Склад шин', ic: '📦'},
+      tools: {x: 5.0, y: 0.35, ax: 5.0, ay: 1.4, name: 'Инструменты', ic: '🧰'},
+    },
   };
-  G.bayOpen = [true, false];
   updateHud();
 }
+const actTime = () => G.up.gun ? 0.8 : 2.0;      // снять/поставить колёса
+const changerTime = () => G.up.fast ? 1.5 : 3.0;  // работа шиномонтажного станка
+const BAL_TIME = 2.5;
+const manSpeed = () => G.up.shoes ? 6.5 : 4.5;
 
 // ====== Машины ======
 function spawnCar() {
   const slot = G.queue.length;
+  G.carId++;
   const car = {
-    id: ++G.carId, color: CAR_COLORS[Math.floor(Math.random() * CAR_COLORS.length)],
-    x: -36, y: ROAD_Y, z: 0, heading: 'x', path: [], speed: 9,
-    state: 'queue', bay: -1, pat: PATIENCE, wheelsDone: 0, job: null,
-    // примерно у каждой четвёртой машины будет сорванный болт
-    stripWheel: Math.random() < 0.3 || (G.carId === 2) ? Math.floor(Math.random() * 4) : -1,
+    id: G.carId, color: CAR_COLORS[Math.floor(Math.random() * CAR_COLORS.length)],
+    x: -44, y: ROAD_Y, z: 0, heading: 'x', path: [], speed: 9,
+    state: 'queue', bay: -1, pat: PATIENCE, wheels: 'on', leaveT: 0,
+    // у второй машины болт сорван всегда (чтобы научиться), дальше — у каждой третьей
+    strip: G.carId === 2 || (G.carId > 2 && Math.random() < 0.3), stripFixed: false, stripKnown: false,
   };
   G.cars.push(car); G.queue.push(car);
-  setQueueTarget(car, slot, true);
+  const [sx, sy] = LOT[slot];
+  car.path = [[LANE_X, ROAD_Y], [LANE_X, sy], [sx, sy]];
 }
-function setQueueTarget(car, slot, fromRoad) {
-  const tx = QUEUE_X[slot];
-  if (fromRoad) car.path = [[tx - 2.5, ROAD_Y], [tx, QUEUE_Y]];
-  else car.path = [[tx, QUEUE_Y]];
+function reflowQueue() {
+  G.queue.forEach((c, i) => {
+    const [sx, sy] = LOT[i];
+    if (c.path.length >= 2) c.path = c.path.slice(0, -2).concat([[LANE_X, sy], [sx, sy]]);
+    else if (c.path.length === 1 && c.x < LANE_X + 0.5) c.path = [[LANE_X, sy], [sx, sy]];
+    else c.path = [[sx, sy]];
+  });
 }
-function reflowQueue() { G.queue.forEach((c, i) => { const tx = QUEUE_X[i]; const last = c.path[c.path.length - 1]; if (!last || last[0] !== tx) { if (c.path.length > 1) c.path[c.path.length - 1] = [tx, QUEUE_Y]; else c.path = [[tx, QUEUE_Y]]; } }); }
 function freeBay() { for (let i = 0; i < 2; i++) if (G.bayOpen[i] && !G.bays[i]) return i; return -1; }
 function sendToBay(car) {
   const b = freeBay();
   if (b < 0) {
     SND.bad();
-    toast(G.bayOpen[1] ? 'Все боксы заняты!<br>Сначала закончи машину в боксе' : 'Бокс занят!<br>Накопи на второй бокс 🛒');
+    toast(G.bayOpen[1] ? 'Все боксы заняты!' : 'Бокс занят!<br>Можно купить второй бокс 🛒');
     return;
   }
   G.queue.splice(G.queue.indexOf(car), 1); reflowQueue();
   G.bays[b] = car; car.bay = b; car.state = 'toBay';
   const B = BAYS[b];
-  car.path = [[car.x + 2.5, ROAD_Y], [B.cx - 1, ROAD_Y], [B.cx, 7.4], [B.cx, B.cy]];
+  car.path = [[LANE_X, car.y], [LANE_X, DRIVE_Y], [B.cx, DRIVE_Y], [B.cx, B.cy]];
   SND.click();
 }
 function carLeaves(car, angry) {
   if (angry) {
     G.queue.splice(G.queue.indexOf(car), 1); reflowQueue();
-    car.state = 'angry'; car.path = [[car.x - 3, ROAD_Y], [-40, ROAD_Y]]; car.speed = 12;
+    car.state = 'angry'; car.path = [[LANE_X, car.y], [LANE_X, ROAD_Y], [-50, ROAD_Y]]; car.speed = 12;
     G.angry++; SND.horn();
   } else {
     car.state = 'leaving';
     const B = BAYS[car.bay];
-    car.path = [[B.cx, 7.6], [B.cx + 3, ROAD_Y], [40, ROAD_Y]]; car.speed = 10;
+    car.path = [[B.cx, DRIVE_Y], [B.cx + 2.5, ROAD_Y], [50, ROAD_Y]]; car.speed = 10;
   }
 }
 function mood(car) { const p = car.pat / PATIENCE; return p > 0.6 ? 0 : p > 0.3 ? 1 : 2; }
@@ -249,391 +269,405 @@ const FACES = ['😀', '😐', '😠'];
 
 function updateCars(dt) {
   for (const car of G.cars) {
-    // движение по точкам пути
     if (car.path.length) {
       const [tx, ty] = car.path[0], dx = tx - car.x, dy = ty - car.y, d = Math.hypot(dx, dy);
-      if (Math.abs(dx) > 0.01 || Math.abs(dy) > 0.01) car.heading = Math.abs(dy) > Math.abs(dx) ? 'y' : 'x';
+      if (d > 0.01) car.heading = Math.abs(dy) > Math.abs(dx) ? 'y' : 'x';
       const step = car.speed * dt;
       if (d <= step) { car.x = tx; car.y = ty; car.path.shift(); }
       else { car.x += dx / d * step; car.y += dy / d * step; }
     }
-    // подъёмник
-    const lifted = car.state === 'inBay' || (car.state === 'toBay' && !car.path.length);
-    const tz = lifted ? 0.9 : 0;
-    car.z += Math.sign(tz - car.z) * Math.min(Math.abs(tz - car.z), dt * 1.5);
+    const tz = car.state === 'inBay' ? 0.9 : 0;
+    car.z += Math.sign(tz - car.z) * Math.min(Math.abs(tz - car.z), dt * 1.6);
     if (car.state === 'toBay' && !car.path.length) car.state = 'inBay';
-    if (car.state === 'leaving' && car.path.length && car.y > 7 && G.bays[car.bay] === car) G.bays[car.bay] = null;
-    // терпение
+    if (car.state === 'done') { car.leaveT -= dt; if (car.leaveT <= 0 && car.z <= 0.01) carLeaves(car, false); }
+    if (car.state === 'leaving' && car.y > 7.8 && G.bays[car.bay] === car) G.bays[car.bay] = null;
     if (car.state === 'queue') {
       car.pat -= dt;
-      if (car.pat <= 0) carLeaves(car, true);
+      if (car.pat <= 0) { carLeaves(car, true); toast('Клиент не дождался и уехал 😠'); }
     } else if (car.state === 'inBay' || car.state === 'toBay') {
-      if (!(G.mode === 'work' && G.job && G.job.car === car)) car.pat = Math.max(PATIENCE * 0.05, car.pat - dt * 0.25);
+      car.pat = Math.max(PATIENCE * 0.05, car.pat - dt * 0.2);
     }
   }
   G.cars = G.cars.filter(c => !((c.state === 'leaving' || c.state === 'angry') && !c.path.length));
 }
 
-// ====== Рисуем гараж ======
+// ====== Хозяин шиномонтажа ======
+function accessPoint(t) {
+  if (t.type === 'car') return [BAYS[t.car.bay].cx + 1.0, 6.0];
+  const s = G.st[t.key]; return [s.ax, s.ay];
+}
+function route(fx, fy, tx, ty) {
+  const inWS = (x, y) => x > 9.9 && y < 4.8;
+  const lane = inWS(fx, fy) && inWS(tx, ty) ? LANE : CORR;
+  const pts = [[fx, lane], [tx, lane], [tx, ty]];
+  return pts.filter((p, i) => { const prev = i ? pts[i - 1] : [fx, fy]; return Math.hypot(p[0] - prev[0], p[1] - prev[1]) > 0.05; });
+}
+function goTo(t) {
+  const M = G.man;
+  if (M.act) return;              // занят делом — подожди
+  M.wait = null; M.goal = t;
+  const [ax, ay] = accessPoint(t);
+  M.path = route(M.x, M.y, ax, ay);
+  SND.click();
+}
+function startAct(label, dur, done, snd) { G.man.act = {label, t: 0, dur, done}; if (snd) snd(); }
+function busyHands() { toast('Руки заняты: ' + HAND[G.man.hand.kind].name); SND.bad(); }
+function startRemove(car) {
+  startAct('Снимаю колёса', actTime(), () => { car.wheels = 'off'; G.man.hand = {kind: 'winter', car}; SND.pop(); }, G.up.gun ? SND.gun : SND.ratchet);
+}
+function interact(t) {
+  const M = G.man, h = M.hand;
+  if (t.type === 'car') {
+    const car = t.car;
+    if (car.state !== 'inBay' || G.bays[car.bay] !== car) return;
+    if (car.wheels === 'on') {
+      if (car.strip && !car.stripFixed) {
+        if (h && h.kind === 'ext') {
+          startAct('Выкручиваю болт', 2, () => { car.stripFixed = true; M.hand = null; toast('Ура! Сорванный болт вытащили! 💪'); startRemove(car); }, SND.drill);
+        } else if (!h) { car.stripKnown = true; SND.bad(); toast('Ой! Болт сорван! 😱<br>Принеси 🪛 экстрактор'); }
+        else busyHands();
+        return;
+      }
+      if (h) { h.kind === 'winter' && h.car !== car ? toast('Сначала разберись<br>с колёсами другой машины') : busyHands(); return; }
+      startRemove(car); return;
+    }
+    if (h && h.car === car && h.kind === 'balanced') { startAct('Ставлю колёса', actTime(), () => { M.hand = null; car.wheels = 'on'; finishCar(car); }, G.up.gun ? SND.gun : SND.ratchet); return; }
+    if (h && h.car === car && h.kind === 'winter') { startAct('Ставлю обратно', 0.6, () => { M.hand = null; car.wheels = 'on'; }); return; }
+    if (h && h.car && h.car !== car) { toast('Это колёса от другой машины!'); SND.bad(); return; }
+    toast('Колёса этой машины ещё в работе 🛠️');
+    return;
+  }
+  const s = G.st[t.key];
+  if (t.key === 'changer') {
+    if (s.state === 'demount' || s.state === 'mount') { if (!h) { M.wait = 'changer'; toast('Станок работает — подожди ⏳'); } else toast('Станок работает — подожди ⏳'); return; }
+    if (s.state === 'empty') {
+      if (h && (h.kind === 'winter')) { s.state = 'demount'; s.car = h.car; s.t = 0; s.dur = changerTime(); M.hand = null; M.wait = 'changer'; SND.put(); SND.machine(); return; }
+      if (h && h.kind === 'summer') { s.state = 'ready'; s.car = h.car; M.hand = null; SND.put(); return; } // положить обратно
+      if (!h) toast('Станок пустой.<br>Принеси колёса с машины 🚗'); else busyHands();
+      return;
+    }
+    if (s.state === 'waitTires') { if (!h) { startAct('Снимаю шины', 0.4, () => { M.hand = {kind: 'old', car: s.car}; s.state = 'needNew'; SND.pop(); }); } else busyHands(); return; }
+    if (s.state === 'needNew') {
+      if (h && h.kind === 'fresh' && h.car === s.car) { s.state = 'mount'; s.t = 0; s.dur = changerTime(); M.hand = null; M.wait = 'changer'; SND.put(); SND.machine(); return; }
+      if (h && h.kind === 'old' && h.car === s.car) { s.state = 'waitTires'; M.hand = null; SND.put(); return; }
+      if (!h) toast('На станке диски.<br>Принеси летние шины со склада 📦'); else busyHands();
+      return;
+    }
+    if (s.state === 'ready') { if (!h) { startAct('Беру колёса', 0.4, () => { M.hand = {kind: 'summer', car: s.car}; s.state = 'empty'; s.car = null; SND.pop(); }); } else busyHands(); return; }
+  }
+  if (t.key === 'balancer') {
+    if (s.state === 'balance') { if (!h) M.wait = 'balancer'; toast('Балансировка идёт — подожди ⏳'); return; }
+    if (s.state === 'empty') {
+      if (h && h.kind === 'summer') { s.state = 'balance'; s.car = h.car; s.t = 0; s.dur = BAL_TIME; M.hand = null; M.wait = 'balancer'; SND.put(); SND.machine(); return; }
+      if (h && h.kind === 'balanced') { s.state = 'ready'; s.car = h.car; M.hand = null; SND.put(); return; }
+      if (!h) toast('Сюда приносят колёса<br>после шиномонтажа ⚖️'); else if (h.kind === 'winter') toast('Сначала на шиномонтажный станок 🛠️'); else busyHands();
+      return;
+    }
+    if (s.state === 'ready') { if (!h) { startAct('Беру колёса', 0.4, () => { M.hand = {kind: 'balanced', car: s.car}; s.state = 'empty'; s.car = null; SND.pop(); }); } else busyHands(); return; }
+  }
+  if (t.key === 'rack') {
+    if (h && h.kind === 'old') { startAct('Беру летние шины', 0.7, () => { M.hand = {kind: 'fresh', car: h.car}; SND.pop(); }); return; }
+    if (!h) toast('Склад шин 📦<br>Приноси сюда старые шины'); else busyHands();
+    return;
+  }
+  if (t.key === 'tools') {
+    if (!h) { startAct('Беру экстрактор', 0.3, () => { M.hand = {kind: 'ext'}; SND.pop(); }); return; }
+    if (h.kind === 'ext') { M.hand = null; SND.put(); return; }
+    busyHands();
+  }
+}
+function updateMan(dt) {
+  const M = G.man;
+  if (M.act) {
+    M.act.t += dt;
+    if (M.act.t >= M.act.dur) { const d = M.act.done; M.act = null; d(); }
+    return;
+  }
+  if (M.path.length) {
+    const [tx, ty] = M.path[0], dx = tx - M.x, dy = ty - M.y, d = Math.hypot(dx, dy), step = manSpeed() * dt;
+    M.step += dt * 10;
+    if (d <= step) { M.x = tx; M.y = ty; M.path.shift(); } else { M.x += dx / d * step; M.y += dy / d * step; }
+  }
+  if (!M.path.length && M.goal) { const g = M.goal; M.goal = null; interact(g); if (M.act) return; }
+  if (M.wait) { const s = G.st[M.wait]; if (s.state === 'waitTires' || s.state === 'ready') { const k = M.wait; M.wait = null; interact({type: 'st', key: k}); } }
+}
+function updateStations(dt) {
+  for (const k of ['changer', 'balancer']) {
+    const s = G.st[k];
+    if (s.state === 'demount' || s.state === 'mount' || s.state === 'balance') {
+      s.t += dt;
+      if (s.t >= s.dur) { s.state = s.state === 'demount' ? 'waitTires' : 'ready'; SND.ding(); }
+    }
+  }
+}
+function finishCar(car) {
+  const m = mood(car), pay = 60 + [30, 10, 0][m];
+  G.served++; car.state = 'done'; car.leaveT = 0.6;
+  const [sx, sy] = iso(car.x, car.y, car.z + 2.4);
+  const r = document.getElementById('coinPill').getBoundingClientRect();
+  const [ex, ey] = toV(r.left + 24, r.top + r.height / 2);
+  const n = 6;
+  for (let i = 0; i < n; i++) {
+    const v = i < n - 1 ? Math.floor(pay / n) : pay - Math.floor(pay / n) * (n - 1);
+    G.coinsFly.push({sx: sx + (Math.random() - 0.5) * 40, sy, ex, ey, t: -i * 0.09, dur: 0.9, v});
+  }
+  G.fx.push({x: sx, y: sy - 20, txt: '+' + pay + ' ' + FACES[m], life: 1.6});
+  SND.ding();
+  if (G.served === GOAL && !G.goalShown) { G.goalShown = true; setTimeout(() => { toast('🎉 Цель сезона выполнена!<br>Работай дальше — за звёзды ⭐'); SND.win(); }, 1500); }
+}
+
+// ====== Рисование ======
 function drawCar(car) {
-  const L = 4, W = 1.9, z0 = car.z;
-  const hx = car.heading === 'x';
+  const L = 4, W = 1.9, z0 = car.z, hx = car.heading === 'x';
   const dx = hx ? L : W, dy = hx ? W : L, x0 = car.x - dx / 2, y0 = car.y - dy / 2;
   poly([iso(x0, y0, 0), iso(x0 + dx, y0, 0), iso(x0 + dx, y0 + dy, 0), iso(x0, y0 + dy, 0)], 'rgba(0,0,0,.2)');
+  if (z0 > 0.05) { // лапы подъёмника
+    box(x0 - 0.5, car.y - 1.4, z0 + 0.1, dx + 1.0, 0.15, 0.12, '#d9a400');
+    box(x0 - 0.5, car.y + 1.25, z0 + 0.1, dx + 1.0, 0.15, 0.12, '#d9a400');
+  }
   box(x0, y0, z0 + 0.3, dx, dy, 0.75, car.color);
-  // колёса на видимом боку
-  const r = 0.42, cz = z0 + 0.42;
-  const wheel = (fn) => { poly(circlePts((c, s) => fn(c * r, s * r)), '#1e1e1e'); poly(circlePts((c, s) => fn(c * r * 0.5, s * r * 0.5), 10), '#b9bec6'); };
+  const r = 0.42, cz = z0 + 0.42, on = car.wheels === 'on';
+  const wheel = (fn) => {
+    if (on) { poly(circlePts((c, s) => fn(c * r, s * r)), '#1e1e1e'); poly(circlePts((c, s) => fn(c * r * 0.5, s * r * 0.5), 10), '#b9bec6'); }
+    else poly(circlePts((c, s) => fn(c * r * 0.33, s * r * 0.33), 10), '#8c8f94', '#555');
+  };
   if (hx) {
     for (const wx of [car.x - 1.3, car.x + 1.3]) wheel((a, b) => iso(wx + a, y0 + dy + 0.02, cz + b));
-    // фары спереди (+x)
     for (const yy of [y0 + 0.25, y0 + dy - 0.55]) poly([iso(x0 + dx + 0.01, yy, z0 + 0.65), iso(x0 + dx + 0.01, yy + 0.3, z0 + 0.65), iso(x0 + dx + 0.01, yy + 0.3, z0 + 0.85), iso(x0 + dx + 0.01, yy, z0 + 0.85)], '#fff6a8');
     box(x0 + 0.9, y0 + 0.15, z0 + 1.05, 2.1, dy - 0.3, 0.6, '#bfe3ff');
     box(x0 + 0.85, y0 + 0.12, z0 + 1.62, 2.2, dy - 0.24, 0.1, car.color);
   } else {
     for (const wy of [car.y - 1.3, car.y + 1.3]) wheel((a, b) => iso(x0 + dx + 0.02, wy - a, cz + b));
-    // задние фонари (+y)
     for (const xx of [x0 + 0.2, x0 + dx - 0.5]) poly([iso(xx, y0 + dy + 0.01, z0 + 0.7), iso(xx + 0.3, y0 + dy + 0.01, z0 + 0.7), iso(xx + 0.3, y0 + dy + 0.01, z0 + 0.88), iso(xx, y0 + dy + 0.01, z0 + 0.88)], '#ff3b30');
     box(x0 + 0.15, y0 + 1.0, z0 + 1.05, dx - 0.3, 2.1, 0.6, '#bfe3ff');
     box(x0 + 0.12, y0 + 0.95, z0 + 1.62, dx - 0.24, 2.2, 0.1, car.color);
   }
 }
-function drawTireStack(x, y, n) {
-  const r = 0.45;
-  for (let k = 0; k < n; k++) {
-    const zb = k * 0.28;
-    for (let s = 0; s <= 5; s++) poly(circlePts((c, sn) => iso(x + c * r, y + sn * r, zb + s * 0.05)), s === 5 ? '#3a3a3a' : '#1c1c1c');
-    poly(circlePts((c, sn) => iso(x + c * r * 0.5, y + sn * r * 0.5, zb + 0.25)), '#0d0d0d');
+// Шина «лёжа»: kind = 'winter' | 'summer' | 'disk' (только диск) | 'tire' (резина без диска)
+function lyingTire(x, y, z, r, type, hasDisk = true) {
+  if (type !== 'disk') {
+    for (let s = 0; s <= 4; s++) poly(circlePts((c, sn) => iso(x + c * r, y + sn * r, z + s * 0.05)), s === 4 ? '#383838' : '#1c1c1c');
+    if (type === 'winter') for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2; const [px, py] = iso(x + Math.cos(a) * r * 0.8, y + Math.sin(a) * r * 0.8, z + 0.2); ctx.fillStyle = '#e8eef5'; ctx.fillRect(px - 1.5, py - 1.5, 3, 3); }
+    if (type === 'summer') poly(circlePts((c, sn) => iso(x + c * r * 0.82, y + sn * r * 0.82, z + 0.205)), null, '#ffb020', 2);
   }
+  if (hasDisk) poly(circlePts((c, sn) => iso(x + c * r * 0.55, y + sn * r * 0.55, z + 0.21)), '#c9d0d8', '#7d8590');
+  else if (type !== 'disk') poly(circlePts((c, sn) => iso(x + c * r * 0.55, y + sn * r * 0.55, z + 0.21)), '#0d0d0d');
 }
-function drawLiftPost(x, y) { box(x - 0.15, y - 0.15, 0, 0.3, 0.3, 3.2, '#ffcc22'); }
+function tireStack(x, y, n, r, type, hasDisk) { for (let k = 0; k < n; k++) lyingTire(x, y, k * 0.24, r, type, hasDisk && k === n - 1); }
+function drawLiftPost(x, y) { box(x - 0.15, y - 0.15, 0, 0.3, 0.3, 3.0, '#ffcc22'); }
 function textOnBackWall(txt, u, z, size, col) {
   const [px, py] = iso(u, 0.02, z);
   ctx.save(); ctx.transform(C30, S30, 0, 1, px, py);
   ctx.font = `900 ${size}px system-ui,sans-serif`; ctx.fillStyle = col; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   ctx.fillText(txt, 0, 0); ctx.restore();
 }
-function drawGarage() {
-  // земля
-  ctx.fillStyle = '#7fcf5a'; ctx.fillRect(-2000, -2000, 5000, 5000);
-  // дорога
-  poly([iso(-60, 7.6), iso(60, 7.6), iso(60, 11.8), iso(-60, 11.8)], '#5b5f66');
-  for (let x = -60; x < 60; x += 4) poly([iso(x, 9.6), iso(x + 2, 9.6), iso(x + 2, 9.8), iso(x, 9.8)], '#f2f2f2');
-  poly([iso(-60, 7.1), iso(60, 7.1), iso(60, 7.6), iso(-60, 7.6)], '#c9c2b4');
-  // площадка перед боксами и пол
-  poly([iso(0, 6), iso(10, 6), iso(10, 7.1), iso(0, 7.1)], '#b8b8b8');
-  poly([iso(0, 0), iso(10, 0), iso(10, 6), iso(0, 6)], '#d9d4c7', 'rgba(0,0,0,.25)');
-  for (let i = 0; i < 2; i++) { // разметка боксов
-    const B = BAYS[i];
-    poly([iso(B.cx - 1.6, 0.8), iso(B.cx + 1.6, 0.8), iso(B.cx + 1.6, 5.8), iso(B.cx - 1.6, 5.8)], null, i === 1 && !G.bayOpen[1] ? 'rgba(0,0,0,.1)' : '#f2b705', 3);
+function drawChanger() {
+  const s = G.st.changer, x = s.x, y = s.y, col = G.up.fast ? '#e8403a' : '#3d7bd9';
+  box(x - 0.65, y - 0.65, 0, 1.3, 1.3, 0.8, col);
+  box(x - 0.6, y - 0.65, 0.8, 0.3, 0.3, 1.3, G.up.fast ? '#b52f2a' : '#2b5aa8');
+  box(x - 0.6, y - 0.65, 1.95, 0.3, 0.95, 0.15, '#555b66');
+  box(x - 0.55, y + 0.15, 1.3, 0.2, 0.2, 0.65, '#555b66');
+  poly(circlePts((c, sn) => iso(x + c * 0.5, y + sn * 0.5, 0.81)), '#aab2bc', '#666');
+  const working = s.state === 'demount' || s.state === 'mount';
+  const content = {demount: 'winter', waitTires: 'disk', needNew: 'disk', mount: 'summer', ready: 'summer'}[s.state];
+  if (content) lyingTire(x, y, 0.82, 0.55, content, true);
+  if (s.state === 'waitTires') tireStack(x + 1.0, y + 0.9, 2, 0.38, 'winter', false);
+  if (working) { const a = G.t * 8; const [p1, p2] = [iso(x + Math.cos(a) * 0.5, y + Math.sin(a) * 0.5, 1.08), iso(x - Math.cos(a) * 0.5, y - Math.sin(a) * 0.5, 1.08)]; ctx.strokeStyle = '#ffcc00'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p2[0], p2[1]); ctx.stroke(); }
+}
+function drawBalancer() {
+  const s = G.st.balancer, x = s.x, y = s.y;
+  box(x - 0.6, y - 0.65, 0, 1.2, 1.3, 1.0, '#f5c518');
+  box(x - 0.55, y - 0.4, 1.0, 0.5, 0.8, 0.35, '#3a3f47');
+  poly([iso(x - 0.04, y - 0.3, 1.12), iso(x - 0.04, y + 0.3, 1.12), iso(x - 0.04, y + 0.3, 1.3), iso(x - 0.04, y - 0.3, 1.3)], '#39d353');
+  box(x + 0.6, y - 0.08, 1.15, 0.35, 0.16, 0.16, '#888');
+  if (s.state !== 'empty') {
+    const r = 0.55, wx = x + 0.95, cz = 1.23;
+    poly(circlePts((c, sn) => iso(wx - 0.12, y + c * r, cz + sn * r)), '#151515');
+    poly(circlePts((c, sn) => iso(wx, y + c * r, cz + sn * r)), '#222');
+    poly(circlePts((c, sn) => iso(wx + 0.01, y + c * r * 0.55, cz + sn * r * 0.55)), '#c9d0d8', '#7d8590');
+    const a = s.state === 'balance' ? G.t * 14 : 0.6;
+    for (let k = 0; k < 3; k++) { const b = a + k * 2.09; const p1 = iso(wx + 0.02, y, cz), p2 = iso(wx + 0.02, y + Math.cos(b) * r * 0.5, cz + Math.sin(b) * r * 0.5); ctx.strokeStyle = '#6b737c'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p2[0], p2[1]); ctx.stroke(); }
   }
-  // задние стены
-  box(-0.3, -0.3, 0, 0.3, 6.3, 4.5, '#e9e3d3');
-  box(0, -0.3, 0, 10, 0.3, 4.5, '#efe9d9');
-  poly([iso(0, 0.01, 4.4), iso(10, 0.01, 4.4), iso(10, 0.01, 3.2), iso(0, 0.01, 3.2)], '#2f6fd6');
-  textOnBackWall('ШИНОМОНТАЖ', 5, 3.8, 30, '#fff');
-  textOnBackWall('🛞', 1, 3.8, 30, '#fff'); textOnBackWall('🛞', 9, 3.8, 30, '#fff');
-  // предметы — сортируем по глубине
+}
+function drawRack() {
+  const x0 = 10.4, x1 = 15.8;
+  for (const px of [x0, (x0 + x1) / 2, x1 - 0.1]) box(px, 0.02, 0, 0.1, 0.1, 2.4, '#8a6a44');
+  box(x0, 0, 1.2, x1 - x0, 0.85, 0.08, '#a8875c');
+  box(x0, 0, 2.35, x1 - x0, 0.85, 0.08, '#a8875c');
+  for (const [tx, type] of [[10.9, 'winter'], [11.6, 'winter'], [12.3, 'winter'], [13.9, 'summer'], [14.6, 'summer'], [15.3, 'summer']]) {
+    tireStack(tx, 0.45, 4, 0.3, type, false);
+    for (let k = 0; k < 3; k++) lyingTire(tx, 0.45, 1.28 + k * 0.24, 0.3, type, false);
+  }
+}
+function drawTools() {
+  box(4.4, 0.05, 0, 1.2, 0.7, 0.9, '#a0703a');
+  poly([iso(4.3, 0.02, 1.2), iso(5.7, 0.02, 1.2), iso(5.7, 0.02, 2.4), iso(4.3, 0.02, 2.4)], '#7d8590', 'rgba(0,0,0,.3)');
+  const hasExt = !(G.man.hand && G.man.hand.kind === 'ext');
+  textOnBackWall('🔧🔨' + (hasExt ? '🪛' : '  '), 5.0, 1.8, 18, '#fff');
+}
+function drawMan() {
+  const M = G.man, x = M.x, y = M.y;
+  const moving = M.path.length > 0, ph = moving ? Math.sin(M.step) : 0, bob = moving ? Math.abs(ph) * 0.06 : 0;
+  poly(circlePts((c, s) => iso(x + c * 0.32, y + s * 0.32, 0), 12), 'rgba(0,0,0,.22)');
+  const shoe = G.up.shoes ? '#ff3b30' : '#3a2a20';
+  box(x - 0.17 + ph * 0.08, y - 0.08, 0, 0.14, 0.16, 0.45, '#244f9e'); box(x - 0.17 + ph * 0.08, y - 0.08, 0, 0.14, 0.2, 0.08, shoe);
+  box(x + 0.03 - ph * 0.08, y - 0.08, 0, 0.14, 0.16, 0.45, '#244f9e'); box(x + 0.03 - ph * 0.08, y - 0.08, 0, 0.14, 0.2, 0.08, shoe);
+  box(x - 0.22, y - 0.14, 0.45 + bob, 0.44, 0.28, 0.6, '#2f6fd6');
+  // голова и кепка
+  const [hx, hy] = iso(x, y, 1.33 + bob);
+  ctx.beginPath(); ctx.arc(hx, hy, 0.24 * S, 0, 7); ctx.fillStyle = '#f2c9a0'; ctx.fill(); ctx.strokeStyle = 'rgba(0,0,0,.3)'; ctx.lineWidth = 1.2; ctx.stroke();
+  ctx.beginPath(); ctx.arc(hx, hy - 2, 0.25 * S, Math.PI, 0); ctx.fillStyle = '#e8403a'; ctx.fill();
+  ctx.fillStyle = '#c42f2a'; ctx.fillRect(hx - 2, hy - 3, 0.42 * S, 4);
+  ctx.fillStyle = '#222'; ctx.beginPath(); ctx.arc(hx - 3, hy + 3, 1.6, 0, 7); ctx.arc(hx + 5, hy + 3, 1.6, 0, 7); ctx.fill();
+  // что несёт
+  const h = M.hand;
+  if (h) {
+    const tx = x + 0.3, ty = y + 0.3, z = 0.65 + bob;
+    if (h.kind === 'ext') { const [px, py] = iso(tx, ty, z + 0.2); ctx.font = '22px system-ui'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('🪛', px, py); }
+    else {
+      const type = {winter: 'winter', old: 'winter', fresh: 'summer', summer: 'summer', balanced: 'summer'}[h.kind];
+      const disk = h.kind === 'winter' || h.kind === 'summer' || h.kind === 'balanced';
+      for (let k = 0; k < 2; k++) lyingTire(tx, ty, z + k * 0.24, 0.33, type, disk && k === 1);
+    }
+  }
+}
+function drawGarage() {
+  ctx.fillStyle = '#7fcf5a'; ctx.fillRect(-3000, -3000, 7000, 7000);
+  // дорога, тротуар, стоянка и площадка перед боксами
+  poly([iso(-80, 10.3), iso(80, 10.3), iso(80, 13.7), iso(-80, 13.7)], '#5b5f66');
+  for (let x = -80; x < 80; x += 4) poly([iso(x, 11.9), iso(x + 2, 11.9), iso(x + 2, 12.1), iso(x, 12.1)], '#f2f2f2');
+  poly([iso(-80, 9.8), iso(80, 9.8), iso(80, 10.3), iso(-80, 10.3)], '#c9c2b4');
+  poly([iso(-7.4, -1.2), iso(-0.2, -1.2), iso(-0.2, 9.8), iso(-7.4, 9.8)], '#8f949c');
+  poly([iso(-0.2, 7), iso(10, 7), iso(10, 9.8), iso(-0.2, 9.8)], '#9a9ea6');
+  for (const [, sy] of LOT) for (const ly of [sy - 1.4, sy + 1.4]) poly([iso(-5.0, ly - 0.04), iso(-0.6, ly - 0.04), iso(-0.6, ly + 0.04), iso(-5.0, ly + 0.04)], '#f2f2f2');
+  { const [px, py] = iso(-2.8, -0.6, 0); pillText(px, py, '🅿️ Очередь', '800 15px system-ui', 'rgba(255,255,255,.9)', '#333'); }
+  poly([iso(0, 0), iso(16, 0), iso(16, 7), iso(0, 7)], '#d9d4c7', 'rgba(0,0,0,.25)');
+  poly([iso(10, 0), iso(16, 0), iso(16, 7), iso(10, 7)], '#cfc9bb');
+  for (let i = 0; i < 2; i++) {
+    const B = BAYS[i];
+    poly([iso(B.cx - 1.6, 1.1), iso(B.cx + 1.6, 1.1), iso(B.cx + 1.6, 5.8), iso(B.cx - 1.6, 5.8)], null, G.bayOpen[i] ? '#f2b705' : 'rgba(0,0,0,.1)', 3);
+  }
+  // стены
+  box(-0.3, -0.3, 0, 0.3, 0.3, 4.2, '#e9e3d3');
+  box(0, -0.3, 0, 16, 0.3, 4.2, '#efe9d9');
+  poly([iso(0, 0.01, 4.1), iso(10, 0.01, 4.1), iso(10, 0.01, 3.0), iso(0, 0.01, 3.0)], '#2f6fd6');
+  textOnBackWall('ШИНОМОНТАЖ', 5, 3.55, 28, '#fff');
+  textOnBackWall('🛞', 1, 3.55, 26, '#fff'); textOnBackWall('🛞', 9, 3.55, 26, '#fff');
+  // всё остальное — по глубине (дальнее раньше)
   const items = [];
-  items.push({k: 0.6 + 0.8, d: () => drawTireStack(0.6, 0.8, 5)});
-  items.push({k: 9.4 + 0.8, d: () => drawTireStack(9.4, 0.8, G.bayOpen[1] ? 4 : 2)});
-  items.push({k: 1.0 + 5.3, d: () => drawTireStack(0.55, 5.3, 3)});
+  items.push({k: 0.6 + 0.6, d: () => tireStack(0.6, 0.6, 5, 0.42, 'winter', false)});
+  items.push({k: 0.55 + 6.2, d: () => tireStack(0.55, 6.2, 3, 0.42, 'summer', false)});
+  if (G.up.gun) items.push({k: 9.2 + 0.6, d: () => box(8.8, 0.2, 0, 0.9, 0.7, 1.1, '#e8403a')});
+  items.push({k: 13.1 + 0.4, d: drawRack});
+  items.push({k: 5.0 + 0.4, d: drawTools});
+  items.push({k: G.st.changer.x + G.st.changer.y, d: drawChanger});
+  items.push({k: G.st.balancer.x + G.st.balancer.y + 0.3, d: drawBalancer});
   for (let i = 0; i < 2; i++) {
     if (!G.bayOpen[i]) continue;
     const B = BAYS[i];
     items.push({k: B.cx - 1.55 + B.cy, d: () => drawLiftPost(B.cx - 1.55, B.cy)});
     items.push({k: B.cx + 1.55 + B.cy, d: () => drawLiftPost(B.cx + 1.55, B.cy)});
   }
-  if (G.gun) items.push({k: 4.3 + 0.6, d: () => { box(3.8, 0.1, 0, 1.0, 0.8, 1.4, '#e8403a'); }});
-  else items.push({k: 4.3 + 0.6, d: () => { box(3.9, 0.1, 0, 0.8, 0.6, 1.1, '#8a8f99'); }});
-  for (const x of [0, 5, 10]) items.push({k: x + 6, d: () => box(x - 0.2, 5.8, 0, 0.4, 0.4, 3.9, '#efe9d9')});
-  items.push({k: 11.2, d: () => box(-0.2, 5.8, 3.9, 10.4, 0.4, 0.6, '#efe9d9')});
-  if (!G.bayOpen[1]) items.push({k: 11.1, d: drawLockedDoor});
-  for (const car of G.cars) items.push({k: car.x + car.y + (car.state === 'inBay' || car.state === 'toBay' ? 0 : 0.01), d: () => drawCar(car)});
+  for (const x of [0, 10, 16]) items.push({k: x + 7, d: () => box(x - 0.2, 6.8, 0, 0.4, 0.4, 3.0, '#efe9d9')});
+  if (!G.bayOpen[1]) items.push({k: 14.4, d: drawLockedDoor});
+  for (const car of G.cars) items.push({k: car.x + car.y, d: () => drawCar(car)});
+  items.push({k: G.man.x + G.man.y + 0.05, d: drawMan});
   items.sort((a, b) => a.k - b.k).forEach(it => it.d());
-  // пузыри настроения поверх всего
+  // надписи станков, пузыри, подсказки — поверх всего
+  drawStationLabels();
   for (const car of G.cars) drawBubble(car);
+  drawManBubble();
   drawPointer();
 }
-function lockedDoorPts() { return [iso(5.2, 6, 0), iso(9.8, 6, 0), iso(9.8, 6, 3.9), iso(5.2, 6, 3.9)]; }
+function lockedDoorPts() { return [iso(5.2, 7, 0), iso(9.8, 7, 0), iso(9.8, 7, 3.0), iso(5.2, 7, 3.0)]; }
 function drawLockedDoor() {
   poly(lockedDoorPts(), '#a9b3bf', 'rgba(0,0,0,.35)');
-  for (let z = 0.3; z < 3.9; z += 0.35) poly([iso(5.2, 6.01, z), iso(9.8, 6.01, z), iso(9.8, 6.01, z + 0.05), iso(5.2, 6.01, z + 0.05)], '#8a95a3');
-  const [px, py] = iso(7.5, 6, 2.1);
-  ctx.fillStyle = 'rgba(255,255,255,.95)'; roundRect(px - 70, py - 28, 140, 56, 14); ctx.fill();
-  ctx.font = '900 24px system-ui'; ctx.fillStyle = '#333'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.fillText('🔒 ' + PRICES.bay2 + ' 💰', px, py);
+  for (let z = 0.3; z < 3.0; z += 0.35) poly([iso(5.2, 7.01, z), iso(9.8, 7.01, z), iso(9.8, 7.01, z + 0.05), iso(5.2, 7.01, z + 0.05)], '#8a95a3');
+  const [px, py] = iso(7.5, 7, 1.6);
+  pillText(px, py, '🔒 Бокс 2 · 200 💰', '900 20px system-ui', 'rgba(255,255,255,.95)', '#333');
 }
-function roundRect(x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+function progressRing(px, py, k, col) {
+  ctx.beginPath(); ctx.arc(px, py, 15, 0, 7); ctx.fillStyle = 'rgba(255,255,255,.95)'; ctx.fill();
+  ctx.beginPath(); ctx.moveTo(px, py); ctx.arc(px, py, 12, -Math.PI / 2, -Math.PI / 2 + k * Math.PI * 2); ctx.closePath(); ctx.fillStyle = col; ctx.fill();
+}
+function drawStationLabels() {
+  for (const k of ['changer', 'balancer', 'rack', 'tools']) {
+    const s = G.st[k];
+    const z = k === 'rack' ? 3.0 : k === 'tools' ? 2.9 : 2.6;
+    const [px, py] = iso(s.x, s.y, z);
+    let txt = s.ic + ' ' + s.name;
+    if (s.state === 'waitTires') txt += ' · забери шины';
+    if (s.state === 'needNew') txt += ' · нужны летние';
+    if (s.state === 'ready') txt += ' · готово ✅';
+    const w = pillText(px, py, txt, '800 15px system-ui', 'rgba(255,255,255,.9)', '#333');
+    if (s.state === 'demount' || s.state === 'mount' || s.state === 'balance') progressRing(px + w / 2 + 14, py, s.t / s.dur, '#3bb273');
+  }
+}
 function carAnchor(car, z) { return iso(car.x, car.y, car.z + z); }
 function drawBubble(car) {
-  if (car.state === 'leaving') return;
-  const [px, py] = carAnchor(car, 3.0);
+  if (car.state === 'leaving' || car.state === 'done') return;
+  const [px, py] = carAnchor(car, 2.9);
   const inBay = car.state === 'inBay';
-  const w = inBay ? 104 : 60;
-  ctx.fillStyle = 'rgba(255,255,255,.95)'; roundRect(px - w / 2, py - 26, w, 52, 14); ctx.fill();
-  ctx.font = '30px system-ui'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  if (inBay) {
-    ctx.fillText(FACES[mood(car)], px - 26, py - 2);
-    ctx.font = '900 18px system-ui'; ctx.fillStyle = '#333'; ctx.fillText('🛞' + car.wheelsDone + '/4', px + 20, py);
-  } else ctx.fillText(FACES[mood(car)], px, py - 4);
-  if (car.state === 'queue' || car.state === 'angry') {
+  let extra = '';
+  if (inBay) extra = car.strip && car.stripKnown && !car.stripFixed ? '🔩❗' : car.wheels === 'on' ? '🛞' : '🔧';
+  const w = extra ? 96 : 58;
+  ctx.fillStyle = 'rgba(255,255,255,.95)'; roundRect(px - w / 2, py - 24, w, 48, 14); ctx.fill();
+  ctx.font = '28px system-ui'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  if (extra) { ctx.fillText(FACES[mood(car)], px - 22, py); ctx.font = '22px system-ui'; ctx.fillText(extra, px + 22, py); }
+  else ctx.fillText(FACES[mood(car)], px, py - 4);
+  if (!inBay) {
     const p = Math.max(0, car.pat / PATIENCE);
-    ctx.fillStyle = '#ddd'; ctx.fillRect(px - 22, py + 16, 44, 6);
-    ctx.fillStyle = p > 0.6 ? '#3bb273' : p > 0.3 ? '#f5c518' : '#e8403a'; ctx.fillRect(px - 22, py + 16, 44 * p, 6);
+    ctx.fillStyle = '#ddd'; ctx.fillRect(px - 22, py + 14, 44, 6);
+    ctx.fillStyle = p > 0.6 ? '#3bb273' : p > 0.3 ? '#f5c518' : '#e8403a'; ctx.fillRect(px - 22, py + 14, 44 * p, 6);
   }
 }
-function pointerTarget() {
-  const inBay = G.cars.find(c => c.state === 'inBay');
+function drawManBubble() {
+  const M = G.man, [px, py] = iso(M.x, M.y, 2.35);
+  if (M.act) {
+    const w = pillText(px, py, M.act.label, '800 15px system-ui', 'rgba(255,255,255,.95)', '#333');
+    ctx.fillStyle = '#ddd'; ctx.fillRect(px - w / 2 + 8, py + 13, w - 16, 6);
+    ctx.fillStyle = '#ff9a1f'; ctx.fillRect(px - w / 2 + 8, py + 13, (w - 16) * Math.min(1, M.act.t / M.act.dur), 6);
+  } else if (M.hand) pillText(px, py, HAND[M.hand.kind].ic, '20px system-ui', 'rgba(255,240,200,.95)', '#333');
+}
+// Куда дальше? Подсказка для ребёнка
+function nextStep() {
+  const M = G.man, h = M.hand, st = G.st;
+  if (h) {
+    if (h.kind === 'winter') return st.changer.state === 'empty' ? {st: 'changer', text: 'Отнеси колёса на шиномонтажный станок 🛠️'} : {car: h.car, text: 'Станок занят. Можно вернуть колёса на машину'};
+    if (h.kind === 'old') return {st: 'rack', text: 'Отнеси старые шины на склад 📦 — там летние'};
+    if (h.kind === 'fresh') return {st: 'changer', text: 'Отнеси летние шины на станок 🛠️'};
+    if (h.kind === 'summer') return st.balancer.state === 'empty' ? {st: 'balancer', text: 'Теперь на балансировку ⚖️'} : {st: 'changer', text: 'Балансировка занята — положи колёса обратно на станок'};
+    if (h.kind === 'balanced') return {car: h.car, text: 'Поставь колёса на машину 🚗'};
+    if (h.kind === 'ext') { const c = G.cars.find(c => c.state === 'inBay' && c.strip && !c.stripFixed); return c ? {car: c, text: 'Выкрути сорванный болт 🪛'} : {st: 'tools', text: 'Верни экстрактор на место'}; }
+  }
+  if (st.changer.state === 'waitTires') return {st: 'changer', text: 'Забери старые шины со станка'};
+  if (st.balancer.state === 'ready') return {st: 'balancer', text: 'Забери готовые колёса с балансировки'};
+  if (st.changer.state === 'ready' && st.balancer.state === 'empty') return {st: 'changer', text: 'Забери колёса со станка'};
+  const waiting = G.cars.filter(c => c.state === 'inBay' && c.wheels === 'on');
+  const stripC = waiting.find(c => c.strip && c.stripKnown && !c.stripFixed);
+  if (stripC) return {st: 'tools', text: 'Болт сорван! Возьми 🪛 экстрактор'};
+  if (waiting.length && st.changer.state === 'empty') return {car: waiting[0], text: 'Сними колёса с машины 🚗'};
   const q = G.queue.find(c => !c.path.length);
-  if (q && freeBay() >= 0) return q;
-  if (inBay) return inBay;
-  return null;
+  if (q && freeBay() >= 0) return {queue: q, text: 'Нажми на машину в очереди — она заедет в бокс'};
+  if (['demount', 'mount'].includes(st.changer.state) || st.balancer.state === 'balance') return {text: 'Станок работает… ⏳'};
+  if (waiting.length) return {car: waiting[0], text: 'Сними колёса с машины 🚗'};
+  if (G.queue.length) return {text: 'Клиенты ждут ⏳'};
+  return {text: 'Ждём клиентов… 🚗'};
 }
+let curStep = {text: ''};
 function drawPointer() {
-  if (G.served >= 3) return; // в начале подсказываем пальчиком
-  const c = pointerTarget(); if (!c) return;
-  const [px, py] = carAnchor(c, 4.6);
-  ctx.font = '40px system-ui'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.fillText('👇', px, py + Math.sin(G.t * 6) * 6);
-}
-
-// ====== Работа с колесом (крупный план) ======
-const WC = {x: 600, y: 420}, TIRE_R = 215, RIM_R = 140, BOLT_R = 80;
-function newWheelJob(car) {
-  const bolts = [];
-  for (let i = 0; i < 4; i++) bolts.push({state: 'in', rot: 0, turn: 0, stripped: false, prog: 0, shake: 0, fly: 0});
-  if (car.stripWheel === car.wheelsDone) bolts[Math.floor(Math.random() * 4)].stripped = true;
-  return {car, phase: 'unscrew', bolts, wx: 0, wAnim: null, tire: 'winter', busy: null, doneT: 0};
-}
-function boltPos(i) { const a = -Math.PI / 4 + i * Math.PI / 2 - Math.PI / 2; return [WC.x + G.job.wx + Math.cos(a) * BOLT_R, WC.y + Math.sin(a) * BOLT_R]; }
-function trayPos(i) { return [150 + (i % 2) * 34, 660 + Math.floor(i / 2) * 24]; }
-function openWork(car) {
-  if (!car.job) car.job = newWheelJob(car);
-  G.job = car.job; G.mode = 'work'; G.tool = 'wrench';
-  document.getElementById('work').classList.remove('hide');
-  updateTools(); SND.click();
-}
-function closeWork() {
-  G.mode = 'garage'; G.job = null;
-  document.getElementById('work').classList.add('hide');
-}
-function turnTime() { return G.gun ? 0.22 : 0.65; }
-function workTap(x, y) {
-  const J = G.job; if (!J || J.wAnim || J.phase === 'done') return;
-  if (J.phase === 'unscrew' || J.phase === 'screw') {
-    for (let i = 0; i < 4; i++) {
-      const b = J.bolts[i], [bx, by] = boltPos(i);
-      if (Math.hypot(x - bx, y - by) > 46) continue;
-      if (J.phase === 'unscrew' && b.state === 'in') {
-        if (b.stripped) {
-          if (G.tool === 'ext') {
-            b.prog++; b.shake = 0.25; SND.drill();
-            if (b.prog >= 4) { b.state = 'flyOut'; b.fly = 0; b.stripped = false; SND.pop(); toast('Ура! Сорванный болт вытащили! 💪'); G.tool = 'wrench'; updateTools(); }
-          } else {
-            b.shake = 0.4; SND.bad();
-            toast('Ой! Болт сорван! 😱<br>Возьми 🪛 экстрактор');
-            G.seenStrip = true; updateTools(true);
-          }
-          return;
-        }
-        if (G.tool === 'ext') { toast('Экстрактор нужен только<br>для сорванных болтов'); G.tool = 'wrench'; updateTools(); return; }
-        if (J.busy !== null) return;
-        b.state = 'turning'; b.turn = 0; J.busy = i; G.gun ? SND.gun() : SND.ratchet();
-      } else if (J.phase === 'screw' && b.state === 'loose') {
-        if (J.busy !== null) return;
-        if (G.tool === 'ext') { G.tool = 'wrench'; updateTools(); }
-        b.state = 'tighten'; b.turn = 0; J.busy = i; G.gun ? SND.gun() : SND.ratchet();
-      }
-      return;
-    }
-    // нажали мимо болтов — подскажем
-    if (J.phase === 'unscrew' && Math.hypot(x - WC.x, y - WC.y) < TIRE_R) toast('Сначала открути все болты 🔩');
-  } else if (J.phase === 'remove') {
-    if (Math.hypot(x - WC.x, y - WC.y) < TIRE_R + 20) { J.wAnim = {from: 0, to: -900, t: 0, dur: 0.6, then: 'mount'}; SND.whoosh(); }
-  } else if (J.phase === 'mount') {
-    if (x > 860 || Math.hypot(x - WC.x, y - WC.y) < TIRE_R) { J.tire = 'summer'; J.wx = 900; J.wAnim = {from: 900, to: 0, t: 0, dur: 0.6, then: 'screw'}; SND.whoosh(); }
-  }
-}
-function updateWork(dt) {
-  const J = G.job; if (!J) return;
-  for (const b of J.bolts) {
-    if (b.shake > 0) b.shake -= dt;
-    if (b.state === 'turning' || b.state === 'tighten') {
-      b.turn += dt; b.rot += (b.state === 'turning' ? -1 : 1) * dt * 14;
-      if (b.turn >= turnTime()) {
-        J.busy = null;
-        if (b.state === 'turning') { b.state = 'flyOut'; b.fly = 0; } else { b.state = 'in'; SND.click(); }
-      }
-    }
-    if (b.state === 'flyOut') { b.fly += dt * 3; if (b.fly >= 1) { b.state = 'out'; b.fly = 1; } }
-  }
-  if (J.phase === 'unscrew' && J.bolts.every(b => b.state === 'out')) J.phase = 'remove';
-  if (J.phase === 'screw' && J.bolts.every(b => b.state === 'in')) { J.phase = 'done'; J.doneT = 0; SND.ding(); }
-  if (J.wAnim) {
-    const A = J.wAnim; A.t += dt; const k = Math.min(1, A.t / A.dur), e = 1 - Math.pow(1 - k, 3);
-    J.wx = A.from + (A.to - A.from) * e;
-    if (k >= 1) {
-      J.wAnim = null; J.phase = A.then;
-      if (A.then === 'screw') J.bolts.forEach(b => { b.state = 'loose'; b.rot = Math.random(); });
-    }
-  }
-  if (J.phase === 'done') {
-    J.doneT += dt;
-    if (J.doneT > 0.9) {
-      const car = J.car; car.wheelsDone++;
-      if (car.wheelsDone < 4) { car.job = newWheelJob(car); G.job = car.job; }
-      else finishCar(car);
-    }
-  }
-}
-function finishCar(car) {
-  const m = mood(car), pay = 60 + [30, 10, 0][m];
-  G.coins += pay; G.served++; car.job = null;
-  closeWork();
-  carLeaves(car, false);
-  SND.coin();
-  const [px, py] = carAnchor(car, 3);
-  G.fx.push({x: px, y: py, txt: '+' + pay + ' 💰', life: 1.6});
-  toast(['Клиент доволен! 😀', 'Готово! 👍', 'Уф, успели… 😅'][m] + '<br>+' + pay + ' монет');
-  if (G.served === GOAL && !G.goalShown) { G.goalShown = true; setTimeout(() => toast('🎉 Цель сезона выполнена!<br>Работай дальше — за звёзды ⭐'), 1600); SND.win(); }
-  updateHud();
-}
-// Рисуем крупный план
-function drawTire(cx, cy, type) {
-  // протектор
-  ctx.beginPath(); ctx.arc(cx, cy, TIRE_R, 0, Math.PI * 2); ctx.fillStyle = '#222'; ctx.fill();
-  ctx.save(); ctx.translate(cx, cy);
-  if (type === 'winter') {
-    ctx.strokeStyle = '#3c3c3c'; ctx.lineWidth = 7;
-    for (let i = 0; i < 28; i++) { ctx.rotate(Math.PI * 2 / 28); ctx.beginPath(); ctx.moveTo(TIRE_R - 26, -6); ctx.lineTo(TIRE_R - 14, 6); ctx.lineTo(TIRE_R - 3, -6); ctx.stroke(); }
-    ctx.fillStyle = '#c9ced6';
-    for (let i = 0; i < 20; i++) { ctx.rotate(Math.PI * 2 / 20); ctx.beginPath(); ctx.arc(TIRE_R - 12, 0, 3.5, 0, 7); ctx.fill(); }
-  } else {
-    ctx.strokeStyle = '#3a3a3a'; ctx.lineWidth = 5;
-    for (let i = 0; i < 40; i++) { ctx.rotate(Math.PI * 2 / 40); ctx.beginPath(); ctx.moveTo(TIRE_R - 26, -4); ctx.lineTo(TIRE_R - 2, 4); ctx.stroke(); }
-  }
-  ctx.restore();
-  ctx.beginPath(); ctx.arc(cx, cy, TIRE_R - 30, 0, Math.PI * 2); ctx.fillStyle = '#303030'; ctx.fill();
-  ctx.font = '34px system-ui'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.fillText(type === 'winter' ? '❄️' : '☀️', cx, cy - TIRE_R + 52);
-  ctx.font = '900 18px system-ui'; ctx.fillStyle = '#888';
-  ctx.fillText(type === 'winter' ? 'ЗИМА' : 'ЛЕТО', cx, cy + TIRE_R - 50);
-  // диск
-  const g = ctx.createRadialGradient(cx - 40, cy - 40, 20, cx, cy, RIM_R);
-  g.addColorStop(0, '#f4f6f8'); g.addColorStop(1, '#9aa3ad');
-  ctx.beginPath(); ctx.arc(cx, cy, RIM_R, 0, Math.PI * 2); ctx.fillStyle = g; ctx.fill();
-  ctx.lineWidth = 4; ctx.strokeStyle = '#7d8590'; ctx.stroke();
-  ctx.fillStyle = '#5d646d';
-  for (let i = 0; i < 5; i++) {
-    const a = i * Math.PI * 2 / 5 + Math.PI / 5;
-    ctx.beginPath(); ctx.ellipse(cx + Math.cos(a) * 108, cy + Math.sin(a) * 108, 22, 14, a, 0, Math.PI * 2); ctx.fill();
-  }
-  ctx.beginPath(); ctx.arc(cx, cy, 34, 0, Math.PI * 2); ctx.fillStyle = '#cfd5dc'; ctx.fill(); ctx.strokeStyle = '#7d8590'; ctx.lineWidth = 3; ctx.stroke();
-}
-function drawHub(cx, cy) {
-  ctx.beginPath(); ctx.arc(cx, cy, 125, 0, Math.PI * 2); ctx.fillStyle = '#8c8f94'; ctx.fill();
-  ctx.beginPath(); ctx.arc(cx, cy, 118, 0, Math.PI * 2); ctx.strokeStyle = '#6e7277'; ctx.lineWidth = 3; ctx.stroke();
-  ctx.fillStyle = '#6e7277';
-  for (let i = 0; i < 16; i++) { const a = i * Math.PI / 8; ctx.beginPath(); ctx.arc(cx + Math.cos(a) * 100, cy + Math.sin(a) * 100, 5, 0, 7); ctx.fill(); }
-  ctx.beginPath(); ctx.arc(cx, cy, 55, 0, Math.PI * 2); ctx.fillStyle = '#a7abb0'; ctx.fill();
-  ctx.beginPath(); ctx.arc(cx, cy, 25, 0, Math.PI * 2); ctx.fillStyle = '#5b5f64'; ctx.fill();
-  for (let i = 0; i < 4; i++) { const a = -Math.PI / 4 + i * Math.PI / 2 - Math.PI / 2; ctx.beginPath(); ctx.arc(cx + Math.cos(a) * BOLT_R, cy + Math.sin(a) * BOLT_R, 9, 0, 7); ctx.fillStyle = '#d4b06a'; ctx.fill(); }
-}
-function drawBolt(x, y, rot, stripped, big) {
-  ctx.save(); ctx.translate(x, y); ctx.rotate(rot); const r = big ? 24 : 20;
-  ctx.beginPath(); for (let i = 0; i < 6; i++) { const a = i * Math.PI / 3; ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r); } ctx.closePath();
-  ctx.fillStyle = stripped ? '#b0623a' : '#d6dbe2'; ctx.fill(); ctx.strokeStyle = stripped ? '#6b3010' : '#7d8590'; ctx.lineWidth = 3; ctx.stroke();
-  ctx.beginPath(); ctx.arc(0, 0, r * 0.45, 0, 7); ctx.fillStyle = stripped ? '#8a4520' : '#aeb5be'; ctx.fill();
-  if (stripped) { ctx.strokeStyle = '#3a1500'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(-r * 0.7, -r * 0.3); ctx.lineTo(-r * 0.1, r * 0.1); ctx.lineTo(r * 0.6, -r * 0.4); ctx.stroke(); }
-  ctx.restore();
-}
-function drawSmallTire(x, y, type, w) {
-  ctx.fillStyle = '#222'; roundRect(x - w / 2, y - 22, w, 44, 12); ctx.fill();
-  ctx.strokeStyle = type === 'winter' ? '#c9ced6' : '#444'; ctx.lineWidth = 3;
-  for (let i = -w / 2 + 14; i < w / 2 - 8; i += 14) { ctx.beginPath(); ctx.moveTo(x + i, y - 18); ctx.lineTo(x + i + (type === 'winter' ? 6 : 0), y + 18); ctx.stroke(); }
-}
-function drawWork() {
-  const J = G.job;
-  // фон: стена и пол мастерской
-  ctx.fillStyle = '#efe9d9'; ctx.fillRect(-2000, -2000, 5000, 5000);
-  ctx.fillStyle = '#d9d4c7'; ctx.fillRect(-2000, 640, 5000, 3000);
-  ctx.fillStyle = '#2f6fd6'; ctx.fillRect(-2000, 70, 5000, 8);
-  // крыло машины над колесом
-  ctx.fillStyle = '#3a3a3a'; ctx.fillRect(250, 540, 700, 100);
-  ctx.fillStyle = J.car.color; roundRect(250, 150, 700, 410, 40); ctx.fill();
-  ctx.fillStyle = 'rgba(255,255,255,.25)'; ctx.fillRect(250, 230, 700, 10);
-  ctx.fillStyle = '#2a2a2a'; ctx.beginPath(); ctx.arc(WC.x, WC.y + 40, 280, Math.PI, 0); ctx.lineTo(WC.x + 280, 640); ctx.lineTo(WC.x - 280, 640); ctx.closePath(); ctx.fill();
-  // ступица и колесо
-  drawHub(WC.x, WC.y);
-  if (J.phase !== 'mount' || J.wAnim) drawTire(WC.x + J.wx, WC.y, J.tire);
-  // болты
-  J.bolts.forEach((b, i) => {
-    if (J.wAnim && J.phase !== 'remove') return;
-    const [bx, by] = boltPos(i);
-    if (b.state === 'out') { const [tx, ty] = trayPos(i); drawBolt(tx, ty, b.rot, false); return; }
-    if (b.state === 'flyOut') { const [tx, ty] = trayPos(i), k = b.fly; drawBolt(bx + (tx - bx) * k, by + (ty - by) * k - Math.sin(k * Math.PI) * 120, b.rot + k * 6, false); return; }
-    if (J.phase === 'mount') return;
-    const sx = b.shake > 0 ? Math.sin(b.shake * 80) * 5 : 0;
-    drawBolt(bx + sx, by, b.rot, b.stripped, b.state === 'loose');
-    if (b.state === 'loose') { ctx.font = '900 16px system-ui'; ctx.fillStyle = '#e8403a'; ctx.textAlign = 'center'; ctx.fillText('!', bx + 22, by - 22); }
-    if (b.stripped && b.prog > 0) { ctx.fillStyle = '#fff'; ctx.font = '900 15px system-ui'; ctx.fillText(b.prog + '/4', bx, by + 36); }
-  });
-  // подставка для болтов
-  ctx.fillStyle = '#7d8590'; ctx.beginPath(); ctx.ellipse(167, 672, 62, 26, 0, 0, 7); ctx.fill();
-  ctx.fillStyle = '#5d646d'; ctx.beginPath(); ctx.ellipse(167, 668, 52, 19, 0, 0, 7); ctx.fill();
-  J.bolts.forEach((b, i) => { if (b.state === 'out') { const [tx, ty] = trayPos(i); drawBolt(tx, ty, b.rot, false); } });
-  // стопка старых (зимних) и новых (летних) шин
-  for (let k = 0; k < 4; k++) drawSmallTire(150, 470 - k * 46, 'winter', 150);
-  ctx.font = '900 18px system-ui'; ctx.fillStyle = '#555'; ctx.textAlign = 'center'; ctx.fillText('❄️ старые', 150, 520);
-  const hl = J.phase === 'mount';
-  const pulse = hl ? 1 + Math.sin(G.t * 8) * 0.05 : 1;
-  ctx.save(); ctx.translate(1050, 400); ctx.scale(pulse, pulse);
-  if (hl) { ctx.fillStyle = 'rgba(255,200,40,.45)'; roundRect(-95, -150, 190, 260, 26); ctx.fill(); }
-  for (let k = 0; k < 4; k++) drawSmallTire(0, 70 - k * 46, 'summer', 150);
-  ctx.font = '900 18px system-ui'; ctx.fillStyle = '#555'; ctx.fillText('☀️ новые', 0, 120);
-  ctx.restore();
-  // сверху: какое колесо
-  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.fillStyle = 'rgba(255,255,255,.95)'; roundRect(470, 76, 260, 56, 16); ctx.fill();
-  ctx.font = '900 22px system-ui'; ctx.fillStyle = '#333'; ctx.fillText('Колесо ' + Math.min(4, J.car.wheelsDone + 1) + ' из 4', 560, 104);
-  ctx.font = '30px system-ui'; ctx.fillText(FACES[mood(J.car)], 700, 104);
-  if (J.phase === 'done') {
-    ctx.font = '900 64px system-ui'; ctx.fillStyle = '#3bb273'; ctx.fillText('✓ Готово!', WC.x, WC.y);
-  }
+  const n = curStep; let p = null;
+  if (n.st) { const s = G.st[n.st]; p = iso(s.x, s.y, n.st === 'rack' ? 3.0 : n.st === 'tools' ? 2.9 : 2.6); p[1] -= 34; }
+  else if (n.car || n.queue) { const c = n.car || n.queue; if (c.state === 'leaving' || c.state === 'done') return; p = carAnchor(c, 2.9); p[1] -= 44; }
+  if (!p) return;
+  ctx.font = '36px system-ui'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('👇', p[0], p[1] + Math.sin(G.t * 6) * 6);
 }
 
 // ====== Подсказки, экран, кнопки ======
 const $ = id => document.getElementById(id);
 let toastT = 0;
 function toast(html) { $('toast').innerHTML = html; $('toast').style.opacity = 1; toastT = 2.2; }
-function setHint() {
-  let h = '';
-  if (G.mode === 'work') {
-    const J = G.job;
-    if (J.phase === 'unscrew') h = J.bolts.some(b => b.stripped && b.state === 'in' && G.seenStrip) ? 'Болт сорван! Выбери 🪛 и нажимай на ржавый болт' : 'Открути болты 🔩 — нажимай на них';
-    else if (J.phase === 'remove') h = 'Сними старую зимнюю шину — нажми на колесо 👆';
-    else if (J.phase === 'mount') h = 'Возьми новую летнюю шину ☀️ — она справа 👉';
-    else if (J.phase === 'screw') h = 'Закрути болты обратно 🔩';
-    else h = 'Отлично!';
-  } else {
-    const t = pointerTarget();
-    if (t && t.state === 'queue') h = 'Нажми на машину в очереди 👆 — она заедет в бокс';
-    else if (t && t.state === 'inBay') h = 'Нажми на машину в боксе — меняем колёса 🛞';
-    else if (G.queue.length) h = 'Боксы заняты — клиенты ждут ⏳';
-    else h = 'Ждём клиентов… 🚗';
-  }
-  $('hint').textContent = h;
-}
-function updateTools(pulseExt) {
-  $('wrIc').textContent = G.gun ? '💨' : '🔧'; $('wrName').textContent = G.gun ? 'Гайковёрт' : 'Ключ';
-  $('tWrench').classList.toggle('sel', G.tool === 'wrench');
-  $('tExt').classList.toggle('sel', G.tool === 'ext');
-  $('tExt').classList.toggle('pulse', !!pulseExt && G.tool !== 'ext');
-}
-$('tWrench').onclick = () => { G.tool = 'wrench'; updateTools(); SND.click(); };
-$('tExt').onclick = () => { G.tool = 'ext'; updateTools(); SND.click(); };
-$('backBtn').onclick = () => { closeWork(); SND.click(); };
 function dateStr() {
   const d = Math.min(60, Math.floor(G.t / SEASON_LEN * 61));
   return d < 31 ? (d + 1) + ' марта' : (d - 30) + ' апреля';
@@ -643,16 +677,19 @@ function updateHud() {
   $('date').textContent = dateStr(); $('dateFill').style.width = Math.min(100, G.t / SEASON_LEN * 100) + '%';
   const q = G.queue.length, worst = G.queue.reduce((m, c) => Math.max(m, mood(c)), 0);
   $('queuePill').textContent = 'Очередь: ' + q + (q ? ' ' + FACES[worst] : '');
-  const canBuy = (!G.bayOpen[1] && G.coins >= PRICES.bay2) || (!G.gun && G.coins >= PRICES.gun);
+  const canBuy = SHOP.some(it => !it.has() && G.coins >= it.price);
   $('shopBtn').classList.toggle('ready', canBuy);
   $('shopBtn').innerHTML = '🛒' + (canBuy ? ' Купить!' : '');
+  if (G.running) { curStep = nextStep(); $('hint').textContent = curStep.text; } else $('hint').textContent = '';
 }
 $('muteBtn').onclick = () => { muted = !muted; $('muteBtn').textContent = muted ? '🔇' : '🔊'; };
 
 // Магазин
 const SHOP = [
-  {id: 'gun', ic: '💨', name: 'Компрессор и гайковёрт', desc: 'Болты откручиваются в 3 раза быстрее! Вжжжж!', price: PRICES.gun, has: () => G.gun, buy: () => { G.gun = true; }},
-  {id: 'bay2', ic: '🏗️', name: 'Второй бокс', desc: 'Ещё один подъёмник — две машины сразу. Клиенты не уедут!', price: PRICES.bay2, has: () => G.bayOpen[1], buy: () => { G.bayOpen[1] = true; }},
+  {ic: '👟', name: 'Кроссовки', desc: 'Хозяин бегает быстрее!', price: 80, has: () => G.up.shoes, buy: () => { G.up.shoes = true; }},
+  {ic: '💨', name: 'Пневмогайковёрт', desc: 'Колёса снимаются и ставятся быстро. Вжжжж!', price: 100, has: () => G.up.gun, buy: () => { G.up.gun = true; }},
+  {ic: '⚙️', name: 'Станок-автомат', desc: 'Шиномонтажный станок работает в 2 раза быстрее', price: 150, has: () => G.up.fast, buy: () => { G.up.fast = true; }},
+  {ic: '🏗️', name: 'Второй бокс', desc: 'Две машины сразу — клиенты не уедут!', price: 200, has: () => G.bayOpen[1], buy: () => { G.bayOpen[1] = true; }},
 ];
 let shopOpen = false;
 function openShop() {
@@ -665,59 +702,81 @@ function openShop() {
     const b = document.createElement('button');
     b.textContent = has ? '✓ Куплено' : it.price + ' 💰';
     b.disabled = has || G.coins < it.price;
-    b.onclick = () => { if (G.coins < it.price || it.has()) return; G.coins -= it.price; it.buy(); SND.coin(); updateHud(); updateTools(); openShop(); toast(it.ic + ' Куплено!'); };
+    b.onclick = () => { if (G.coins < it.price || it.has()) return; G.coins -= it.price; it.buy(); SND.ding(); updateHud(); openShop(); toast(it.ic + ' Куплено!'); };
     d.appendChild(b);
-    if (!has && G.coins < it.price) { const s = document.createElement('span'); s.style.marginTop = '6px'; s.style.minHeight = '0'; s.textContent = 'Не хватает ' + (it.price - G.coins) + ' 💰'; d.appendChild(s); }
     $('shopList').appendChild(d);
   }
 }
 $('shopBtn').onclick = () => { audio(); SND.click(); openShop(); };
 $('shopClose').onclick = () => { shopOpen = false; $('shop').classList.add('hide'); SND.click(); };
 
-// Нажатия по полю
+// Нажатия по полю: выбираем ближайшую цель
 cvs.addEventListener('pointerdown', e => {
   audio();
-  if (!G.running) return;
+  if (!G.running || shopOpen) return;
   const [x, y] = toV(e.clientX, e.clientY);
-  if (G.mode === 'work') { workTap(x, y); return; }
-  // машины (сначала ближние)
-  const cs = G.cars.filter(c => c.state === 'queue' || c.state === 'inBay').sort((a, b) => (b.x + b.y) - (a.x + a.y));
-  for (const c of cs) {
-    const [px, py] = carAnchor(c, 1.2);
-    if (Math.hypot(x - px, y - py) < 2.3 * S || (Math.abs(x - px) < 40 && y < py && y > py - 3.4 * S)) {
-      if (c.state === 'queue') sendToBay(c); else openWork(c);
-      return;
-    }
+  let best = null, bd = 1e9;
+  const consider = (d, r, fn) => { if (d < r && d < bd) { bd = d; best = fn; } };
+  for (const c of G.cars) {
+    if (c.state !== 'queue' && c.state !== 'inBay') continue;
+    const [px, py] = carAnchor(c, 1.0);
+    consider(Math.hypot(x - px, y - py), 75, () => c.state === 'queue' ? sendToBay(c) : goTo({type: 'car', car: c}));
   }
-  if (!G.bayOpen[1] && inPoly(x, y, lockedDoorPts())) { openShop(); return; }
+  for (const k of ['changer', 'balancer', 'rack', 'tools']) {
+    const s = G.st[k], [px, py] = iso(s.x, s.y, k === 'rack' ? 1.3 : 1.0);
+    consider(Math.hypot(x - px, y - py), k === 'rack' ? 75 : 60, () => goTo({type: 'st', key: k}));
+    const [lx, ly] = iso(s.x, s.y, k === 'rack' ? 3.0 : k === 'tools' ? 2.9 : 2.6); // по надписи тоже можно
+    consider(Math.hypot(x - lx, y - ly) * 1.5, 70, () => goTo({type: 'st', key: k}));
+  }
+  if (!best && !G.bayOpen[1] && inPoly(x, y, lockedDoorPts())) { openShop(); return; }
+  if (best) best();
 });
 function inPoly(x, y, pts) { let ins = false; for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) { const [xi, yi] = pts[i], [xj, yj] = pts[j]; if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) ins = !ins; } return ins; }
 
 // ====== Сезон ======
-function arrivalInterval() { const f = G.t / SEASON_LEN; return 15 - 8 * Math.sin(Math.PI * Math.min(1, f * 1.15)); }
+function arrivalInterval() { const f = G.t / SEASON_LEN; return 17 - 8 * Math.sin(Math.PI * Math.min(1, f * 1.15)); }
 function update(dt) {
   G.t += dt;
   G.nextArrival -= dt;
   if (G.nextArrival <= 0 && G.t < SEASON_LEN - 15) {
-    if (G.queue.length < QUEUE_X.length) spawnCar();
+    if (G.queue.length < LOT.length) spawnCar();
     G.nextArrival = arrivalInterval();
   }
   updateCars(dt);
-  if (G.mode === 'work') updateWork(dt);
+  updateMan(dt);
+  updateStations(dt);
   for (const f of G.fx) { f.life -= dt; f.y -= dt * 40; }
   G.fx = G.fx.filter(f => f.life > 0);
+  for (const c of G.coinsFly) {
+    c.t += dt;
+    if (c.t >= c.dur && !c.got) { c.got = true; G.coins += c.v; SND.coin(); bump(); }
+  }
+  G.coinsFly = G.coinsFly.filter(c => !c.got);
   if (G.t >= SEASON_LEN) endSeason();
 }
+let bumpT = 0;
+function bump() { $('coinPill').classList.add('bump'); bumpT = 0.12; $('coins').textContent = G.coins; }
+function drawCoins() {
+  for (const c of G.coinsFly) {
+    if (c.t < 0) continue;
+    const k = Math.min(1, c.t / c.dur), e = k * k;
+    const x = c.sx + (c.ex - c.sx) * e, y = c.sy + (c.ey - c.sy) * e - Math.sin(k * Math.PI) * 120;
+    ctx.beginPath(); ctx.arc(x, y, 13, 0, 7); ctx.fillStyle = '#ffcc00'; ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = '#b07800'; ctx.stroke();
+    ctx.font = '900 14px system-ui'; ctx.fillStyle = '#8a5a00'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('$', x, y + 1);
+  }
+}
 function endSeason() {
-  G.running = false; G.ended = true; if (G.mode === 'work') closeWork();
+  G.running = false;
+  G.coins += G.coinsFly.reduce((s, c) => s + c.v, 0); G.coinsFly = [];
   const stars = G.served >= STAR3 ? 3 : G.served >= STAR2 ? 2 : G.served >= GOAL ? 1 : 0;
   let best = 0; try { best = +localStorage.getItem('tires-best') || 0; if (G.served > best) localStorage.setItem('tires-best', G.served); } catch (e) {}
   $('endTitle').textContent = stars ? '🏆 Сезон пройден!' : '⏰ Сезон закончился';
   $('endStars').textContent = stars ? '⭐'.repeat(stars) + '☆'.repeat(3 - stars) : '😅';
   $('endText').innerHTML = `Обслужено машин: <b>${G.served}</b> из ${GOAL}<br>Заработано монет: <b>${G.coins}</b>` + (G.angry ? `<br>Не дождались и уехали: ${G.angry} 😠` : '') +
-    (stars ? (stars < 3 ? `<br>Для ${stars + 1}-й звезды нужно ${stars === 1 ? STAR2 : STAR3} машин` : '<br>Ты лучший шиномонтаж города!') : '<br>Попробуй ещё — купи гайковёрт пораньше! 💨');
+    (stars ? (stars < 3 ? `<br>Для ${stars + 1}-й звезды нужно ${stars === 1 ? STAR2 : STAR3} машин` : '<br>Ты лучший шиномонтаж города!') : '<br>Попробуй ещё! Купи кроссовки и гайковёрт 👟💨');
   $('endBest').textContent = 'Рекорд: ' + Math.max(best, G.served) + ' 🚗 · Скоро: осенняя переобувка ❄️';
   $('end').classList.remove('hide');
+  $('hint').textContent = '';
   stars ? SND.win() : SND.bad();
 }
 function startSeason() {
@@ -735,11 +794,12 @@ function frame(now) {
   const dt = Math.min(0.05, (now - last) / 1000); last = now;
   if (G.running && !shopOpen) update(dt);
   if (toastT > 0) { toastT -= dt; if (toastT <= 0) $('toast').style.opacity = 0; }
-  hudT -= dt; if (hudT <= 0) { hudT = 0.2; updateHud(); if (G.running) setHint(); }
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  if (bumpT > 0) { bumpT -= dt; if (bumpT <= 0) $('coinPill').classList.remove('bump'); }
+  hudT -= dt; if (hudT <= 0) { hudT = 0.15; updateHud(); }
   ctx.setTransform(dpr * scale, 0, 0, dpr * scale, dpr * offX, dpr * offY);
-  if (G.mode === 'work' && G.job) drawWork(); else drawGarage();
+  drawGarage();
   for (const f of G.fx) { ctx.globalAlpha = Math.min(1, f.life); ctx.font = '900 30px system-ui'; ctx.fillStyle = '#ffcc00'; ctx.strokeStyle = '#6b3a00'; ctx.lineWidth = 5; ctx.textAlign = 'center'; ctx.strokeText(f.txt, f.x, f.y); ctx.fillText(f.txt, f.x, f.y); ctx.globalAlpha = 1; }
+  drawCoins();
   requestAnimationFrame(frame);
 }
 newGame();
