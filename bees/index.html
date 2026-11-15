@@ -14,7 +14,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
 <style>
-:root{--b:clamp(56px,13vmin,84px);--t:clamp(40px,8.5vmin,58px);--m:clamp(34px,7vmin,44px);
+:root{--d:clamp(120px,30vmin,190px);--a:calc(var(--d)*.62);--b:clamp(56px,13vmin,84px);--t:clamp(40px,8.5vmin,58px);--m:clamp(34px,7vmin,44px);
   --sl:env(safe-area-inset-left,0px);--sr:env(safe-area-inset-right,0px);--st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px)}
 html,body{margin:0;height:100%;height:100dvh;overflow:hidden;overscroll-behavior:none;background:#120b35;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
 canvas{position:fixed;inset:0;width:100vw;height:100%;display:block}
@@ -28,7 +28,7 @@ button{font-family:inherit}
 #menu{position:fixed;top:calc(6px + var(--st));right:calc(8px + var(--sr));display:flex;gap:6px;z-index:3}
 .mbtn{width:var(--m);height:var(--m);border-radius:50%;border:none;background:rgba(255,255,255,.85);font-size:calc(var(--m)*.48);box-shadow:0 2px 6px rgba(0,0,0,.25);padding:0;cursor:pointer;touch-action:none;color:#3a2a10;display:flex;align-items:center;justify-content:center}
 /* инструменты — внизу по центру, между кнопками управления */
-#dock{position:fixed;bottom:calc(10px + var(--sb));left:50%;transform:translateX(-50%);display:flex;gap:5px;flex-wrap:wrap-reverse;justify-content:center;width:max-content;max-width:calc(100vw - 4*var(--b) - 70px - var(--sl) - var(--sr));z-index:2}
+#dock{position:fixed;bottom:calc(10px + var(--sb));left:50%;transform:translateX(-50%);display:flex;gap:5px;flex-wrap:wrap-reverse;justify-content:center;width:max-content;max-width:calc(100vw - var(--d) - var(--a) - 70px - var(--sl) - var(--sr));z-index:2}
 .tool{width:var(--t);height:var(--t);border-radius:12px;border:none;background:rgba(255,255,255,.88);font-size:calc(var(--t)*.42);line-height:1;box-shadow:0 2px 6px rgba(0,0,0,.25);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0;cursor:pointer;touch-action:none;color:#3a2a10}
 .tool small{font-size:calc(var(--t)*.17);font-weight:800;color:#5a3a10;margin-top:2px;white-space:nowrap}
 .tool.sel{outline:3px solid #ffcc00;background:#fff3c4}
@@ -45,6 +45,13 @@ button{font-family:inherit}
 /* кнопки управления */
 .btn{position:fixed;width:var(--b);height:var(--b);border-radius:50%;background:rgba(255,255,255,.5);border:3px solid rgba(255,255,255,.9);font-size:calc(var(--b)*.45);display:flex;align-items:center;justify-content:center;touch-action:none;z-index:2;cursor:pointer;color:#3a2a10;box-sizing:border-box}
 .btn.on{background:rgba(255,220,100,.9)}
+#dpad{position:fixed;left:calc(12px + var(--sl));bottom:calc(12px + var(--sb));width:var(--d);height:var(--d);border-radius:50%;background:rgba(255,255,255,.3);border:3px solid rgba(255,255,255,.85);box-shadow:0 3px 10px rgba(0,0,0,.2);touch-action:none;z-index:2;box-sizing:border-box}
+.dp{position:absolute;width:32%;height:32%;display:flex;align-items:center;justify-content:center;font-size:calc(var(--d)*.15);color:#3a2a10;border-radius:30%;background:rgba(255,255,255,.6);pointer-events:none;transition:background .08s,transform .08s}
+.dp.up{left:34%;top:4%}.dp.down{left:34%;bottom:4%}.dp.left{left:4%;top:34%}.dp.right{right:4%;top:34%}
+.dp.on{background:rgba(255,215,90,.95);transform:scale(1.08)}
+.dpc{position:absolute;left:41%;top:41%;width:18%;height:18%;border-radius:50%;background:rgba(255,255,255,.5);pointer-events:none}
+#bAct{width:var(--a);height:var(--a);font-size:calc(var(--a)*.45);right:calc(14px + var(--sr));bottom:calc(14px + var(--sb) + var(--d)*.1)}
+#actHint{position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);font-size:calc(var(--a)*.13);font-weight:800;color:#3a2a10;white-space:nowrap;pointer-events:none}
 #bLeft{left:calc(12px + var(--sl));bottom:calc(12px + var(--sb))}
 #bRight{left:calc(22px + var(--sl) + var(--b));bottom:calc(12px + var(--sb))}
 #bJump{right:calc(12px + var(--sr));bottom:calc(12px + var(--sb))}
@@ -81,7 +88,6 @@ button.big.grey{background:#ccc;box-shadow:0 4px 0 #999}
   <button class="mbtn" id="reset">🔄</button>
 </div>
 <div id="dock">
-  <button class="tool" data-tool="dig">⛏️<small>копать</small></button>
   <button class="tool" data-tool="wood">🟫<small>1🪵</small></button>
   <button class="tool" data-tool="stone">⬜<small>1🪨</small></button>
   <button class="tool" data-tool="hatch">🚪<small>люк 2🪵</small></button>
@@ -91,24 +97,22 @@ button.big.grey{background:#ccc;box-shadow:0 4px 0 #999}
 </div>
 <div id="furnPanel" class="hide"></div>
 
-<div class="btn" id="bLeft">◀</div>
-<div class="btn" id="bRight">▶</div>
-<div class="btn" id="bAct">🪓</div>
-<div class="btn" id="bJump">⬆</div>
+<div id="dpad"><div class="dp up">▲</div><div class="dp left">◀</div><div class="dp right">▶</div><div class="dp down">▼</div><div class="dpc"></div></div>
+<div class="btn" id="bAct">🪓<span id="actHint"></span></div>
 
 <div id="toast"></div>
-<div id="ver">v4</div>
+<div id="ver">v4.1</div>
 
 <div class="overlay" id="start">
   <div class="card">
     <h1>🐝 Спасение мира от пчёл 🦊</h1>
     <button class="big" id="play">Играть!</button>
-    <p>Выкопай <b>нору</b> ⛏️, закрой вход <b>люком</b> 🚪 и поставь <b>лестницу</b> 🪜. Ночью злые пчёлы 🐝 капают <b style="color:#d9a6ff">фиолетовым мёдом</b> — звери становятся злыми. Прячься!</p>
+    <p>Держи стрелку и жми 🪓 — лисёнок копает <b>нору</b> в ту сторону. Закрой вход <b>люком</b> 🚪 и поставь <b>лестницу</b> 🪜. Ночью злые пчёлы 🐝 капают <b style="color:#d9a6ff">фиолетовым мёдом</b> — звери становятся злыми. Прячься!</p>
     <details>
       <summary>Как играть</summary>
       <p>Руби деревья 🌳 и камни 🪨 (🪓) и <b>обустраивай нору</b> 🏠: каждый новый день открывается новая вещь — кухня, кровать, телевизор…</p>
-      <p>Через люк лисёнок пролезает, а звери и мёд — нет. По лестнице: встань и держи ⬆.</p>
-      <p class="small">Компьютер: ← → ходить, пробел — прыжок, ↑/↓ — лестница, E — рубить и толкать, 1 копать, 2–3 блоки, 4 люк, 5 лестница, 6 нора, 7 убрать, Esc — выйти.<br>Телефон и планшет: кнопки на экране; выбери инструмент внизу и нажимай рядом с лисёнком.</p>
+      <p>🪓 рядом с деревом или камнем — рубить, рядом со злым зверем — оттолкнуть. Стрелка + 🪓 — копать (держи 🪓, чтобы копать дальше). Через люк лисёнок пролезает, а звери и мёд — нет. По лестнице: ▲ вверх, ▼ вниз.</p>
+      <p class="small">Компьютер: стрелки или WASD — ходить, ↑/пробел — прыжок, E — 🪓 (со стрелкой — копать), 1–2 блоки, 3 люк, 4 лестница, 5 нора, 6 убрать, Esc — выйти.<br>Телефон и планшет: слева крестовина (можно вести пальцем), справа 🪓; стройка — кнопки внизу.</p>
     </details>
   </div>
 </div>
@@ -158,7 +162,7 @@ let family={vixen:false,cubs:0},npcs=[];
 let grid,res,furn,fox,animals,bees,honey,nodes,particles,floats,day,phase,ptime,warned,spawnLeft,spawnTimer,beesLeft;
 let tool=null,running=false,camX=0,hover=null,painting=false,lastCell='';
 let camShake=0,dpr=1,cssW=0,cssH=0,scale=1,viewW=0,camY=0,visH=600;
-const keys={left:false,right:false,jump:false,down:false};
+const keys={left:false,right:false,jump:false,down:false,act:false};let actRepeat=0;
 const stars=Array.from({length:70},()=>({x:Math.random(),y:Math.random()*0.6,s:Math.random()*2+1}));
 
 function resize(){dpr=Math.min(window.devicePixelRatio||1,2.5);cssW=innerWidth;cssH=innerHeight;cv.width=Math.round(cssW*dpr);cv.height=Math.round(cssH*dpr);
@@ -280,8 +284,25 @@ function hurtFox(fromX){
   fox.hearts--;fox.inv=1.5;sfx('hurt');buzz(150);fox.vy=-350;fox.kb=(fox.x+fox.w/2>fromX?1:-1)*350;burst(fox.x+fox.w/2,fox.y+fox.h/2,'#ff6b9a',10);
   if(fox.hearts<=0)caught();
 }
+function digTarget(){
+  const cc=Math.floor((fox.x+fox.w/2)/T),fr=Math.floor((fox.y+fox.h-1)/T);
+  if(keys.down)return{c:cc,r:fr+1,d:'down'};
+  if(keys.left)return{c:Math.floor((fox.x-3)/T),r:fr,d:'left'};
+  if(keys.right)return{c:Math.floor((fox.x+fox.w+3)/T),r:fr,d:'right'};
+  if(keys.jump)return{c:cc,r:Math.floor((fox.y-3)/T),d:'up'};
+  return null}
+function tryDig(){
+  const tg=digTarget();if(!tg)return false;const{c,r}=tg;
+  if(c<0||c>=COLS||r<0||r>=ROWS)return false;const g=grid[r][c];
+  if(g==='b'){deny('Это твёрдая скала — её не выкопать',1.3);return true}
+  if(g!=='e')return false;
+  if(r>0&&furnAt(c,r-1)){deny('Тут стоит мебель — не подкопаешь',1.3);return true}
+  faceTo(c);startChop('pick',.3);camShake=.1;grid[r][c]='n';burst(c*T+T/2,r*T+T/2,'#8b5a2b',10);sfx('dig');buzz(15);save();
+  if(tg.d==='left'||tg.d==='right')fox.slide=c*T+(T-fox.w)/2;
+  return true}
 function doAction(){
   if(!running)return;
+  if(tryDig())return;
   fox.swing=0.2;startChop('axe',.36);
   const cx=fox.x+fox.w/2,cy=fox.y+fox.h/2;let pushed=false;
   for(const a of animals){if(!a.inf)continue;const ex=a.x+a.w/2,ey=a.y+a.h/2;
@@ -431,6 +452,8 @@ function update(dt,t){
     fox.vy=Math.min(fox.vy+1500*dt,900);
   }
   moveX(fox,fox.vx*dt,'fox');
+  if(fox.slide!=null){const d=fox.slide-fox.x;if(Math.abs(d)<1||mv){fox.slide=null}else{const h=moveX(fox,Math.sign(d)*Math.min(Math.abs(d),320*dt),'fox');if(h)fox.slide=null}}
+  if(keys.act){actRepeat-=dt;if(actRepeat<=0){actRepeat=.34;doAction()}}
   fox.onGround=false;
   const hy=moveY(fox,fox.vy*dt,'fox');if(hy){if(fox.vy>0)fox.onGround=true;fox.vy=0}
   if(mv&&fox.onGround)fox.walk+=dt*14;
@@ -874,22 +897,37 @@ const codeMap={ArrowLeft:'left',KeyA:'left',ArrowRight:'right',KeyD:'right',Arro
 addEventListener('keydown',e=>{
   if(codeMap[e.code]){keys[codeMap[e.code]]=true;e.preventDefault();return}
   if(e.repeat)return;
-  if(e.code==='KeyE'||e.code==='KeyF'||e.code==='Enter'){doAction();e.preventDefault()}
-  const tl={Digit1:'dig',Digit2:'wood',Digit3:'stone',Digit4:'hatch',Digit5:'ladder',Digit7:'erase'}[e.code];
+  if(e.code==='KeyE'||e.code==='KeyF'||e.code==='Enter'){keys.act=true;actRepeat=.34;doAction();e.preventDefault()}
+  const tl={Digit1:'wood',Digit2:'stone',Digit3:'hatch',Digit4:'ladder',Digit6:'erase'}[e.code];
   if(tl)setTool(tool===tl?null:tl);
-  if(e.code==='Digit6')togglePanel();
+  if(e.code==='Digit5')togglePanel();
   if(e.code==='Escape'||e.code==='Digit0'){setTool(null);panel.classList.add('hide')}
 });
-addEventListener('keyup',e=>{if(codeMap[e.code])keys[codeMap[e.code]]=false});
-addEventListener('blur',()=>{keys.left=keys.right=keys.jump=keys.down=false});
-function holdBtn(id,key){const el=document.getElementById(id);
-  const on=e=>{e.preventDefault();keys[key]=true;el.classList.add('on')};
-  const off=()=>{keys[key]=false;el.classList.remove('on')};
-  el.addEventListener('pointerdown',on);['pointerup','pointercancel','pointerleave'].forEach(ev=>el.addEventListener(ev,off))}
-holdBtn('bLeft','left');holdBtn('bRight','right');holdBtn('bJump','jump');
+addEventListener('keyup',e=>{if(codeMap[e.code])keys[codeMap[e.code]]=false;if(e.code==='KeyE'||e.code==='KeyF'||e.code==='Enter')keys.act=false});
+addEventListener('blur',()=>{keys.left=keys.right=keys.jump=keys.down=keys.act=false;padClear()});
+// крестовина: один палец, 8 направлений
+const pad=document.getElementById('dpad');let padId=null;
+const dpEl={up:pad.querySelector('.up'),down:pad.querySelector('.down'),left:pad.querySelector('.left'),right:pad.querySelector('.right')};
+function padApply(L,R,U,D){keys.left=L;keys.right=R;keys.jump=U;keys.down=D;
+  dpEl.left.classList.toggle('on',L);dpEl.right.classList.toggle('on',R);dpEl.up.classList.toggle('on',U);dpEl.down.classList.toggle('on',D)}
+function padSet(e){const r=pad.getBoundingClientRect();const dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2);
+  if(Math.hypot(dx,dy)<r.width*.12){padApply(false,false,false,false);return}
+  const a=Math.atan2(dy,dx)*180/Math.PI;
+  padApply(a>112.5||a<-112.5,a>-67.5&&a<67.5,a<-22.5&&a>-157.5,a>22.5&&a<157.5)}
+function padClear(){padId=null;padApply(false,false,false,false)}
+pad.addEventListener('pointerdown',e=>{e.preventDefault();padId=e.pointerId;try{pad.setPointerCapture(e.pointerId)}catch(er){}padSet(e)});
+pad.addEventListener('pointermove',e=>{if(e.pointerId===padId)padSet(e)});
+['pointerup','pointercancel','lostpointercapture'].forEach(ev=>pad.addEventListener(ev,e=>{if(e.pointerId===padId)padClear()}));
 const bAct=document.getElementById('bAct');
-bAct.addEventListener('pointerdown',e=>{e.preventDefault();bAct.classList.add('on');doAction()});
-['pointerup','pointercancel','pointerleave'].forEach(ev=>bAct.addEventListener(ev,()=>bAct.classList.remove('on')));
+bAct.addEventListener('pointerdown',e=>{e.preventDefault();bAct.classList.add('on');keys.act=true;actRepeat=.34;doAction()});
+['pointerup','pointercancel','pointerleave'].forEach(ev=>bAct.addEventListener(ev,()=>{bAct.classList.remove('on');keys.act=false}));
+// подсказка на кнопке: что сейчас сделает 🪓
+function actLabel(){if(!fox)return'';const tg=digTarget();if(tg&&grid[tg.r]&&grid[tg.r][tg.c]==='e')return'копать';
+  const cx=fox.x+fox.w/2,cy=fox.y+fox.h/2;
+  if(animals&&animals.some(a=>a.inf&&Math.abs(a.x+a.w/2-cx)<80&&Math.abs(a.y+a.h/2-cy)<80))return'толкнуть';
+  if(nodes&&nodes.some(n=>n.down<=0&&Math.abs(n.x-cx)<55&&Math.abs(n.y-(fox.y+fox.h))<60))return'рубить';return''}
+const actHint=document.getElementById('actHint');let actHintTxt='';
+setInterval(()=>{const l=actLabel();if(l!==actHintTxt){actHintTxt=l;actHint.textContent=l;bAct.firstChild.textContent=l==='копать'?'⛏️':'🪓'}},150);
 
 function setTool(tl){tool=tl;
   document.querySelectorAll('.tool[data-tool]').forEach(b=>b.classList.toggle('sel',b.dataset.tool===tool));
@@ -929,12 +967,12 @@ fsBtn.addEventListener('click',async e=>{e.preventDefault();e.stopPropagation();
 fsBtn.addEventListener('pointerdown',e=>e.stopPropagation());
 document.getElementById('reset').addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();running=false;document.getElementById('ask').classList.remove('hide')});
 document.getElementById('no').onclick=()=>{document.getElementById('ask').classList.add('hide');running=true};
-document.getElementById('yes').onclick=()=>{document.getElementById('ask').classList.add('hide');newWorld();initRun();save();setTool(null);renderPanel();running=true;toast('Новая игра! Копай нору ⛏️')};
+document.getElementById('yes').onclick=()=>{document.getElementById('ask').classList.add('hide');newWorld();initRun();save();setTool(null);renderPanel();running=true;toast('Новая игра! Держи стрелку и жми 🪓 — копай нору')};
 
 document.getElementById('rotOk').onclick=()=>{rotDismissed=true;updRotate()};
 resize();newWorld();const loaded=load();initRun();renderPanel();
 document.getElementById('play').onclick=()=>{audioInit();document.getElementById('start').classList.add('hide');running=true;
-  toast(loaded?'С возвращением, лисёнок! 🦊 Загляни в 🏠 — там мебель для норы':'Ты на холме! Выбери ⛏️ и выкопай нору',3.2)};
+  toast(loaded?'С возвращением, лисёнок! 🦊 Загляни в 🏠 — там мебель для норы':'Держи ▼ и жми 🪓 — лисёнок копает нору вниз!',3.2)};
 requestAnimationFrame(loop);
 if('serviceWorker' in navigator){try{navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}}
 </script>
