@@ -119,7 +119,7 @@ button.big{font-size:26px;padding:14px 32px;border-radius:20px;border:none;backg
     <button class="big" id="againBtn">Ещё раз</button>
   </div>
 </div>
-<div id="ver">v3</div>
+<div id="ver">v3.1</div>
 
 <script>
 'use strict';
@@ -191,6 +191,7 @@ function tone(f1, f2, dur, type = 'sine', vol = 0.15, delay = 0) {
 const SND = {
   ratchet() { for (let i = 0; i < 4; i++) tone(1400, 900, 0.04, 'square', 0.05, i * 0.13); },
   gun() { tone(160, 520, 0.25, 'sawtooth', 0.08); },
+  pump() { for (let i = 0; i < 5; i++) tone(260, 180, 0.09, 'square', 0.06, i * 0.28); },
   jack() { for (let i = 0; i < 3; i++) tone(500 + i * 120, 400 + i * 120, 0.08, 'square', 0.05, i * 0.2); },
   drill() { for (let i = 0; i < 3; i++) tone(320, 200, 0.15, 'sawtooth', 0.07, i * 0.2); },
   pop() { tone(500, 1300, 0.09, 'sine', 0.14); },
@@ -278,7 +279,7 @@ function spawnCar() {
   const car = {
     id: G.carId, cls, color: C.colors[Math.floor(Math.random() * C.colors.length)],
     x: -50, y: ROAD_Y, z: 0, front: [1, 0], path: [], speed: 9,
-    state: 'queue', slot, bay: -1, pat, maxPat: pat, wL: 'on', wR: 'on', jL: false, jR: false, lifted: false, claim: null, leaveT: 0,
+    state: 'queue', slot, bay: -1, pat, maxPat: pat, wL: 'on', wR: 'on', jL: 0, jR: 0, pump: null, lifted: false, claim: null, leaveT: 0,
     strip: G.carId === 2 || (G.carId > 2 && Math.random() < 0.25), stripFixed: false, stripKnown: false,
     thought: null, thoughtT: 0, thoughtCD: 3 + Math.random() * 4,
   };
@@ -336,8 +337,8 @@ function updateCars(dt) {
       if (d <= step) { car.x = tx; car.y = ty; car.path.shift(); }
       else { car.x += dx / d * step; car.y += dy / d * step; }
     }
-    const tz = car.lifted ? 0.9 : (car.jL ? 0.17 : 0) + (car.jR ? 0.17 : 0);
-    car.z += Math.sign(tz - car.z) * Math.min(Math.abs(tz - car.z), dt * 1.4);
+    const tz = car.lifted ? 0.9 : 0.17 * (car.jL + car.jR);
+    car.z += Math.sign(tz - car.z) * Math.min(Math.abs(tz - car.z), dt * (car.lifted || car.z > 0.36 ? 1.4 : 4));
     if (car.state === 'toBay' && !car.path.length) car.state = 'inBay';
     if (car.state === 'done') { car.leaveT -= dt; if (car.leaveT <= 0 && car.z <= 0.01) carLeaves(car, false); }
     if (car.state === 'leaving' && car.y > 7.8 && G.bays[car.bay] === car) G.bays[car.bay] = null;
@@ -377,11 +378,22 @@ function goTo(A, t) {
 }
 function runStep(A, s) {
   if (s.walk) A.path = route(A.x, A.y, s.walk[0], s.walk[1]);
-  else if (s.act) { A.act = {label: s.act, t: 0, dur: s.dur, done: s.done}; if (s.snd) s.snd(); }
+  else if (s.act) { A.act = {label: s.act, t: 0, dur: s.dur, done: s.done, tick: s.tick, pump: s.pump}; if (s.start) s.start(); if (s.snd) s.snd(); }
   else if (s.fn) s.fn();
 }
 function busyHands(A) { say(A, 'Руки заняты: ' + HAND[A.hand.kind].name, true); }
 const remTime = () => G.up.gun ? 0.6 : 1.4;
+// домкрат с длинной ручкой: качаешь — машина поднимается
+function jackUp(car, side) {
+  const k = 'j' + side;
+  return {act: 'Качаю домкрат', dur: 1.4, pump: {car, side}, snd: SND.pump,
+    start: () => { car.pump = side; }, tick: (p) => { car[k] = p; }, done: () => { car[k] = 1; car.pump = null; }};
+}
+function jackDown(car, side, then) {
+  const k = 'j' + side;
+  return {act: 'Опускаю домкрат', dur: 0.8, pump: {car, side}, snd: SND.jack,
+    start: () => { car.pump = side; }, tick: (p) => { car[k] = 1 - p; }, done: () => { car[k] = 0; car.pump = null; if (then) then(); }};
+}
 function pushRemove(A, car) {
   car.claim = A; A.locked = true;
   if (G.up.lift) {
@@ -389,10 +401,10 @@ function pushRemove(A, car) {
     A.plan.push({act: 'Снимаю колёса', dur: G.up.gun ? 0.9 : 2.2, snd: wrenchSnd, done: () => { car.wL = car.wR = 'off'; A.hand = {kind: 'winter', car}; car.claim = null; SND.pop(); }});
     return;
   }
-  A.plan.push({act: 'Домкрат ⬆️', dur: 0.8, snd: SND.jack, done: () => { car.jR = true; }});
+  A.plan.push(jackUp(car, 'R'));
   A.plan.push({act: 'Снимаю 2 колеса', dur: remTime(), snd: wrenchSnd, done: () => { car.wR = 'off'; SND.pop(); }});
   A.plan.push({walk: carSide(car, 'L')});
-  A.plan.push({act: 'Домкрат ⬆️', dur: 0.8, snd: SND.jack, done: () => { car.jL = true; }});
+  A.plan.push(jackUp(car, 'L'));
   A.plan.push({act: 'Снимаю 2 колеса', dur: remTime(), snd: wrenchSnd, done: () => { car.wL = 'off'; A.hand = {kind: 'winter', car}; car.claim = null; SND.pop(); }});
 }
 function pushInstall(A, car) {
@@ -404,10 +416,10 @@ function pushInstall(A, car) {
     return;
   }
   A.plan.push({act: 'Ставлю 2 колеса', dur: remTime(), snd: wrenchSnd, done: () => { car.wR = 'on'; }});
-  A.plan.push({act: 'Опускаю домкрат', dur: 0.5, snd: SND.jack, done: () => { car.jR = false; }});
+  A.plan.push(jackDown(car, 'R'));
   A.plan.push({walk: carSide(car, 'L')});
   A.plan.push({act: 'Ставлю 2 колеса', dur: remTime(), snd: wrenchSnd, done: () => { car.wL = 'on'; }});
-  A.plan.push({act: 'Опускаю домкрат', dur: 0.5, snd: SND.jack, done: () => { car.jL = false; fin(); }});
+  A.plan.push(jackDown(car, 'L', fin));
 }
 function interact(A, t) {
   const h = A.hand;
@@ -429,7 +441,7 @@ function interact(A, t) {
       pushRemove(A, car); return;
     }
     if (h && h.car === car && h.kind === 'balanced') { pushInstall(A, car); return; }
-    if (h && h.car === car && h.kind === 'winter') { A.plan.push({act: 'Ставлю обратно', dur: 0.8, done: () => { A.hand = null; car.wL = car.wR = 'on'; car.jL = car.jR = false; car.lifted = false; }}); return; }
+    if (h && h.car === car && h.kind === 'winter') { A.plan.push({act: 'Ставлю обратно', dur: 0.8, done: () => { A.hand = null; car.wL = car.wR = 'on'; car.jL = car.jR = 0; car.lifted = false; }}); return; }
     if (h && h.car && h.car !== car) { say(A, 'Это колёса от другой машины!', true); return; }
     say(A, 'Колёса этой машины ещё в работе 🛠️');
     return;
@@ -476,6 +488,7 @@ function interact(A, t) {
 function updateActor(A, dt) {
   if (A.act) {
     A.act.t += dt;
+    if (A.act.tick) A.act.tick(Math.min(1, A.act.t / A.act.dur));
     if (A.act.t >= A.act.dur) { const d = A.act.done; A.act = null; if (d) d(); }
     return;
   }
@@ -555,7 +568,7 @@ function drawCar(car) {
   baseT();
   // подъёмник / домкраты
   if (car.lifted) { for (const s of [-1, 1]) { const px = car.x + vx * s * (W / 2 - 0.3), py = car.y + vy * s * (W / 2 - 0.3); box(px - 0.12 - Math.abs(fx) * 1.2, py - 0.12 - Math.abs(fy) * 1.2, zb - 0.05, 0.24 + Math.abs(fx) * 2.4, 0.24 + Math.abs(fy) * 2.4, 0.1, '#d9a400'); } }
-  for (const [on, s] of [[car.jL, -1], [car.jR, 1]]) if (on) { const px = car.x + vx * s * (W / 2 - 0.25), py = car.y + vy * s * (W / 2 - 0.25); box(px - 0.15, py - 0.15, 0, 0.3, 0.3, Math.max(0.05, zb + 0.2), '#e8403a'); }
+  drawJacks(car, false);
   // кузов: слои снизу вверх
   const P = C.prof, top = P[P.length - 1][0];
   let k = 0;
@@ -589,6 +602,7 @@ function drawCar(car) {
       } else poly(pt(0.13), '#8c8f94', '#555');
     }
   }
+  drawJacks(car, true);
   // фары спереди / фонари сзади
   const fz = zb + 0.58;
   for (const [sgn, colr, rr] of [[1, '#fff7c2', 0.13], [-1, '#ff4b3e', 0.09]]) {
@@ -597,6 +611,41 @@ function drawCar(car) {
     for (const v of [-W / 2 + 0.38, W / 2 - 0.38]) {
       const cx = car.x + ux * (L / 2 + 0.01) + vx * v, cy = car.y + uy * (L / 2 + 0.01) + vy * v;
       poly(circlePts((c, sn) => iso(cx + vx * c * rr, cy + vy * c * rr, fz + sn * rr), 12), colr, 'rgba(0,0,0,.35)');
+    }
+  }
+}
+
+// Подкатные домкраты: по 2 с каждой стороны, с длинной ручкой
+function jackShown(car, side) { return !car.lifted && (car['j' + side] > 0.001 || car.pump === side); }
+function jackGeom(car, side, u) {
+  const C = CLASSES[car.cls], W = C.wid, [fx, fy] = car.front, vx = -fy, vy = fx, s = side === 'R' ? 1 : -1;
+  const at = (uu, vv) => [car.x + fx * uu + vx * s * vv, car.y + fy * uu + vy * s * vv];
+  const pumping = car.pump === side;
+  const tipZ = pumping ? 0.75 + 0.5 * Math.abs(Math.sin(G.t * 9 + (u > 0 ? 0 : 1.2))) : 0.55;
+  return {saddle: at(u, W / 2 - 0.3), body: at(u, W / 2 + 0.05), base: at(u * 0.92, W / 2 + 0.3), tip: at(u * 0.2, W / 2 + 0.7), tipZ, fx, fy};
+}
+function jackTip(car, side) { const C = CLASSES[car.cls], g = jackGeom(car, side, C.len / 2 - 0.95); return [g.tip[0], g.tip[1], g.tipZ]; }
+function drawJacks(car, front) {
+  const C = CLASSES[car.cls];
+  for (const side of ['L', 'R']) {
+    if (!jackShown(car, side)) continue;
+    const [fx, fy] = car.front, vx = -fy, vy = fx, s = side === 'R' ? 1 : -1;
+    const visible = vx * s > 0 || vy * s > 0;
+    for (const u of [-(C.len / 2 - 0.95), C.len / 2 - 0.95]) {
+      const g = jackGeom(car, side, u);
+      if (!front) { // стойка-«седло» под машиной
+        box(g.saddle[0] - 0.1, g.saddle[1] - 0.1, 0, 0.2, 0.2, Math.max(0.1, car.z + 0.2), '#7a1f1a');
+        if (visible) continue;
+      } else if (!visible) continue;
+      // корпус домкрата на колёсиках
+      const along = Math.abs(vx) > 0.5; // корпус вытянут поперёк машины
+      const dx = along ? 0.75 : 0.36, dy = along ? 0.36 : 0.75;
+      box(g.body[0] - dx / 2, g.body[1] - dy / 2, 0.02, dx, dy, 0.16, '#e8403a');
+      // длинная ручка
+      const p0 = iso(g.base[0], g.base[1], 0.22), p1 = iso(g.tip[0], g.tip[1], g.tipZ);
+      ctx.lineCap = 'round'; ctx.strokeStyle = '#3a3f47'; ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(p0[0], p0[1]); ctx.lineTo(p1[0], p1[1]); ctx.stroke();
+      ctx.strokeStyle = '#e8403a'; ctx.lineWidth = 7; ctx.beginPath(); ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p1[0] + (p0[0] - p1[0]) * 0.15, p1[1] + (p0[1] - p1[1]) * 0.15); ctx.stroke();
+      ctx.lineCap = 'butt';
     }
   }
 }
@@ -710,6 +759,11 @@ function drawPerson(A) {
   ctx.beginPath(); ctx.arc(hx, hy - 2, 0.25 * S, Math.PI, 0); ctx.fillStyle = cap; ctx.fill();
   ctx.fillStyle = shade(cap, -0.2); ctx.fillRect(hx - 2, hy - 3, 0.42 * S, 4);
   ctx.fillStyle = '#222'; ctx.beginPath(); ctx.arc(hx - 3, hy + 3, 1.6, 0, 7); ctx.arc(hx + 5, hy + 3, 1.6, 0, 7); ctx.fill();
+  if (A.act && A.act.pump) { // руки на ручке домкрата
+    const [tx, ty, tz] = jackTip(A.act.pump.car, A.act.pump.side), sh = iso(x, y, 0.95 + bob), tp = iso(tx, ty, tz);
+    ctx.lineCap = 'round'; ctx.strokeStyle = body; ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(sh[0], sh[1]); ctx.lineTo(tp[0], tp[1]); ctx.stroke();
+    ctx.fillStyle = '#f2c9a0'; ctx.beginPath(); ctx.arc(tp[0], tp[1], 4, 0, 7); ctx.fill(); ctx.lineCap = 'butt';
+  }
   const h = A.hand;
   if (h) {
     const tx = x + 0.3, ty = y + 0.3, z = 0.65 + bob;
