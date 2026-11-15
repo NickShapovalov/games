@@ -36,6 +36,7 @@ button{font-family:inherit}
 @keyframes pulse{50%{transform:scale(1.12);background:#ffe27a}}
 #furnPanel{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--t) + 22px + var(--sb));background:rgba(255,248,230,.97);border-radius:18px;padding:10px;box-shadow:0 4px 14px rgba(0,0,0,.35);z-index:4;display:grid;grid-template-columns:repeat(3,minmax(78px,96px));gap:8px;max-height:calc(100dvh - var(--t) - 90px);overflow:auto;touch-action:pan-y}
 #furnPanel.hide{display:none}
+#furnPanel .goal{grid-column:1/-1;font-weight:800;font-size:13px;color:#7a3a5a;text-align:center;background:#ffe8f2;border-radius:10px;padding:5px 6px}
 #furnPanel .ttl{grid-column:1/-1;font-weight:900;font-size:16px;color:#5a3a10;text-align:center}
 .fitem{border:none;border-radius:14px;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.2);padding:6px 2px;cursor:pointer;font-weight:800;color:#3a2a10;font-size:12px;touch-action:none}
 .fitem .ic{font-size:26px;display:block}
@@ -96,7 +97,7 @@ button.big.grey{background:#ccc;box-shadow:0 4px 0 #999}
 <div class="btn" id="bJump">⬆</div>
 
 <div id="toast"></div>
-<div id="ver">v3.5</div>
+<div id="ver">v4</div>
 
 <div class="overlay" id="start">
   <div class="card">
@@ -143,14 +144,17 @@ const KINDS={
 };
 const FURN=[
   {id:'kitchen',name:'Кухня',ic:'🍳',day:1,w:2,cost:{wood:3,stone:2}},
-  {id:'bed',name:'Кровать',ic:'🛏️',day:2,w:2,cost:{wood:4}},
+  {id:'bed',name:'Кровать',ic:'🛏️',day:1,w:2,cost:{wood:4}},
+  {id:'bath',name:'Ванна',ic:'🛁',day:2,w:2,cost:{wood:1,stone:4}},
+  {id:'lamp',name:'Лампа',ic:'💡',day:2,w:1,cost:{wood:1,stone:1}},
+  {id:'play',name:'Игровая',ic:'🧸',day:3,w:2,cost:{wood:3}},
   {id:'tv',name:'Телевизор',ic:'📺',day:3,w:1,cost:{wood:1,stone:2}},
-  {id:'play',name:'Игровая',ic:'🧸',day:4,w:2,cost:{wood:3}},
-  {id:'lamp',name:'Лампа',ic:'💡',day:5,w:1,cost:{wood:1,stone:1}},
-  {id:'pic',name:'Картина',ic:'🖼️',day:6,w:1,cost:{wood:2}}
+  {id:'nursery',name:'Детская',ic:'👶',need:'vixen',w:2,cost:{wood:4,stone:1}},
+  {id:'pic',name:'Картина',ic:'🖼️',day:4,w:1,cost:{wood:2}}
 ];
 const FBY=Object.fromEntries(FURN.map(f=>[f.id,f]));
 // grid: null air, 'e' earth, 'b' bedrock, 'n' tunnel, {t:'wood'|'stone'|'hatch',under:null|'n'}
+let family={vixen:false,cubs:0},npcs=[];
 let grid,res,furn,fox,animals,bees,honey,nodes,particles,floats,day,phase,ptime,warned,spawnLeft,spawnTimer,beesLeft;
 let tool=null,running=false,camX=0,hover=null,painting=false,lastCell='';
 let camShake=0,dpr=1,cssW=0,cssH=0,scale=1,viewW=0,camY=0,visH=600;
@@ -169,7 +173,7 @@ if(window.visualViewport)visualViewport.addEventListener('resize',resize);
 function hillTop(c){if(c>=28&&c<=32)return 9;if((c>=25&&c<=27)||(c>=33&&c<=35))return 10;if((c>=22&&c<=24)||(c>=36&&c<=38))return 11;return SURF}
 function newWorld(){
   grid=[];for(let r=0;r<ROWS;r++){const row=[];for(let c=0;c<COLS;c++)row.push(r>=ROWS-1?'b':(r>=hillTop(c)?'e':null));grid.push(row)}
-  res={wood:0,stone:0};furn=[];day=1;
+  res={wood:0,stone:0};furn=[];day=1;family={vixen:false,cubs:0};
 }
 function surfaceRow(c){if(c<0)c=0;if(c>=COLS)c=COLS-1;for(let r=0;r<ROWS;r++)if(grid[r][c])return r;return ROWS}
 function initRun(){
@@ -180,13 +184,14 @@ function initRun(){
   animals=[];bees=[];honey=[];particles=[];floats=[];
   phase='day';ptime=0;warned=false;spawnLeft=0;spawnTimer=0;beesLeft=0;
   spawnAnimal(false);spawnAnimal(false);
+  npcs=[];if(family.vixen)spawnNpc('vixen');for(let i=0;i<family.cubs;i++)spawnNpc('cub');
 }
 const SAVEKEY='bees-v2';
 const ENC={wood:'w',stone:'s',hatch:'h',ladder:'l'},DEC={w:'wood',s:'stone',h:'hatch',l:'ladder'};
-function save(){try{localStorage.setItem(SAVEKEY,JSON.stringify({g:grid.map(r=>r.map(g=>g===null?'.':typeof g==='object'?(g.under==='n'?ENC[g.t].toUpperCase():ENC[g.t]):g).join('')),res,day,furn}))}catch(e){}}
+function save(){try{localStorage.setItem(SAVEKEY,JSON.stringify({g:grid.map(r=>r.map(g=>g===null?'.':typeof g==='object'?(g.under==='n'?ENC[g.t].toUpperCase():ENC[g.t]):g).join('')),res,day,furn,family}))}catch(e){}}
 function load(){try{const s=JSON.parse(localStorage.getItem(SAVEKEY));if(!s||!s.g)return false;
   grid=s.g.map(r=>[...r].map(ch=>{if(ch==='.')return null;if(DEC[ch])return{t:DEC[ch],under:null};const lo=ch.toLowerCase();if(DEC[lo])return{t:DEC[lo],under:'n'};return ch}));
-  res=s.res||{wood:0,stone:0};day=s.day||1;furn=s.furn||[];return true}catch(e){return false}}
+  res=s.res||{wood:0,stone:0};day=s.day||1;furn=s.furn||[];family=s.family||{vixen:false,cubs:0};return true}catch(e){return false}}
 
 // ---------- collision ----------
 function solid(c,r,kind){if(c<0||c>=COLS)return true;if(r>=ROWS)return true;if(r<0)return false;
@@ -249,6 +254,7 @@ const SFX={
   jump(){tone(380,.11,'sine',.08,1.7)},
   heal(){tone(880,.12,'sine',.12,1.3);tone(1320,.15,'sine',.1,1,.1)},
   night(){tone(220,.7,'triangle',.16,.8);tone(165,.9,'triangle',.13,.8,.35)},
+  love(){[523,659,784,1046,1318].forEach((f,i)=>tone(f,.25,'sine',.15,1,i*.11));tone(1568,.5,'triangle',.08,1,.6)},
   dawn(){[392,523,659,784].forEach((f,i)=>tone(f,.22,'sine',.16,1,i*.12))}
 };
 function sfx(n){try{audioInit();SFX[n]&&SFX[n]()}catch(e){}}
@@ -329,7 +335,7 @@ function buildAt(c,r,drag){
     const id=tool.slice(5),F=FBY[id];
     if(!furnFits(id,c,r)){if(!drag)deny(F.w>1?'Нужно '+F.w+' свободных клетки в норе, на полу':'Ставь в норе, на пол',1.6);return}
     if(!afford(F.cost)){if(!drag)deny('Не хватает: нужно '+costText(F.cost),1.6);return}
-    faceTo(c);startChop('hammer',.3);pay(F.cost);furn.push({id,c,r});sfx('furn');buzz([30,30,30,30,80]);burst(c*T+F.w*T/2,r*T+T/2,'#ffe08a',14);float(c*T+F.w*T/2,r*T,'⭐ '+F.name+'!');
+    faceTo(c);startChop('hammer',.3);pay(F.cost);furn.push({id,c,r});sfx('furn');buzz([30,30,30,30,80]);burst(c*T+F.w*T/2,r*T+T/2,'#ffe08a',14);float(c*T+F.w*T/2,r*T,'⭐ '+F.name+'!');setTimeout(checkFamily,600);
     save();renderPanel();setTool(null);return}
   if(!(g===null||g==='n')||furnAt(c,r))return;
   const rect=cellRect(c,r);
@@ -348,7 +354,49 @@ function endNight(){
   while(animals.length<2)spawnAnimal(false);
   save();renderPanel();
 }
-function newUnlock(){const f=FURN.find(f=>f.day===day);if(f){document.getElementById('homeBtn').classList.add('pulse');return f}return null}
+function unlocked(f){return f.need==='vixen'?family.vixen:day>=f.day}
+function newUnlock(){const fs=FURN.filter(f=>f.day===day);if(fs.length){document.getElementById('homeBtn').classList.add('pulse');return {name:fs.map(f=>f.name).join(' и '),ic:fs.map(f=>f.ic).join('')}}return null}
+function hasF(id){return furn.some(f=>f.id===id)}
+// ---------- семья ----------
+function spawnNpc(kind){
+  const pref=kind==='vixen'?['bed','kitchen','bath']:['nursery','play','bed'];
+  let f=null;for(const id of pref){f=furn.find(x=>x.id===id);if(f)break}
+  const w=kind==='vixen'?28:18,h=kind==='vixen'?30:20;
+  let x,y;if(f){x=f.c*T+Math.random()*(FBY[f.id].w*T-w);y=f.r*T+T-h-0.5}else{x=fox.x;y=fox.y+fox.h-h}
+  const n={kind,x,y,w,h,vx:0,vy:0,onGround:false,walk:0,face:Math.random()<.5?1:-1,dir:1,timer:1+Math.random()*2,seed:Math.random()*10,
+    s:kind==='vixen'?.92:.6,chop:0,chopDur:1,inBed:false,heart:2+Math.random()*4};
+  freeUp(n,'fox');npcs.push(n);return n}
+function checkFamily(){
+  if(!family.vixen&&hasF('kitchen')&&hasF('bed')&&hasF('bath')){
+    family.vixen=true;const v=spawnNpc('vixen');save();renderPanel();sfx('love');buzz([60,60,60,60,200]);
+    for(let i=0;i<8;i++)floats.push({x:v.x+v.w/2+(Math.random()-.5)*60,y:v.y-10-Math.random()*30,text:'💕',life:1.6+Math.random()});
+    document.getElementById('homeBtn').classList.add('pulse');
+    toast('💕 К лисёнку пришла лисичка! Теперь можно построить детскую 👶',4)}
+  if(family.vixen&&family.cubs===0&&hasF('nursery')&&hasF('play')){
+    family.cubs=3;let c;for(let i=0;i<3;i++){c=spawnNpc('cub');burst(c.x+c.w/2,c.y,'#ffd1e8',12)}save();sfx('love');buzz([60,60,60,60,200]);
+    for(let i=0;i<8;i++)floats.push({x:c.x+(Math.random()-.5)*80,y:c.y-10-Math.random()*30,text:['🍼','💕','⭐'][i%3],life:1.6+Math.random()});
+    toast('🦊🦊🦊 Ура! В норе появились лисята!',4)}
+}
+function tunnelish(c,r){if(c<0||c>=COLS||r<0||r>=ROWS)return false;const g=grid[r][c];return g==='n'||(g&&typeof g==='object'&&g.under==='n'&&(g.t==='ladder'||g.t==='hatch'))}
+function updateNpcs(dt){
+  for(const n of npcs){
+    n.inBed=phase==='night';
+    n.vy=Math.min(n.vy+1500*dt,900);
+    let vx=0;
+    if(!n.inBed){
+      n.timer-=dt;if(n.timer<=0){n.timer=1.5+Math.random()*3;n.dir=Math.random()<.35?0:(Math.random()<.5?-1:1)}
+      vx=n.dir*(n.kind==='cub'?55:40);
+      if(n.kind==='cub'&&n.onGround&&Math.random()<dt*.8)n.vy=-330;
+      // не выходить из норы
+      if(vx){const ahead=Math.floor((n.x+(vx>0?n.w+3:-3))/T),row=Math.floor((n.y+n.h-2)/T);if(!tunnelish(ahead,row)){n.dir*=-1;vx=0}}
+      // рядом с лисёнком — сердечко
+      n.heart-=dt;if(n.heart<=0){n.heart=4+Math.random()*5;if(Math.abs(n.x-fox.x)<90&&Math.abs(n.y-fox.y)<60)floats.push({x:n.x+n.w/2,y:n.y-6,text:'❤️',life:1.1})}
+    }
+    n.vx=vx;if(vx)n.face=Math.sign(vx);
+    moveX(n,vx*dt,'fox');n.onGround=false;const hy=moveY(n,n.vy*dt,'fox');if(hy){if(n.vy>0)n.onGround=true;n.vy=0}
+    if(Math.abs(vx)>1&&n.onGround)n.walk+=dt*16;
+  }
+}
 function dawn(){endNight();sfx('dawn');const f=newUnlock();
   toast(f?'☀️ Утро! День '+day+'. 🎁 В нору можно поставить: '+f.name+' '+f.ic:'☀️ Утро! Пчёлы улетели, злые звери убежали. День '+day,3.5)}
 function caught(){
@@ -393,6 +441,7 @@ function update(dt,t){
   if(bed&&fox.hearts<MAXH){fox.heal+=dt;if(fox.heal>=6){fox.heal=0;fox.hearts++;sfx('heal');float(fox.x+fox.w/2,fox.y-10,'+❤️')}}else fox.heal=0;
   for(const n of nodes){n.shake=Math.max(0,n.shake-dt);if(n.down>0)n.down-=dt}
   const fcx=fox.x+fox.w/2;
+  updateNpcs(dt);
   // animals
   for(const a of animals){
     a.stun=Math.max(0,a.stun-dt);a.kb*=Math.pow(.02,dt);if(Math.abs(a.kb)<8)a.kb=0;
@@ -474,13 +523,17 @@ function leg(x,y,len,ang,col,w,foot){ctx.save();ctx.translate(x,y);ctx.rotate(an
 function line(x0,y0,x1,y1,col,w){ctx.strokeStyle=col;ctx.lineWidth=w;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x1,y1);ctx.stroke()}
 
 // ---- fox ----
+const FP_FOX={b1:'#f7a043',b2:'#d9721a',ear:'#f39a3c',h2:'#e07a1c',cream:'#fff3e0'};
+const FP_VIXEN={b1:'#ffbe7d',b2:'#ec8a45',ear:'#ffa866',h2:'#f0904a',cream:'#fff8ef',bow:true,lash:true,cheek:true};
+const FP_CUB={b1:'#ffc98f',b2:'#f4a259',ear:'#ffb877',h2:'#f6a25a',cream:'#fffaf2',cheek:true};
+let FP=FP_FOX;
 function drawFox(f,t){
   const O='#a5520f';
   if(f.inBed&&Math.abs(f.vx)<1){ // sleeping curled
-    E(0,-9,16,9,0,lg(0,-18,0,0,'#f7a043','#d9721a'),O);
-    ctx.beginPath();ctx.moveTo(-12,-6);ctx.quadraticCurveTo(-22,-14,-10,-17);ctx.quadraticCurveTo(0,-14,4,-6);P('#e8801f',O,1.2);
+    E(0,-9,16,9,0,lg(0,-18,0,0,FP.b1,FP.b2),O);
+    ctx.beginPath();ctx.moveTo(-12,-6);ctx.quadraticCurveTo(-22,-14,-10,-17);ctx.quadraticCurveTo(0,-14,4,-6);P(FP.ear,O,1.2);
     E(-11,-15,4,3,0.4,'#fff');
-    E(10,-11,8,7,0,'#f39a3c',O);ctx.beginPath();ctx.moveTo(6,-16);ctx.lineTo(8,-25);ctx.lineTo(12,-17);P('#f39a3c',O,1.2);
+    E(10,-11,8,7,0,FP.ear,O);ctx.beginPath();ctx.moveTo(6,-16);ctx.lineTo(8,-25);ctx.lineTo(12,-17);P(FP.ear,O,1.2);
     line(8,-12,13,-12,'#3a1a00',1.5);emoji('💤',18,-30+Math.sin(t*2)*2,16);return}
   const moving=Math.abs(f.vx)>1&&f.onGround;
   const ch=f.chop>0?1-f.chop/f.chopDur:-1;
@@ -490,28 +543,32 @@ function drawFox(f,t){
   // tail
   const sway=Math.sin(t*3.2)*.18+(moving?Math.sin(f.walk)*.12:0);
   ctx.save();ctx.translate(-13,-17);ctx.rotate(-.35+sway);
-  ctx.beginPath();ctx.moveTo(2,-3);ctx.quadraticCurveTo(-12,-14,-25,-6);ctx.quadraticCurveTo(-14,7,2,4);ctx.closePath();P(lg(0,0,-25,0,'#d9721a','#f7a043'),O,1.2);
+  ctx.beginPath();ctx.moveTo(2,-3);ctx.quadraticCurveTo(-12,-14,-25,-6);ctx.quadraticCurveTo(-14,7,2,4);ctx.closePath();P(lg(0,0,-25,0,FP.b2,FP.b1),O,1.2);
   ctx.beginPath();ctx.moveTo(-18,-8);ctx.quadraticCurveTo(-27,-8,-25,-6);ctx.quadraticCurveTo(-23,0,-17,1);ctx.closePath();P('#fff','#d8cfc4',1);
   ctx.restore();
   // legs
   const s=moving?Math.sin(f.walk):0, air=!f.onGround;
   leg(-9,-11,10,air?.5:s*.45,'#6b3410',3.6,'#2e1505');leg(7,-11,10,air?-.5:-s*.45,'#6b3410',3.6,'#2e1505');
   // body
-  E(0,-15,16,9.5,0,lg(0,-25,0,-6,'#f7a043','#d9721a'),O);
-  ctx.beginPath();ctx.ellipse(3,-11,10,4.5,0,0,Math.PI*2);P('#fff3e0');
+  E(0,-15,16,9.5,0,lg(0,-25,0,-6,FP.b1,FP.b2),O);
+  ctx.beginPath();ctx.ellipse(3,-11,10,4.5,0,0,Math.PI*2);P(FP.cream);
   leg(-5,-11,10,air?.3:-s*.45,'#7d3e12',3.6,'#2e1505');leg(11,-11,10,air?-.3:s*.45,'#7d3e12',3.6,'#2e1505');
   // head
   ctx.save();ctx.translate(14,-22);ctx.rotate(ch>=0?.12:Math.sin(t*1.3)*.04);
   const tw=((t*0.7)%5)<0.15?.25:0;
-  ctx.save();ctx.translate(-3,-7);ctx.rotate(-tw);ctx.beginPath();ctx.moveTo(-4,1);ctx.lineTo(-2,-10);ctx.lineTo(4,0);P('#f39a3c',O,1.2);
+  ctx.save();ctx.translate(-3,-7);ctx.rotate(-tw);ctx.beginPath();ctx.moveTo(-4,1);ctx.lineTo(-2,-10);ctx.lineTo(4,0);P(FP.ear,O,1.2);
   ctx.beginPath();ctx.moveTo(-2.5,0);ctx.lineTo(-1.8,-6);ctx.lineTo(1.8,-.5);P('#4a200a');ctx.restore();
-  ctx.save();ctx.translate(3,-7);ctx.rotate(tw);ctx.beginPath();ctx.moveTo(-3,1);ctx.lineTo(1,-10);ctx.lineTo(6,0);P('#f39a3c',O,1.2);
+  ctx.save();ctx.translate(3,-7);ctx.rotate(tw);ctx.beginPath();ctx.moveTo(-3,1);ctx.lineTo(1,-10);ctx.lineTo(6,0);P(FP.ear,O,1.2);
   ctx.beginPath();ctx.moveTo(-1.5,0);ctx.lineTo(1,-6);ctx.lineTo(4,-.5);P('#4a200a');ctx.restore();
-  E(0,0,9.5,8.5,0,lg(0,-9,0,9,'#f7a043','#e07a1c'),O);
-  ctx.beginPath();ctx.moveTo(3,-2);ctx.lineTo(16,2);ctx.quadraticCurveTo(10,8,1,7);ctx.quadraticCurveTo(-3,5,3,-2);P('#fff3e0');
-  ctx.beginPath();ctx.moveTo(4,-4);ctx.quadraticCurveTo(12,-2,16,2);ctx.lineTo(8,1);P('#f39a3c');
+  E(0,0,9.5,8.5,0,lg(0,-9,0,9,FP.b1,FP.h2),O);
+  ctx.beginPath();ctx.moveTo(3,-2);ctx.lineTo(16,2);ctx.quadraticCurveTo(10,8,1,7);ctx.quadraticCurveTo(-3,5,3,-2);P(FP.cream);
+  ctx.beginPath();ctx.moveTo(4,-4);ctx.quadraticCurveTo(12,-2,16,2);ctx.lineTo(8,1);P(FP.ear);
   circ(16,2,2.3,'#2a1608');circ(16.6,1.4,.7,'#fff');
-  eye(5,-2.5,2.2,blinkAt(t,1.3));
+  eye(5,-2.5,2.2,blinkAt(t,f.seed||1.3));
+  if(FP.lash){line(5,-4.8,3.5,-6.8,'#1b0c02',1);line(6.5,-4.6,6.5,-7,'#1b0c02',1);line(7.8,-4.2,9,-6.2,'#1b0c02',1)}
+  if(FP.bow){ctx.beginPath();ctx.moveTo(-1,-9);ctx.lineTo(-7,-13);ctx.lineTo(-6,-6);ctx.closePath();P('#ff6fa8','#c2185b',1);
+    ctx.beginPath();ctx.moveTo(-1,-9);ctx.lineTo(4,-14);ctx.lineTo(5,-7);ctx.closePath();P('#ff6fa8','#c2185b',1);circ(-1,-9,2,'#c2185b')}
+  if(FP.cheek){ctx.globalAlpha=.45;circ(6,2.5,2.2,'#ff8fb1');ctx.globalAlpha=1}
   line(9,5,13,4.5,'#7a3a12',1);
   ctx.restore();
   // tool in paws
@@ -657,6 +714,17 @@ function drawFurn(f,t){
   }else if(f.id==='lamp'){
     rect(x+18,y+12,4,26,'#555');rect(x+11,y+36,18,3,'#555');
     tri(x+8,y+14,x+20,y+2,x+32,y+14,'#ffe082');
+  }else if(f.id==='bath'){
+    rect(x+8,y+34,4,6,'#9e9e9e');rect(x+w-12,y+34,4,6,'#9e9e9e');
+    ctx.beginPath();ctx.moveTo(x+3,y+16);ctx.lineTo(x+w-3,y+16);ctx.quadraticCurveTo(x+w-3,y+36,x+w-18,y+36);ctx.lineTo(x+18,y+36);ctx.quadraticCurveTo(x+3,y+36,x+3,y+16);P('#fdfdfd','#9fb7c4',2);
+    rect(x+6,y+16,w-12,5,'#7fd0ff');
+    for(let i=0;i<5;i++){const bx=x+12+i*13+Math.sin(t*2+i)*2,by=y+12-Math.abs(Math.sin(t*1.5+i*1.7))*6;ctx.globalAlpha=.85;circ(bx,by,3+i%2*1.5,'#ffffff');ctx.strokeStyle='#bfe6ff';ctx.lineWidth=1;ctx.beginPath();ctx.arc(bx,by,3+i%2*1.5,0,7);ctx.stroke();ctx.globalAlpha=1}
+    line(x+w-10,y+16,x+w-10,y+4,'#b0bec5',3);line(x+w-10,y+4,x+w-17,y+4,'#b0bec5',3);
+  }else if(f.id==='nursery'){
+    rect(x+4,y+10,4,30,'#c98b4a');rect(x+w-8,y+10,4,30,'#c98b4a');rect(x+4,y+30,w-8,4,'#c98b4a');rect(x+4,y+12,w-8,3,'#c98b4a');
+    rect(x+8,y+24,w-16,6,'#ffffff');rect(x+20,y+20,w-28,6,'#9ad0ff');
+    ctx.strokeStyle='#e0b07a';ctx.lineWidth=2;for(let bx=x+12;bx<x+w-8;bx+=8){ctx.beginPath();ctx.moveTo(bx,y+15);ctx.lineTo(bx,y+30);ctx.stroke()}
+    line(x+w/2,y-2,x+w/2,y+4,'#999',1);const sw=Math.sin(t*1.2)*.2;ctx.save();ctx.translate(x+w/2,y+4);ctx.rotate(sw);line(-12,0,12,0,'#999',1.2);emoji('⭐',-12,5,9);emoji('🌙',0,6,9);emoji('⭐',12,5,9);ctx.restore();
   }else if(f.id==='pic'){
     rect(x+6,y+4,28,22,'#a1662f');rect(x+9,y+7,22,16,'#bbdefb');emoji('🌻',x+20,y+15,14);
   }
@@ -743,6 +811,7 @@ function draw(t){
         ctx.fillStyle=ok?'rgba(120,255,120,.3)':'rgba(255,80,80,.3)';ctx.fillRect(c*T,r*T,T*wcells,T);
         ctx.strokeStyle=ok?'#7dff7d':'#ff6060';ctx.lineWidth=2;ctx.strokeRect(c*T+1,r*T+1,T*wcells-2,T-2)}}
   }
+  for(const n of npcs){ctx.save();ctx.translate(n.x+n.w/2,n.y+n.h);ctx.scale(n.face*n.s,n.s);FP=n.kind==='vixen'?FP_VIXEN:FP_CUB;drawFox(n,t);FP=FP_FOX;ctx.restore()}
   // fox
   if(!(fox.inv>0&&Math.floor(fox.inv*10)%2)){
     ctx.save();ctx.translate(fox.x+fox.w/2,fox.y+fox.h);ctx.scale(fox.face,1);drawFox(fox,t);ctx.restore();
@@ -782,13 +851,17 @@ function hud(){
 const panel=document.getElementById('furnPanel');
 function renderPanel(){
   if(!res)return;
+  const ck=id=>hasF(id)?'✅':'⬜';
   let h='<div class="ttl">🏠 Обустрой нору</div>';
-  for(const f of FURN){const locked=day<f.day;const poor=!locked&&!afford(f.cost);
-    h+='<button class="fitem'+(locked?' locked':'')+(poor?' poor':'')+'" data-f="'+f.id+'"><span class="ic">'+(locked?'🔒':f.ic)+'</span>'+f.name+'<br>'+(locked?'день '+f.day:costText(f.cost))+'</button>'}
+  if(!family.vixen)h+='<div class="goal">💕 Чтобы пришла лисичка: '+ck('kitchen')+' кухня '+ck('bed')+' кровать '+ck('bath')+' ванна</div>';
+  else if(!family.cubs)h+='<div class="goal">🦊 Чтобы появились лисята: '+ck('nursery')+' детская '+ck('play')+' игровая</div>';
+  else h+='<div class="goal">🦊💕🦊🦊🦊 Вся семья дома!</div>';
+  for(const f of FURN){const locked=!unlocked(f);const poor=!locked&&!afford(f.cost);
+    h+='<button class="fitem'+(locked?' locked':'')+(poor?' poor':'')+'" data-f="'+f.id+'"><span class="ic">'+(locked?'🔒':f.ic)+'</span>'+f.name+'<br>'+(locked?(f.need?'когда придёт лисичка':'день '+f.day):costText(f.cost))+'</button>'}
   panel.innerHTML=h;
   panel.querySelectorAll('.fitem').forEach(b=>b.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();
     const f=FBY[b.dataset.f];
-    if(day<f.day){toast('🔒 Откроется на '+f.day+'-й день',1.5);return}
+    if(!unlocked(f)){toast(f.need?'🔒 Откроется, когда придёт лисичка 💕':'🔒 Откроется на '+f.day+'-й день',1.8);return}
     panel.classList.add('hide');setTool('furn:'+f.id);
     toast(f.ic+' '+f.name+': нажми на пол внутри норы'+(f.w>1?' (нужно '+f.w+' клетки)':''),2)}));
 }
