@@ -58,7 +58,7 @@ button.big{font-size:26px;padding:14px 32px;border-radius:20px;border:none;backg
 <div id="hud">
   <div class="grp">
     <div class="pill" id="coinPill">💰 <span id="coins">0</span></div>
-    <div class="pill">🚗 <span id="served">0</span>/<span id="goal">5</span></div>
+    <div class="pill">🚗 <span id="served">0</span>/<span id="goal">4</span></div>
     <div class="pill">📅 <span id="date"></span><span id="dateBar"><span id="dateFill"></span></span></div>
     <div class="pill" id="queuePill">Очередь: 0</div>
   </div>
@@ -77,14 +77,15 @@ button.big{font-size:26px;padding:14px 32px;border-radius:20px;border:none;backg
     <div class="steps">
       🅿️ Нажми на машину на стоянке — она заедет в бокс<br>
       🔧 Подними машину домкратом и сними колёса — сначала с одной стороны, потом с другой<br>
-      🛠️ Шиномонтажный станок снимет старую резину<br>
+      🛠️ На станке мастер выпускает воздух, отжимает борт с хампа, лапой снимает покрышку<br>
       📦 На складе поменяй зимние шины на летние<br>
-      🛠️ Станок наденет летние шины<br>
-      ⚖️ Балансировка — чтобы колесо не трясло<br>
+      🛠️ Мастер надевает летние шины и накачивает — борта сели!<br>
+      ⚖️ Балансировка: нет ли биения, клеим грузики<br>
+      😱 Неопытный мастер иногда рвёт покрышки — новая стоит 40 💰. С опытом реже!<br>
       🚗 Поставь колёса обратно — и получи монетки! 💰
     </div>
     <p>Нажимай туда, куда нужно бежать. 👇 подскажет, куда дальше.<br>Бери клиентов по очереди — кто приехал раньше, тот и первый!</p>
-    <p><b>Цель сезона:</b> обслужить 5 машин до конца апреля.</p>
+    <p><b>Цель сезона:</b> обслужить 4 машины до конца апреля.</p>
     <button class="big" id="startBtn">Открыть «Шинку»!</button>
     <p class="small">Придумал Гоша · сделали вместе с папой</p>
   </div>
@@ -119,7 +120,7 @@ button.big{font-size:26px;padding:14px 32px;border-radius:20px;border:none;backg
     <button class="big" id="againBtn">Ещё раз</button>
   </div>
 </div>
-<div id="ver">v3.1</div>
+<div id="ver">v4</div>
 
 <script>
 'use strict';
@@ -138,8 +139,8 @@ function toV(cx, cy) { return [(cx - offX) / scale, (cy - offY) / scale]; }
 function baseT() { ctx.setTransform(dpr * scale, 0, 0, dpr * scale, dpr * offX, dpr * offY); }
 
 // ====== Изометрия (вид три четверти) ======
-const C30 = Math.cos(Math.PI / 6), S30 = 0.5, S = 42;
-const OX = 571, OY = 263;
+const C30 = Math.cos(Math.PI / 6), S30 = 0.5, S = 40;
+const OX = 538, OY = 256;
 function iso(x, y, z = 0) { return [OX + (x - y) * C30 * S, OY + (x + y) * S30 * S - z * S]; }
 // рисовать прямо «в мире»: горизонтальная плоскость на высоте z
 function planeZ(z) { const k = dpr * scale; ctx.setTransform(k * C30 * S, k * S30 * S, -k * C30 * S, k * S30 * S, k * OX + dpr * offX, k * (OY - z * S) + dpr * offY); }
@@ -191,6 +192,11 @@ function tone(f1, f2, dur, type = 'sine', vol = 0.15, delay = 0) {
 const SND = {
   ratchet() { for (let i = 0; i < 4; i++) tone(1400, 900, 0.04, 'square', 0.05, i * 0.13); },
   gun() { tone(160, 520, 0.25, 'sawtooth', 0.08); },
+  air() { for (let i = 0; i < 6; i++) tone(1800 - i * 150, 1200 - i * 150, 0.08, 'sawtooth', 0.025, i * 0.06); },
+  press() { tone(160, 90, 0.45, 'square', 0.06); },
+  spin() { tone(180, 420, 0.7, 'triangle', 0.05); },
+  tear() { tone(420, 70, 0.6, 'sawtooth', 0.12); tone(300, 60, 0.4, 'square', 0.07, 0.1); },
+  seat() { tone(260, 900, 0.07, 'square', 0.13); tone(260, 900, 0.07, 'square', 0.11, 0.16); },
   pump() { for (let i = 0; i < 5; i++) tone(260, 180, 0.09, 'square', 0.06, i * 0.28); },
   jack() { for (let i = 0; i < 3; i++) tone(500 + i * 120, 400 + i * 120, 0.08, 'square', 0.05, i * 0.2); },
   drill() { for (let i = 0; i < 3; i++) tone(320, 200, 0.15, 'sawtooth', 0.07, i * 0.2); },
@@ -208,9 +214,9 @@ const SND = {
 const wrenchSnd = () => G.up.gun ? SND.gun() : SND.ratchet();
 
 // ====== Настройки ======
-const SEASON_LEN = 300;     // сезон: 5 минут
-const GOAL = 5, STAR2 = 7, STAR3 = 9;
-const PATIENCE = 150;       // первый уровень: клиенты терпеливые
+const SEASON_LEN = 480;     // сезон: 8 минут — чтобы было время посмотреть, как мастер работает
+const GOAL = 4, STAR2 = 6, STAR3 = 8;
+const PATIENCE = 220;       // первый уровень: клиенты терпеливые
 const BAYS = [{cx: 2.5, cy: 3.4}, {cx: 7.5, cy: 3.4}];
 const CORR = 6.3;
 // стоянка: машины стоят вразнобой
@@ -241,7 +247,7 @@ const THOUGHTS = [['☕', '📱', '🎵', '📰', '🍔', '🙂'], ['⏰', '🥱
 
 let G;
 function makeActor(player) {
-  return {player, x: player ? 13 : 12, y: 6.7, path: [], plan: [], act: null, hand: null, wait: null, step: 0, locked: false, role: null, think: 0};
+  return {player, x: player ? 13 : 12, y: 6.7, path: [], plan: [], act: null, hand: null, wait: null, step: 0, locked: false, role: null, think: 0, exp: player ? 0 : 25, tears: 0};
 }
 function newGame() {
   G = {
@@ -251,17 +257,15 @@ function newGame() {
     nextArrival: 2, fx: [], coinsFly: [], carId: 0,
     actors: [makeActor(true)],
     st: {
-      changer: {x: 11.2, y: 2.4, ax: 11.2, ay: 3.8, bz: 2.6, name: 'Шиномонтаж', ic: '🛠️', state: 'empty', car: null, t: 0, dur: 1},
-      balancer: {x: 12.4, y: 5.2, ax: 12.4, ay: 6.45, bz: 2.0, name: 'Балансировка', ic: '⚖️', state: 'empty', car: null, t: 0, dur: 1},
-      store: {x: 14.65, y: 1.3, ax: 14.65, ay: 3.3, bz: 3.4, name: 'Склад шин', ic: '📦', door: 0},
+      changer: {x: 11.4, y: 2.6, ax: 10.35, ay: 3.9, bz: 2.6, name: 'Шиномонтаж', ic: '🛠️', state: 'empty', car: null, t: 0, dur: 1},
+      balancer: {x: 14.4, y: 2.6, ax: 14.2, ay: 3.95, bz: 2.3, name: 'Балансировка', ic: '⚖️', state: 'empty', car: null, t: 0, dur: 1},
+      store: {x: 16.95, y: 1.3, ax: 16.95, ay: 3.4, bz: 3.4, name: 'Склад шин', ic: '📦', door: 0},
       tools: {x: 5.0, y: 0.35, ax: 5.0, ay: 1.4, bz: 2.8, name: 'Инструменты', ic: '🧰'},
     },
   };
   updateHud();
 }
 const ME = () => G.actors[0];
-const changerTime = () => G.up.fast ? 1.5 : 3.0;
-const BAL_TIME = 2.5;
 const actorSpeed = (A) => A.player ? (G.up.shoes ? 6.5 : 4.5) : 4.0;
 
 // ====== Машины ======
@@ -365,7 +369,7 @@ function accessPoint(t) {
   const s = G.st[t.key]; return [s.ax, s.ay];
 }
 function route(fx, fy, tx, ty) {
-  const inWS = (x, y) => x > 9.9 && y < 4.3;
+  const inWS = (x, y) => x > 9.9 && y < 4.4;
   const pts = inWS(fx, fy) && inWS(tx, ty) ? [[tx, ty]] : [[fx, CORR], [tx, CORR], [tx, ty]];
   return pts.filter((p, i) => { const prev = i ? pts[i - 1] : [fx, fy]; return Math.hypot(p[0] - prev[0], p[1] - prev[1]) > 0.05; });
 }
@@ -447,17 +451,22 @@ function interact(A, t) {
     return;
   }
   const s = G.st[t.key];
+  const working = s.state === 'demount' || s.state === 'mount' || s.state === 'balance';
+  if (working) { say(A, (s.op && !s.op.player ? 'Работник' : 'Мастер') + ' работает — смотри, как он это делает 👀'); return; }
+  if (s.state === 'pending') { // колёса лежат у станка и ждут мастера
+    if (!h) runRoutine(A, s, s.pending, s.car); else busyHands(A);
+    return;
+  }
   if (t.key === 'changer') {
-    if (s.state === 'demount' || s.state === 'mount') { if (!h && A.player) A.wait = 'changer'; say(A, 'Станок работает — подожди ⏳'); return; }
     if (s.state === 'empty') {
-      if (h && h.kind === 'winter') { s.state = 'demount'; s.car = h.car; s.t = 0; s.dur = changerTime(); A.hand = null; if (A.player) A.wait = 'changer'; SND.put(); SND.machine(); return; }
+      if (h && h.kind === 'winter') { A.hand = null; startOrPend(A, s, 'demount', h.car); return; }
       if (h && h.kind === 'summer') { s.state = 'ready'; s.car = h.car; A.hand = null; SND.put(); return; }
       if (!h) say(A, 'Станок пустой.<br>Принеси колёса с машины 🚗'); else busyHands(A);
       return;
     }
-    if (s.state === 'waitTires') { if (!h) A.plan.push({act: 'Снимаю шины', dur: 0.4, done: () => { if (s.state !== 'waitTires' || A.hand) return; A.hand = {kind: 'old', car: s.car}; s.state = 'needNew'; SND.pop(); }}); else busyHands(A); return; }
+    if (s.state === 'waitTires') { if (!h) A.plan.push({act: 'Беру старые шины', dur: 0.4, done: () => { if (s.state !== 'waitTires' || A.hand) return; A.hand = {kind: 'old', car: s.car}; s.state = 'needNew'; SND.pop(); }}); else busyHands(A); return; }
     if (s.state === 'needNew') {
-      if (h && h.kind === 'fresh' && h.car === s.car) { s.state = 'mount'; s.t = 0; s.dur = changerTime(); A.hand = null; if (A.player) A.wait = 'changer'; SND.put(); SND.machine(); return; }
+      if (h && h.kind === 'fresh' && h.car === s.car) { A.hand = null; startOrPend(A, s, 'mount', s.car); return; }
       if (h && h.kind === 'old' && h.car === s.car) { s.state = 'waitTires'; A.hand = null; SND.put(); return; }
       if (!h) say(A, 'На станке диски.<br>Принеси летние шины со склада 📦'); else busyHands(A);
       return;
@@ -465,9 +474,8 @@ function interact(A, t) {
     if (s.state === 'ready') { if (!h) A.plan.push({act: 'Беру колёса', dur: 0.4, done: () => { if (s.state !== 'ready' || A.hand) return; A.hand = {kind: 'summer', car: s.car}; s.state = 'empty'; s.car = null; SND.pop(); }}); else busyHands(A); return; }
   }
   if (t.key === 'balancer') {
-    if (s.state === 'balance') { if (!h && A.player) A.wait = 'balancer'; say(A, 'Балансировка идёт — подожди ⏳'); return; }
     if (s.state === 'empty') {
-      if (h && h.kind === 'summer') { s.state = 'balance'; s.car = h.car; s.t = 0; s.dur = BAL_TIME; A.hand = null; if (A.player) A.wait = 'balancer'; SND.put(); SND.machine(); return; }
+      if (h && h.kind === 'summer') { A.hand = null; startOrPend(A, s, 'balance', h.car); return; }
       if (h && h.kind === 'balanced') { s.state = 'ready'; s.car = h.car; A.hand = null; SND.put(); return; }
       if (!h) say(A, 'Сюда приносят колёса<br>после шиномонтажа ⚖️'); else if (h.kind === 'winter') say(A, 'Сначала на шиномонтажный станок 🛠️'); else busyHands(A);
       return;
@@ -484,6 +492,94 @@ function interact(A, t) {
     if (h.kind === 'ext') { A.hand = null; SND.put(); return; }
     busyHands(A);
   }
+}
+// ====== Работа на станках: мастер делает всё по шагам ======
+const TEAR_COST = 40;
+const machinesWorker = () => G.actors.find(a => !a.player && a.role === 'machines');
+function startOrPend(A, s, kind, car) {
+  const mw = machinesWorker();
+  if (mw && mw !== A && !mw.locked && !mw.hand) { s.state = 'pending'; s.pending = kind; s.car = car; SND.put(); say(A, '👷 Работник сейчас займётся'); return; }
+  runRoutine(A, s, kind, car);
+}
+function runRoutine(A, s, kind, car) {
+  SND.put();
+  A.locked = true; s.state = kind; s.car = car; s.op = A; s.wheel = 0; s.done = 0; s.anim = null; s.prog = 0;
+  if (kind === 'demount') routineDemount(A, s, car);
+  if (kind === 'mount') routineMount(A, s, car);
+  if (kind === 'balance') routineBalance(A, s, car);
+}
+// один шаг: подпись над мастером + анимация станка
+function stepAct(s, label, dur, step, n, ex = {}) {
+  return {act: label, dur, snd: ex.snd,
+    start: () => { s.anim = Object.assign({step, p: 0}, ex.anim || {}); if (ex.start) ex.start(); },
+    tick: (p) => { if (s.anim) s.anim.p = p; s.prog = (s.wheel + (n + p) / ex.of) / 4; },
+    done: ex.done};
+}
+function tearChance(A) { return Math.max(0.004, 0.045 - 0.001 * A.exp); }
+function rotStep(A, s, label, dur, step, n, of, why) {
+  return stepAct(s, label, dur, step, n, {of, snd: SND.spin, done: () => {
+    if (Math.random() < tearChance(A)) {
+      A.plan.unshift(
+        {fn: () => payTear(A, s, why)},
+        stepAct(s, 'Тррр! Порвал покрышку 😱', 1.1, 'tear', n, {of}),
+        stepAct(s, 'Беру новую покрышку', 0.7, 'newtire', n, {of}),
+        rotStep(A, s, label, dur, step, n, of, why));
+    }
+  }});
+}
+function payTear(A, s, why) {
+  G.coins = Math.max(0, G.coins - TEAR_COST); SND.tear();
+  const [px, py] = iso(s.x, s.y, 2.2);
+  G.fx.push({x: px, y: py, txt: '−' + TEAR_COST + ' 💰', life: 2, col: '#ff5a4f'});
+  toast((A.player ? '😱 Порвали покрышку!' : '😱 Работник порвал покрышку!') + '<br><small>' + why + ' Новая стоит ' + TEAR_COST + ' 💰</small>');
+  A.tears = (A.tears || 0) + 1;
+}
+const wk = (i) => i === 0 ? 1 : 0.6;            // первое колесо — подробно, дальше рука набита
+const rk = (i) => wk(i) * (G.up.fast ? 0.55 : 1); // станок-автомат крутит быстрее
+function routineDemount(A, s, car) {
+  const of = 8;
+  for (let i = 0; i < 4; i++) {
+    A.plan.push({fn: () => { s.wheel = i; }});
+    A.plan.push(stepAct(s, `Колесо ${i + 1}/4: выпускаю воздух`, 0.55 * wk(i), 'deflate', 0, {of, snd: SND.air}));
+    A.plan.push(stepAct(s, 'Отжимаю борт с хампа', 0.85 * wk(i), 'break', 1, {of, snd: SND.press}));
+    A.plan.push(stepAct(s, 'Кладу на стол, зажимаю', 0.4 * wk(i), 'table', 2, {of, snd: SND.click}));
+    A.plan.push(stepAct(s, 'Подвожу лапу', 0.4 * wk(i), 'head', 3, {of}));
+    A.plan.push(stepAct(s, 'Утапливаю борт в ручей', 0.4 * wk(i), 'drop', 4, {of}));
+    A.plan.push(rotStep(A, s, 'Верхний борт через шишечку — 360°', 1.0 * rk(i), 'top', 5, of, 'Не утопили борт в ручей диска.'));
+    A.plan.push(rotStep(A, s, 'Нижний борт — 360°', 1.0 * rk(i), 'bottom', 6, of, 'Борт зацепился за хамп.'));
+    A.plan.push(stepAct(s, 'Снимаю покрышку', 0.35 * wk(i), 'off', 7, {of, done: () => { s.done = i + 1; A.exp++; }}));
+  }
+  A.plan.push({fn: () => { s.anim = null; s.state = 'needNew'; A.hand = {kind: 'old', car}; SND.pop(); }});
+}
+function routineMount(A, s, car) {
+  const of = 6;
+  for (let i = 0; i < 4; i++) {
+    A.plan.push({fn: () => { s.wheel = i; }});
+    A.plan.push(stepAct(s, `Колесо ${i + 1}/4: диск на стол, зажимаю`, 0.4 * wk(i), 'mtable', 0, {of, snd: SND.click}));
+    A.plan.push(stepAct(s, 'Подвожу лапу', 0.35 * wk(i), 'head', 1, {of}));
+    A.plan.push(rotStep(A, s, 'Нижний борт под носок — 360°', 0.9 * rk(i), 'mbottom', 2, of, 'Завели не той стороной лапы.'));
+    A.plan.push(rotStep(A, s, 'Верхний борт — 360°', 0.9 * rk(i), 'mtop', 3, of, 'Борт не попал в ручей.'));
+    A.plan.push(stepAct(s, 'Накачиваю — борта сели! 💥', 0.6 * wk(i), 'inflate', 4, {of, snd: SND.seat}));
+    A.plan.push(stepAct(s, 'Снимаю колесо', 0.3 * wk(i), 'moff', 5, {of, done: () => { s.done = i + 1; A.exp++; }}));
+  }
+  A.plan.push({fn: () => { s.anim = null; s.state = 'empty'; s.car = null; A.hand = {kind: 'summer', car}; SND.pop(); }});
+}
+function routineBalance(A, s, car) {
+  const of = 4;
+  for (let i = 0; i < 4; i++) {
+    const crooked = Math.random() < 0.2, g = 5 * (1 + Math.floor(Math.random() * 10));
+    A.plan.push({fn: () => { s.wheel = i; s.grams = null; }});
+    A.plan.push(stepAct(s, `Колесо ${i + 1}/4: на вал`, 0.35 * wk(i), 'bmount', 0, {of, snd: SND.click}));
+    A.plan.push(stepAct(s, 'Кручу — смотрю, нет ли биения', 0.8 * wk(i), 'spin', 1, {of, snd: SND.spin, anim: {wobble: crooked}, done: () => {
+      if (!crooked) return;
+      A.plan.unshift(
+        stepAct(s, 'Идёт криво! Отжимаю, проворачиваю, подкачиваю', 1.3 * wk(i), 'fix', 1, {of, snd: SND.air}),
+        stepAct(s, 'Кручу ещё раз — теперь ровно ✅', 0.6 * wk(i), 'spin', 1, {of, snd: SND.spin}));
+    }}));
+    A.plan.push(stepAct(s, `Клею грузик ${g} г`, 0.6 * wk(i), 'weights', 2, {of, start: () => { s.grams = g; }, snd: SND.click}));
+    A.plan.push(stepAct(s, 'Снимаю колесо', 0.3 * wk(i), 'boff', 3, {of, done: () => { s.done = i + 1; A.exp++; }}));
+  }
+  A.plan.push({fn: () => { s.anim = null; s.state = 'empty'; s.car = null; s.grams = null; A.hand = {kind: 'balanced', car}; SND.ding(); }});
 }
 function updateActor(A, dt) {
   if (A.act) {
@@ -523,6 +619,8 @@ function workerThink(W, dt) {
     const c = G.cars.find(c => inBay(c) && allOn(c) && !c.jL && !c.jR && !c.lifted && !c.claim);
     if (c) { if (c.strip && !c.stripFixed) { c.stripKnown = true; return go({type: 'st', key: 'tools'}); } c.claim = W; return go({type: 'car', car: c}); }
   } else if (W.role === 'machines') {
+    if (st.changer.state === 'pending') return go({type: 'st', key: 'changer'});
+    if (st.balancer.state === 'pending') return go({type: 'st', key: 'balancer'});
     if (st.changer.state === 'waitTires') return go({type: 'st', key: 'changer'});
     if (st.changer.state === 'ready' && st.balancer.state === 'empty') return go({type: 'st', key: 'changer'});
   }
@@ -530,10 +628,6 @@ function workerThink(W, dt) {
 function updateStations(dt) {
   for (const k of ['changer', 'balancer']) {
     const s = G.st[k];
-    if (s.state === 'demount' || s.state === 'mount' || s.state === 'balance') {
-      s.t += dt;
-      if (s.t >= s.dur) { s.state = s.state === 'demount' ? 'waitTires' : 'ready'; SND.ding(); }
-    }
   }
   if (G.st.store.door > 0) G.st.store.door -= dt;
 }
@@ -662,41 +756,129 @@ function lyingTire(x, y, z, r, type, hasDisk = true) {
 }
 function tireStack(x, y, n, r, type, hasDisk) { for (let k = 0; k < n; k++) lyingTire(x, y, k * 0.24, r, type, hasDisk && k === n - 1); }
 function drawLiftPost(x, y) { box(x - 0.15, y - 0.15, 0, 0.3, 0.3, 3.0, '#ffcc22'); }
+// колесо «стоя» в плоскости y-z (бок станка)
+function uprightWheel(x, y, cz, r, type, spin) {
+  if (type !== 'disk') {
+    poly(circlePts((c, sn) => iso(x - 0.1, y + c * r, cz + sn * r)), '#121212');
+    poly(circlePts((c, sn) => iso(x, y + c * r, cz + sn * r)), '#222');
+    if (type === 'winter') for (let k = 0; k < 10; k++) { const a = k / 10 * Math.PI * 2 + (spin || 0); const [px, py] = iso(x + 0.01, y + Math.cos(a) * r * 0.85, cz + Math.sin(a) * r * 0.85); ctx.fillStyle = '#e8eef5'; ctx.fillRect(px - 1.5, py - 1.5, 3, 3); }
+  }
+  poly(circlePts((c, sn) => iso(x + 0.01, y + c * r * 0.58, cz + sn * r * 0.58)), '#c9d0d8', '#7d8590');
+  for (let k = 0; k < 3; k++) { const b = (spin || 0.6) + k * 2.09; const p1 = iso(x + 0.02, y, cz), p2 = iso(x + 0.02, y + Math.cos(b) * r * 0.5, cz + Math.sin(b) * r * 0.5); ctx.strokeStyle = '#6b737c'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p2[0], p2[1]); ctx.stroke(); }
+}
+function line3(a, b, col, w) { const p = iso(...a), q = iso(...b); ctx.lineCap = 'round'; ctx.strokeStyle = col; ctx.lineWidth = w; ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]); ctx.stroke(); ctx.lineCap = 'butt'; }
+function emojiAt(e, x, y, z, size) { const [px, py] = iso(x, y, z); ctx.font = size + 'px system-ui'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(e, px, py); }
+// Шиномонтажный станок: стол с зажимами, колонна с лапой (носок + шишечка), боковой отжим борта
 function drawChanger() {
   const s = G.st.changer, x = s.x, y = s.y, col = G.up.fast ? '#e8403a' : '#3d7bd9', col2 = G.up.fast ? '#b52f2a' : '#2b5aa8';
+  const a = s.anim || {}, st = a.step || '', p = a.p || 0;
+  const demount = s.state === 'demount', mount = s.state === 'mount';
+  // стопки вокруг станка: что ждёт и что уже готово
+  const n = s.wheel || 0, done = s.done || 0;
+  const pile = [];
+  if (demount) { pile.push([x + 1.05, y - 1.0, 3 - n + (done > n ? 0 : 0), 'winter', true]); pile.push([x - 1.05, y - 0.9, done, 'disk', true]); pile.push([x + 1.1, y + 1.05, done, 'winter', false]); }
+  if (mount) { pile.push([x - 1.05, y - 0.9, 3 - n, 'disk', true]); pile.push([x + 1.1, y + 1.05, 3 - n, 'summer', false]); pile.push([x + 1.05, y - 1.0, done, 'summer', true]); }
+  if (s.state === 'needNew' || (s.state === 'pending' && s.pending === 'mount')) pile.push([x - 1.05, y - 0.9, 4, 'disk', true]);
+  if (s.state === 'pending' && s.pending === 'demount') pile.push([x + 1.05, y - 1.0, 4, 'winter', true]);
+  if (s.state === 'waitTires') { pile.push([x - 1.05, y - 0.9, 4, 'disk', true]); pile.push([x + 1.1, y + 1.05, 4, 'winter', false]); }
+  if (s.state === 'ready') pile.push([x + 1.05, y - 1.0, 4, 'summer', true]);
+  const drawPile = (front) => { for (const [px, py, cnt, type, disk] of pile) { if ((px + py > x + y + 0.5) !== front) continue; for (let k = 0; k < cnt; k++) { if (type === 'disk') lyingTire(px, py, k * 0.12, 0.42, 'disk', true); else lyingTire(px, py, k * 0.24, 0.42, type, disk); } } };
+  drawPile(false);
+  // корпус и педали
   box(x - 0.65, y - 0.65, 0, 1.3, 1.3, 0.8, col);
-  box(x - 0.6, y - 0.65, 0.8, 0.3, 0.3, 1.3, col2);
-  box(x - 0.6, y - 0.65, 1.95, 0.3, 0.95, 0.15, '#555b66');
-  box(x - 0.55, y + 0.15, 1.3, 0.2, 0.2, 0.65, '#555b66');
-  poly(circlePts((c, sn) => iso(x + c * 0.5, y + sn * 0.5, 0.81)), '#aab2bc', '#666');
-  const working = s.state === 'demount' || s.state === 'mount';
-  const content = {demount: 'winter', waitTires: 'disk', needNew: 'disk', mount: 'summer', ready: 'summer'}[s.state];
-  if (content) lyingTire(x, y, 0.82, 0.55, content, true);
-  if (s.state === 'waitTires') tireStack(x + 0.95, y + 0.95, 2, 0.36, 'winter', false);
-  if (working) { const a = G.t * 8; const p1 = iso(x + Math.cos(a) * 0.5, y + Math.sin(a) * 0.5, 1.08), p2 = iso(x - Math.cos(a) * 0.5, y - Math.sin(a) * 0.5, 1.08); ctx.strokeStyle = '#ffcc00'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p2[0], p2[1]); ctx.stroke(); }
+  for (let k = 0; k < 3; k++) box(x - 0.4 + k * 0.28, y + 0.65, 0, 0.16, 0.22, 0.06, '#2a2a2a');
+  // боковой отжим (лапа отжима) справа
+  const breaking = st === 'break', push = breaking ? Math.abs(Math.sin(p * Math.PI * 2)) : 0;
+  box(x + 0.65, y - 0.15, 0, 0.18, 0.3, 0.75, col2);
+  box(x + 0.83, y - 0.12, 0.35, 0.12 + push * 0.3, 0.24, 0.12, '#555b66');
+  box(x + 0.92 + push * 0.3, y - 0.2, 0.2, 0.06, 0.4, 0.35, '#2a2a2a');
+  // колесо «стоя» у отжима: выпускаем воздух и отжимаем борт
+  const upright = demount && (st === 'deflate' || st === 'break');
+  if (upright) {
+    uprightWheel(x + 1.35, y, 0.55, 0.55, 'winter', 0);
+    if (st === 'deflate') emojiAt('💨', x + 1.45, y + 0.5 + p * 0.4, 0.85 + p * 0.5, 20);
+    if (breaking && push > 0.7) emojiAt('💥', x + 1.2, y, 0.55, 16);
+  }
+  // стол с зажимами (крутится на 360° во время работы)
+  const rotating = ['top', 'bottom', 'mbottom', 'mtop'].includes(st);
+  const rot = rotating ? p * Math.PI * 2 : 0;
+  poly(circlePts((c, sn) => iso(x + c * 0.52, y + sn * 0.52, 0.81)), '#aab2bc', '#666');
+  for (let k = 0; k < 4; k++) { const b = rot + k * Math.PI / 2; box(x + Math.cos(b) * 0.42 - 0.06, y + Math.sin(b) * 0.42 - 0.06, 0.81, 0.12, 0.12, 0.08, '#333'); }
+  // что лежит на столе
+  let tz = 0.86, tire = null, disk = false, lift = 0;
+  if (demount && ['table', 'head', 'drop', 'top', 'tear', 'newtire'].includes(st)) { tire = 'winter'; disk = true; }
+  if (demount && st === 'bottom') { tire = 'winter'; disk = true; lift = 0.18 * Math.min(1, p * 3); }
+  if (demount && st === 'off') { disk = true; }
+  if (mount && ['mtable', 'head'].includes(st)) { disk = true; }
+  if (mount && ['mbottom', 'mtop', 'tear', 'newtire', 'inflate', 'moff'].includes(st)) { tire = 'summer'; disk = true; lift = st === 'mbottom' ? 0.15 * (1 - p) : 0; }
+  if (s.state === 'needNew' || s.state === 'waitTires') disk = false;
+  const shake = st === 'tear' ? Math.sin(G.t * 60) * 0.04 : 0;
+  if (disk) lyingTire(x + shake, y, tz, 0.5, 'disk', true);
+  if (tire) {
+    const sc = st === 'inflate' ? 1 + 0.06 * Math.sin(p * Math.PI) : 1;
+    for (let k = 0; k < 4; k++) poly(circlePts((c, sn) => iso(x + shake + c * 0.55 * sc, y + sn * 0.55 * sc, tz + lift + k * 0.05)), k === 3 ? '#383838' : '#1c1c1c');
+    poly(circlePts((c, sn) => iso(x + shake + c * 0.32, y + sn * 0.32, tz + lift + 0.16)), disk ? '#c9d0d8' : '#0d0d0d', '#7d8590');
+    if (tire === 'winter') for (let k = 0; k < 8; k++) { const b = rot + k / 8 * Math.PI * 2; const [px, py] = iso(x + Math.cos(b) * 0.45, y + Math.sin(b) * 0.45, tz + lift + 0.16); ctx.fillStyle = '#e8eef5'; ctx.fillRect(px - 1.5, py - 1.5, 3, 3); }
+    if (tire === 'summer') poly(circlePts((c, sn) => iso(x + shake + c * 0.46, y + sn * 0.46, tz + lift + 0.161)), null, '#ffb020', 2);
+  }
+  // колонна, рука и монтажная лапа (носок + шишечка)
+  box(x - 0.62, y - 0.65, 0.8, 0.3, 0.3, 1.45, col2);
+  const headOn = ['head', 'drop', 'top', 'bottom', 'mbottom', 'mtop', 'tear', 'newtire'].includes(st);
+  const hz = headOn ? (st === 'head' ? 1.75 - 0.6 * p : 1.15) : 1.75;
+  const hx = x - 0.5, hy = y + 0.12;
+  box(x - 0.62, y - 0.65, 2.1, 0.3, 0.9, 0.14, '#555b66');
+  box(hx - 0.06, hy - 0.06, hz + 0.1, 0.12, 0.12, 2.1 - hz - 0.1, '#7d8590');
+  box(hx - 0.1, hy - 0.1, hz - 0.08, 0.2, 0.2, 0.18, '#222');
+  { const [px, py] = iso(hx + 0.08, hy + 0.1, hz - 0.05); ctx.beginPath(); ctx.arc(px, py, 3.5, 0, 7); ctx.fillStyle = '#ffcc00'; ctx.fill(); } // шишечка
+  // борт перекидывается через лапу и идёт по кругу
+  if (rotating) {
+    const th0 = Math.atan2(hy - y, hx - x), r = 0.53, bz = tz + lift + (st === 'bottom' || st === 'mbottom' ? 0.05 : 0.24);
+    const pts = []; for (let k = 0; k <= 24; k++) { const b = th0 + k / 24 * p * Math.PI * 2; pts.push(iso(x + Math.cos(b) * r, y + Math.sin(b) * r, bz + 0.06 * Math.sin(k / 24 * Math.PI))); }
+    ctx.strokeStyle = '#0a0a0a'; ctx.lineWidth = 5; ctx.beginPath(); pts.forEach((q, k) => k ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1])); ctx.stroke();
+    if (p < 0.3) line3([hx, hy, hz], [hx - 0.35, hy + 0.5, hz + 0.7], '#c9d0d8', 4); // монтировка
+  }
+  if (st === 'drop') emojiAt('👇', x + 0.45, y - 0.2, 1.35 + Math.sin(G.t * 10) * 0.05, 16);
+  if (st === 'tear') emojiAt('💥', hx, hy, hz + 0.3, 26);
+  if (st === 'inflate') emojiAt('💨', x + 0.4, y + 0.6, 1.2 + p * 0.3, 18);
+  drawPile(true);
 }
+// Балансировочный станок: вал справа, экран с граммами
 function drawBalancer() {
-  const s = G.st.balancer, x = s.x, y = s.y;
+  const s = G.st.balancer, x = s.x, y = s.y, a = s.anim || {}, st = a.step || '', p = a.p || 0;
+  const n = s.wheel || 0, done = s.done || 0, busy = s.state === 'balance';
+  // стопки: ждут и готовы
+  const waitN = busy ? 3 - n : (s.state === 'pending' ? 4 : 0), readyN = busy ? done : (s.state === 'ready' ? 4 : 0);
+  for (let k = 0; k < readyN; k++) lyingTire(x + 1.0, y - 1.05, k * 0.24, 0.42, 'summer', true);
   box(x - 0.6, y - 0.65, 0, 1.2, 1.3, 1.0, '#f5c518');
   box(x - 0.55, y - 0.4, 1.0, 0.5, 0.8, 0.35, '#3a3f47');
   poly([iso(x - 0.04, y - 0.3, 1.12), iso(x - 0.04, y + 0.3, 1.12), iso(x - 0.04, y + 0.3, 1.3), iso(x - 0.04, y - 0.3, 1.3)], '#39d353');
   box(x + 0.6, y - 0.08, 1.15, 0.35, 0.16, 0.16, '#888');
-  if (s.state !== 'empty') {
-    const r = 0.55, wx = x + 0.95, cz = 1.23;
-    poly(circlePts((c, sn) => iso(wx - 0.12, y + c * r, cz + sn * r)), '#151515');
-    poly(circlePts((c, sn) => iso(wx, y + c * r, cz + sn * r)), '#222');
-    poly(circlePts((c, sn) => iso(wx + 0.01, y + c * r * 0.55, cz + sn * r * 0.55)), '#c9d0d8', '#7d8590');
-    const a = s.state === 'balance' ? G.t * 14 : 0.6;
-    for (let k = 0; k < 3; k++) { const b = a + k * 2.09; const p1 = iso(wx + 0.02, y, cz), p2 = iso(wx + 0.02, y + Math.cos(b) * r * 0.5, cz + Math.sin(b) * r * 0.5); ctx.strokeStyle = '#6b737c'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p2[0], p2[1]); ctx.stroke(); }
+  // защитный кожух поднимается при вращении
+  const spinning = st === 'spin';
+  const onShaft = busy && !['boff'].includes(st) || s.state === 'ready' && false;
+  if (onShaft) {
+    const wob = spinning && a.wobble ? Math.sin(G.t * 40) * 0.09 : 0;
+    const sp = spinning ? G.t * 25 : (st === 'fix' ? G.t * 3 : 0.6);
+    uprightWheel(x + 0.95, y + wob, 1.23, 0.55, 'summer', sp);
+    if (st === 'weights' && p > 0.3) { const [px, py] = iso(x + 0.97, y + 0.28, 1.23 + 0.22); ctx.fillStyle = '#9aa3ad'; ctx.fillRect(px - 5, py - 3, 10, 6); ctx.strokeStyle = '#555'; ctx.strokeRect(px - 5, py - 3, 10, 6); }
+    if (st === 'fix') emojiAt('💨', x + 1.1, y + 0.6, 1.5 + p * 0.3, 18);
+    if (spinning && a.wobble) emojiAt('〰️', x + 1.0, y - 0.7, 1.9, 18);
   }
+  // кожух
+  const hood = spinning ? 1 : 0;
+  box(x + 0.62, y - 0.7, 1.95 - hood * 0.15, 0.7, 1.4, 0.08, hood ? '#ff9a1f' : '#c9a227');
+  // экран: граммы
+  if (s.grams && busy) { const [px, py] = iso(x - 0.04, y, 1.6); pillText(px, py, s.grams + ' г', '900 14px system-ui', '#1e2a22', '#39d353'); }
+  else if (spinning) { const [px, py] = iso(x - 0.04, y, 1.6); pillText(px, py, a.wobble ? 'бьёт!' : '…', '900 13px system-ui', '#1e2a22', a.wobble ? '#ff5a4f' : '#39d353'); }
+  for (let k = 0; k < waitN; k++) lyingTire(x + 1.0, y + 1.05, k * 0.24, 0.42, 'summer', true);
 }
 function drawStore() {
   // закрытая комната-склад с подъёмной дверью
-  const x0 = 13.4, x1 = 15.95, y1 = 2.6, h = 2.7;
+  const x0 = 15.9, x1 = 17.95, y1 = 2.6, h = 2.7;
   box(x0, 0, 0, x1 - x0, y1, h, '#d8c39a');
   box(x0 - 0.05, -0.05, h, x1 - x0 + 0.1, y1 + 0.1, 0.12, '#b89c6a');
   const dr = G.st.store.door, open = Math.min(1, Math.max(0, dr > 1.2 ? (1.6 - dr) / 0.4 : dr / 0.4));
-  const dz = 2.0, d0 = 13.95, d1 = 15.35;
+  const dz = 2.0, d0 = 16.25, d1 = 17.65;
   poly([iso(d0, y1 + 0.01, 0), iso(d1, y1 + 0.01, 0), iso(d1, y1 + 0.01, dz), iso(d0, y1 + 0.01, dz)], '#1d1a16');
   const bottom = dz * open;
   poly([iso(d0, y1 + 0.02, bottom), iso(d1, y1 + 0.02, bottom), iso(d1, y1 + 0.02, dz), iso(d0, y1 + 0.02, dz)], '#8d99a6', 'rgba(0,0,0,.35)');
@@ -714,8 +896,8 @@ function drawWallDecor() {
   planeWall();
   // гирлянда флажков
   const flagCols = ['#e8403a', '#ffcc00', '#3bb273', '#2f7de1'];
-  for (let i = 0, x = 0.3; x < 15.7; x += 0.55, i++) { ctx.beginPath(); ctx.moveTo(x, 4.15); ctx.lineTo(x + 0.45, 4.15); ctx.lineTo(x + 0.225, 3.85); ctx.closePath(); ctx.fillStyle = flagCols[i % 4]; ctx.fill(); }
-  ctx.strokeStyle = '#555'; ctx.lineWidth = 0.02; ctx.beginPath(); ctx.moveTo(0.2, 4.15); ctx.lineTo(15.8, 4.15); ctx.stroke();
+  for (let i = 0, x = 0.3; x < 17.7; x += 0.55, i++) { ctx.beginPath(); ctx.moveTo(x, 4.15); ctx.lineTo(x + 0.45, 4.15); ctx.lineTo(x + 0.225, 3.85); ctx.closePath(); ctx.fillStyle = flagCols[i % 4]; ctx.fill(); }
+  ctx.strokeStyle = '#555'; ctx.lineWidth = 0.02; ctx.beginPath(); ctx.moveTo(0.2, 4.15); ctx.lineTo(17.8, 4.15); ctx.stroke();
   // вывеска
   ctx.fillStyle = '#2f6fd6'; roundRect(1.2, 2.85, 7.6, 0.95, 0.25); ctx.fill();
   ctx.strokeStyle = '#ffcc00'; ctx.lineWidth = 0.06; ctx.stroke();
@@ -790,20 +972,20 @@ function drawGarage() {
   }
   { const [px, py] = iso(-5.2, -1.0, 0); pillText(px, py, '🅿️ Стоянка', '800 15px system-ui', 'rgba(255,255,255,.9)', '#333'); }
   // пол мастерской
-  poly([iso(0, 0), iso(16, 0), iso(16, 7), iso(0, 7)], '#d9d4c7', 'rgba(0,0,0,.25)');
-  poly([iso(10, 0), iso(16, 0), iso(16, 7), iso(10, 7)], '#cfc9bb');
+  poly([iso(0, 0), iso(18, 0), iso(18, 7), iso(0, 7)], '#d9d4c7', 'rgba(0,0,0,.25)');
+  poly([iso(10, 0), iso(18, 0), iso(18, 7), iso(10, 7)], '#cfc9bb');
   for (let i = 0; i < 2; i++) {
     if (!G.bayOpen[i]) continue;
     const B = BAYS[i];
     poly([iso(B.cx - 1.6, 0.8), iso(B.cx + 1.6, 0.8), iso(B.cx + 1.6, 6.0), iso(B.cx - 1.6, 6.0)], null, '#f2b705', 3);
   }
-  box(0, -0.3, 0, 16, 0.3, 4.3, '#efe9d9');
+  box(0, -0.3, 0, 18, 0.3, 4.3, '#efe9d9');
   box(-0.3, -0.3, 0, 0.3, 0.3, 4.3, '#e9e3d3');
   drawWallDecor();
   const items = [];
   items.push({k: 0.6 + 0.6, d: () => tireStack(0.6, 0.6, 5, 0.42, 'winter', false)});
   if (G.up.gun) items.push({k: 9.6 + 0.5, d: () => box(9.2, 0.2, 0, 0.8, 0.6, 1.0, '#e8403a')});
-  items.push({k: 14.6 + 1.3, d: drawStore});
+  items.push({k: 16.95 + 1.3, d: drawStore});
   items.push({k: 5.0 + 0.4, d: drawTools});
   items.push({k: G.st.changer.x + G.st.changer.y, d: drawChanger});
   items.push({k: G.st.balancer.x + G.st.balancer.y + 0.3, d: drawBalancer});
@@ -813,7 +995,7 @@ function drawGarage() {
     items.push({k: B.cx - 1.55 + B.cy, d: () => drawLiftPost(B.cx - 1.55, B.cy)});
     items.push({k: B.cx + 1.55 + B.cy, d: () => drawLiftPost(B.cx + 1.55, B.cy)});
   }
-  for (const x of [0, 10, 16]) items.push({k: x + 7, d: () => box(x - 0.2, 6.8, 0, 0.4, 0.4, 3.0, '#efe9d9')});
+  for (const x of [0, 10, 18]) items.push({k: x + 7, d: () => box(x - 0.2, 6.8, 0, 0.4, 0.4, 3.0, '#efe9d9')});
   for (const car of G.cars) items.push({k: car.x + car.y, d: () => drawCar(car)});
   for (const A of G.actors) items.push({k: A.x + A.y + 0.05, d: () => drawPerson(A)});
   items.sort((a, b) => a.k - b.k).forEach(it => { it.d(); baseT(); });
@@ -832,7 +1014,8 @@ function drawStationBadges() {
     const s = G.st[k], [px, py] = iso(s.x, s.y, s.bz);
     ctx.beginPath(); ctx.arc(px, py, 17, 0, 7); ctx.fillStyle = 'rgba(255,255,255,.88)'; ctx.fill(); ctx.strokeStyle = 'rgba(0,0,0,.15)'; ctx.lineWidth = 1.5; ctx.stroke();
     ctx.font = '19px system-ui'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(s.ic, px, py + 1);
-    if (s.state === 'demount' || s.state === 'mount' || s.state === 'balance') progressRing(px + 24, py - 10, s.t / s.dur, '#3bb273');
+    if (s.state === 'demount' || s.state === 'mount' || s.state === 'balance') progressRing(px + 24, py - 10, s.prog || 0, '#3bb273');
+    else if (s.state === 'pending') { ctx.font = '16px system-ui'; ctx.fillText('⏳', px + 20, py - 13); }
     else if (s.state === 'ready' || s.state === 'waitTires') { ctx.font = '16px system-ui'; ctx.fillText(s.state === 'ready' ? '✅' : '❗', px + 20, py - 13); }
   }
 }
@@ -890,6 +1073,9 @@ function nextStep() {
     if (h.kind === 'balanced') return {car: h.car, text: 'Поставь колёса на машину 🚗'};
     if (h.kind === 'ext') { const c = G.cars.find(c => inBay(c) && c.strip && !c.stripFixed); return c ? {car: c, text: 'Выкрути сорванный болт 🪛'} : {st: 'tools', text: 'Верни экстрактор на место'}; }
   }
+  if (M.act && G.st.changer.op === M && ['demount', 'mount'].includes(st.changer.state)) return {text: 'Смотри, как мастер работает 👀'};
+  if (M.act && G.st.balancer.op === M && st.balancer.state === 'balance') return {text: 'Смотри, как мастер балансирует 👀'};
+  if (st.changer.state === 'pending' && !machinesWorker()) return {st: 'changer', text: 'Колёса ждут у станка 🛠️'};
   if (st.changer.state === 'waitTires') return {st: 'changer', text: 'Забери старые шины со станка'};
   if (st.balancer.state === 'ready') return {st: 'balancer', text: 'Забери готовые колёса с балансировки'};
   if (st.changer.state === 'ready' && st.balancer.state === 'empty') return {st: 'changer', text: 'Забери колёса со станка'};
@@ -899,7 +1085,7 @@ function nextStep() {
   if (waiting.length && st.changer.state === 'empty') return {car: waiting[0], text: G.up.lift ? 'Подними машину и сними колёса 🚗' : 'Подними машину домкратом и сними колёса 🚗'};
   const q = G.queue.find(parked);
   if (q && freeBay() >= 0) return {queue: q, text: G.up.equeue ? 'Бери машину №1 — она заедет в бокс' : 'Возьми машину, которая приехала первой 🅿️'};
-  if (['demount', 'mount'].includes(st.changer.state) || st.balancer.state === 'balance') return {text: 'Станок работает… ⏳'};
+  if (['demount', 'mount'].includes(st.changer.state) || st.balancer.state === 'balance') return {text: 'Работник работает на станке 👀'};
   if (waiting.length) return {car: waiting[0], text: 'Сними колёса с машины 🚗'};
   if (G.queue.length) return {text: 'Клиенты ждут ⏳'};
   return {text: 'Ждём клиентов… 🚗'};
@@ -945,7 +1131,7 @@ const SHOP = [
   {ic: '👟', name: 'Кроссовки', desc: 'Хозяин бегает быстрее', price: 80, has: () => G.up.shoes, buy: () => { G.up.shoes = true; }},
   {ic: '💨', name: 'Гайковёрт', desc: 'Колёса снимаются и ставятся быстро. Вжжжж!', price: 100, has: () => G.up.gun, buy: () => { G.up.gun = true; }},
   {ic: '🎫', name: 'Электронная очередь', desc: 'Над машинами номерки — видно, кто первый. Клиенты спокойнее', price: 120, has: () => G.up.equeue, buy: () => { G.up.equeue = true; }},
-  {ic: '⚙️', name: 'Станок-автомат', desc: 'Шиномонтажный станок в 2 раза быстрее', price: 150, has: () => G.up.fast, buy: () => { G.up.fast = true; }},
+  {ic: '⚙️', name: 'Станок-автомат', desc: 'Шиномонтажный станок крутит в 2 раза быстрее', price: 150, has: () => G.up.fast, buy: () => { G.up.fast = true; }},
   {ic: '🏗️', name: 'Подъёмники', desc: 'Машина поднимается целиком — не надо бегать с домкратом', price: 180, has: () => G.up.lift, buy: () => { G.up.lift = true; }},
   {ic: '🚧', name: 'Второй бокс', desc: 'Две машины сразу — меньше очередь', price: 200, has: () => G.bayOpen[1], buy: () => { G.bayOpen[1] = true; }},
   {ic: '👷', name: 'Работник', desc: 'Помощник: работает на машинах или на станках', price: 250, has: () => G.up.worker, buy: () => { G.up.worker = true; const w = makeActor(false); w.role = 'cars'; G.actors.push(w); }, after: () => openRole()},
@@ -1063,7 +1249,7 @@ function frame(now) {
   hudT -= dt; if (hudT <= 0) { hudT = 0.15; updateHud(); }
   drawGarage();
   baseT();
-  for (const f of G.fx) { ctx.globalAlpha = Math.min(1, f.life); ctx.font = '900 30px system-ui'; ctx.fillStyle = '#ffcc00'; ctx.strokeStyle = '#6b3a00'; ctx.lineWidth = 5; ctx.textAlign = 'center'; ctx.strokeText(f.txt, f.x, f.y); ctx.fillText(f.txt, f.x, f.y); ctx.globalAlpha = 1; }
+  for (const f of G.fx) { ctx.globalAlpha = Math.min(1, f.life); ctx.font = '900 30px system-ui'; ctx.fillStyle = f.col || '#ffcc00'; ctx.strokeStyle = '#6b3a00'; ctx.lineWidth = 5; ctx.textAlign = 'center'; ctx.strokeText(f.txt, f.x, f.y); ctx.fillText(f.txt, f.x, f.y); ctx.globalAlpha = 1; }
   drawCoins();
   requestAnimationFrame(frame);
 }
