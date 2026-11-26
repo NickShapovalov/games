@@ -9,7 +9,7 @@
 
 Запуск: python3 .github/scripts/aurora_update.py aurora/data.json
 """
-import json, os, sys, re, datetime as dt, urllib.request, urllib.parse
+import json, os, sys, re, time, html, datetime as dt, urllib.request, urllib.parse
 
 LAT, LON = 69.288, 32.800
 UA = "aurora-hunt/1.0 github.com/NickShapovalov/games"
@@ -83,6 +83,89 @@ def cloud_models():
     if not out:
         raise ValueError("нет данных облачности")
     return out
+
+
+AIRLINES = {"5N": "Smartavia", "SU": "Аэрофлот", "FV": "Россия", "DP": "Победа", "A4": "Азимут",
+            "WZ": "Red Wings", "UT": "ЮТэйр", "N4": "Nordwind", "S7": "S7", "YC": "Ямал"}
+FLIGHT_RE = r"\b(" + "|".join(AIRLINES) + r")[\s\u00a0\-]?(\d{3,4})\b"
+
+
+def enclosing_object(text, pos, limit=6000):
+    """Текст ближайшего JSON-объекта {...}, внутри которого стоит pos."""
+    depth, start = 0, None
+    for j in range(pos, max(-1, pos - limit), -1):
+        c = text[j]
+        if c == "}":
+            depth += 1
+        elif c == "{":
+            if depth == 0:
+                start = j
+                break
+            depth -= 1
+    if start is None:
+        return text[max(0, pos - 300): pos + 300]
+    depth = 0
+    for k in range(start, min(len(text), start + limit)):
+        c = text[k]
+        if c == "{":
+            depth += 1
+        elif c == "}":
+            depth -= 1
+            if depth == 0:
+                return text[start:k + 1]
+    return text[start:start + limit]
+
+
+def rasp_schedule(from_id, to_id, date):
+    """Прямые рейсы на дату из Яндекс Расписаний: [{"flight": "FV 6343", "dep": "09:10", "arr": "11:15"}]."""
+    url = "https://rasp.yandex.ru/search/plane/?" + urllib.parse.urlencode(
+        {"fromId": from_id, "toId": to_id, "when": date})
+    page = get(url, {"Accept-Language": "ru-RU,ru;q=0.9"})
+    dbg = os.environ.get("AURORA_DEBUG_DIR")
+    if dbg:  # сырая страница для отладки разбора
+        os.makedirs(dbg, exist_ok=True)
+        open(os.path.join(dbg, f"rasp_{from_id}_{to_id}_{date}.html"), "w", encoding="utf-8").write(page)
+    if re.search(r"captcha|showcaptcha", page[:20000], re.I) and "5N" not in page and "FV" not in page:
+        raise RuntimeError("капча")
+    found = {}
+    # 1) данные внутри страницы (JSON): номер рейса рядом с ISO-временем вылета и прилёта
+    ms = list(re.finditer(r'"number"\s*:\s*"([A-Z0-9]{2})[\s\u00a0]?(\d{3,4})"', page))
+    for i, m in enumerate(ms):
+        code, num = m.group(1), m.group(2)
+        if code not in AIRLINES:
+            continue
+        # окно — JSON-объект, в котором лежит этот номер рейса
+        win = enclosing_object(page, m.start())
+        dep = re.search(r'"departure(?:LocalDt|Dt)?"\s*:\s*"(\d{4}-\d\d-\d\dT(\d\d:\d\d))', win)
+        arr = re.search(r'"arrival(?:LocalDt|Dt)?"\s*:\s*"(\d{4}-\d\d-\d\dT(\d\d:\d\d))', win)
+        if dep and arr and dep.group(1).startswith(date):
+            found.setdefault(f"{code} {num}", {"dep": dep.group(2), "arr": arr.group(2)})
+    # 2) запасной путь: видимый текст — номер рейса и два времени после него
+    if not found:
+        text = re.sub(r"<[^>]+>", " ", page)
+        text = re.sub(r"\s+", " ", html.unescape(text))
+        for m in re.finditer(FLIGHT_RE, text):
+            times = re.findall(r"\b([01]\d|2[0-3]):([0-5]\d)\b", text[m.end(): m.end() + 400])
+            if len(times) >= 2:
+                found.setdefault(f"{m.group(1)} {m.group(2)}",
+                                 {"dep": ":".join(times[0]), "arr": ":".join(times[1])})
+    # убираем код-шеринг: SU 6343 — это тот же рейс, что FV 6343
+    out = []
+    for f, t in sorted(found.items(), key=lambda x: x[1]["dep"]):
+        code, num = f.split()
+        if code == "SU" and f"FV {num}" in found:
+            continue
+        out.append({"flight": f, "airline": AIRLINES[code], **t})
+    return out
+
+
+def schedules(days):
+    res = {}
+    for d in days:
+        back = (dt.date.fromisoformat(d) + dt.timedelta(days=1)).isoformat()
+        res[d] = {"out": rasp_schedule("c2", "c23", d), "back": rasp_schedule("c23", "c2", back)}
+        time.sleep(1)
+    return res
 
 
 def tp(token, **params):
@@ -160,6 +243,10 @@ def main(path):
     data["sources"] = src
     today = dt.datetime.now(MSK).date()
     days = [(today + dt.timedelta(days=i)).isoformat() for i in (1, 2, 3)]
+    try:
+        data["schedule"] = schedules(days)
+    except Exception as e:
+        errors.append(f"schedule: {e}")
     try:
         t = tickets(days)
         if t is not None:

@@ -23,6 +23,7 @@ jobs:
       - name: Собрать прогноз и цены
         env:
           TRAVELPAYOUTS_TOKEN: ${{ secrets.TRAVELPAYOUTS_TOKEN }}
+          AURORA_DEBUG_DIR: /tmp/aurora-debug
         run: python3 .github/scripts/aurora_update.py aurora/data.json
       - name: Сохранить, если что-то изменилось
         run: |
@@ -33,3 +34,13 @@ jobs:
           git commit -m "Сияние: обновлён прогноз"
           git pull --rebase --autostash
           git push
+      - name: Сырые страницы расписания для отладки (ветка aurora-debug)
+        if: always()
+        run: |
+          [ -d /tmp/aurora-debug ] || exit 0
+          cd /tmp/aurora-debug
+          git init -q -b aurora-debug
+          git config user.name "aurora-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add . && git commit -q -m "debug $(date -u +%FT%TZ)"
+          git push -q -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" aurora-debug
