@@ -66,6 +66,25 @@ def weather():
     return out[:72]
 
 
+def cloud_models():
+    """Облачность по трём моделям (ECMWF, ICON, GFS) через Open-Meteo: {"2026-11-27T18": {"ecmwf": 0, ...}}."""
+    url = ("https://api.open-meteo.com/v1/forecast?" + urllib.parse.urlencode({
+        "latitude": LAT, "longitude": LON, "hourly": "cloud_cover",
+        "models": "ecmwf_ifs025,icon_seamless,gfs_seamless", "timezone": "GMT", "forecast_days": 4}))
+    h = json.loads(get(url))["hourly"]
+    out = {}
+    for key, vals in h.items():
+        if not key.startswith("cloud_cover"):
+            continue
+        name = "ecmwf" if "ecmwf" in key else "icon" if "icon" in key else "gfs" if "gfs" in key else "best"
+        for t, v in zip(h["time"], vals):
+            if v is not None:
+                out.setdefault(t[:13], {})[name] = round(v)
+    if not out:
+        raise ValueError("нет данных облачности")
+    return out
+
+
 def tp(token, **params):
     q = urllib.parse.urlencode({"currency": "rub", "sorting": "price", "limit": 3, "market": "ru", "direct": "true", **params})
     res = json.loads(get("https://api.travelpayouts.com/aviasales/v3/prices_for_dates?" + q,
@@ -117,7 +136,7 @@ def main(path):
         old = {}
     data = dict(old)
     errors = []
-    for name, fn in (("kp", kp_forecast), ("hourly", weather)):
+    for name, fn in (("kp", kp_forecast), ("hourly", weather), ("clouds", cloud_models)):
         try:
             data[name] = fn()
         except Exception as e:  # оставляем прошлые данные, но отмечаем ошибку
@@ -131,7 +150,7 @@ def main(path):
             src["kpNote"] = "NOAA SWPC: " + note
     except Exception as e:
         errors.append(f"kp-text: {e}")
-    src["weather"] = "MET Norway (yr.no), прогноз для Ура-Губы"
+    src["weather"] = "MET Norway (yr.no) и модели ECMWF, ICON, GFS (Open-Meteo), прогноз для Ура-Губы"
     data["sources"] = src
     today = dt.datetime.now(MSK).date()
     days = [(today + dt.timedelta(days=i)).isoformat() for i in (1, 2, 3)]
