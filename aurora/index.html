@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Охота за сиянием</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="theme-color" content="#08131c">
+<meta name="apple-mobile-web-app-title" content="Сияние">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+/* VOICE: спокойная сводка полевого наблюдателя, честно о вероятностях
+   IDEA: бортовой журнал охотника за сиянием над Ура-Губой
+   PICTURE: ночное небо над сопками и губой, занавес сияния, яркость = шанс
+   COLOUR and TYPE: полярная ночь #08131c, снег #eaf2f4, зелень сияния #5ff0a0; Unbounded + Manrope
+   LAYOUT: вердикт и небо первым экраном, затем три ночи, план, билеты, как считаем */
+:root{color-scheme:dark;--bg:#08131c;--bg2:#0f1f2b;--line:#1f3443;--ink:#eaf2f4;--mute:#9bb0bb;--go:#5ff0a0;--maybe:#9fd3ff;--no:#7d8f99}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Manrope,system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:Unbounded,Manrope,sans-serif;line-height:1.05;text-wrap:balance;margin:0}
+h1{font-size:clamp(32px,6vw,52px)}h2{font-size:clamp(22px,3.4vw,30px);margin-bottom:18px}h3{font-size:17px}
+a{color:var(--go)}
+.band{padding:clamp(28px,4vw,64px) max(5vw,16px)}
+.wrap{max-width:1240px;margin:0 auto}
+.hero{position:relative;padding:0;min-height:520px;display:grid;overflow:hidden}
+.hero svg{position:absolute;inset:0;width:100%;height:100%}
+.hero .txt{position:relative;align-self:end;padding:clamp(28px,4vw,56px) max(5vw,16px);max-width:1240px;width:100%;margin:0 auto}
+.kick{color:var(--mute);font-size:14px;margin-bottom:10px}
+.verdict{font-size:clamp(40px,8vw,76px);font-family:Unbounded,sans-serif;font-weight:700;line-height:1;margin:6px 0 12px}
+.big{font-size:clamp(20px,3vw,26px);font-weight:600;max-width:40ch}
+.meta{color:var(--mute);font-size:14px;margin-top:14px}
+.nights{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px}
+.card{background:var(--bg2);border:1px solid var(--line);border-radius:18px;padding:20px}
+.card.best{border-color:var(--go)}
+.row{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+.pct{font:700 40px/1 Unbounded,sans-serif}
+.tag{font-size:14px;font-weight:800;padding:4px 10px;border-radius:99px;background:#ffffff12;white-space:nowrap}
+.bars{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin:16px 0 4px;height:70px;align-items:end}
+.bars i{display:block;border-radius:4px 4px 2px 2px;background:var(--go);min-height:3px}
+.bars i.cl{background:#4a5d69}
+.hrs{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;font-size:13px;color:var(--mute);text-align:center}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;margin-top:16px;font-size:15px}
+.facts b{display:block;font-size:13px;color:var(--mute);font-weight:600}
+.kpm{height:8px;border-radius:9px;background:#ffffff14;margin-top:6px;overflow:hidden}.kpm i{display:block;height:100%;background:var(--go)}
+.plan{list-style:none;padding:0;margin:0;display:grid;gap:2px}
+.plan li{display:grid;grid-template-columns:5.5em 1fr;gap:16px;padding:12px 0;border-top:1px solid var(--line)}
+.plan time{font:700 20px/1.2 Unbounded,sans-serif;white-space:nowrap}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.btn{display:inline-flex;align-items:center;min-height:44px;padding:10px 18px;border-radius:12px;background:var(--go);color:#062014;font-weight:800;text-decoration:none}
+.btn.alt{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn:focus-visible{outline:3px solid var(--maybe);outline-offset:2px}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:28px}
+.small{font-size:14px;color:var(--mute)}
+.price{font:700 30px/1.1 Unbounded,sans-serif;white-space:nowrap}
+ul.how{padding-left:1.1em;margin:0}ul.how li{margin:6px 0}
+footer{color:var(--mute);font-size:14px}
+@media(prefers-reduced-motion:no-preference){.curtain{animation:sway 9s ease-in-out infinite alternate;transform-origin:50% 100%}@keyframes sway{to{transform:skewX(-6deg) translateX(2%)}}}
+@media(max-width:600px){.hero{min-height:560px}.plan li{grid-template-columns:4.6em 1fr}}
+</style>
+</head>
+<body>
+<header class="hero" id="hero">
+  <svg id="sky" viewBox="0 0 1200 560" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <linearGradient id="g-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#050b12"/><stop offset="1" stop-color="#0d2230"/></linearGradient>
+      <linearGradient id="g-aur" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9ffd9" stop-opacity="0"/><stop offset=".45" stop-color="#5ff0a0" stop-opacity=".75"/><stop offset="1" stop-color="#2bbf86" stop-opacity="0"/></linearGradient>
+      <filter id="blur"><feGaussianBlur stdDeviation="14"/></filter>
+      <linearGradient id="g-sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#123040"/><stop offset="1" stop-color="#08131c"/></linearGradient>
+    </defs>
+    <rect width="1200" height="560" fill="url(#g-sky)"/>
+    <g id="stars" fill="#eaf2f4"></g>
+    <g id="aur" filter="url(#blur)"><g class="curtain">
+      <path d="M-40 300 C 180 140, 380 260, 600 150 S 980 80, 1240 210 L1240 320 C 980 200, 760 300, 600 260 S 200 260, -40 380Z" fill="url(#g-aur)"/>
+      <path d="M100 240 C 320 90, 520 200, 700 110 S 1000 60, 1180 140 L1180 200 C 1000 120, 820 210, 700 180 S 320 170, 100 300Z" fill="url(#g-aur)" opacity=".7"/>
+    </g></g>
+    <circle id="moon" cx="1010" cy="96" r="22" fill="#f4f1e6" opacity=".85"/>
+    <path d="M0 430 L120 380 L230 405 L360 350 L470 392 L600 362 L720 398 L860 340 L990 386 L1100 360 L1200 380 L1200 560 L0 560Z" fill="#0a1a24"/>
+    <path d="M0 430 L120 380 L230 405 L360 350 L470 392 L600 362 L720 398 L860 340 L990 386 L1100 360 L1200 380" fill="none" stroke="#d9e9ef" stroke-opacity=".35" stroke-width="2"/>
+    <rect y="455" width="1200" height="105" fill="url(#g-sea)"/>
+    <g fill="#d6f8e6" opacity=".18"><rect x="180" y="470" width="300" height="3" rx="2"/><rect x="560" y="490" width="380" height="3" rx="2"/><rect x="300" y="515" width="240" height="2" rx="2"/></g>
+    <g fill="#061017"><path d="M842 455 l18 -34 l18 34z"/><rect x="848" y="455" width="24" height="16"/><rect x="855" y="459" width="8" height="8" fill="#ffd98a" opacity=".9"/></g>
+  </svg>
+  <div class="txt">
+    <div class="kick">Ура-Губа, Кольский полуостров · Охота за сиянием</div>
+    <div class="verdict" id="verdict">Считаю…</div>
+    <div class="big" id="sum"></div>
+    <div class="meta" id="meta"></div>
+  </div>
+</header>
+
+<section class="band"><div class="wrap">
+  <h2>Ближайшие ночи</h2>
+  <div class="nights" id="nights"></div>
+  <p class="small">Столбики показывают ясность неба по часам с 18:00 до 03:00: зелёный значит ясно, серый значит облачно. Время московское.</p>
+</div></section>
+
+<section class="band" style="background:var(--bg2)"><div class="wrap cols">
+  <div>
+    <h2 id="plan-h">План поездки</h2>
+    <ol class="plan" id="plan"></ol>
+  </div>
+  <div>
+    <h2>Билеты и ночёвка</h2>
+    <div id="tix"></div>
+    <div class="btns" id="links"></div>
+    <p class="small" id="tixnote"></p>
+  </div>
+</div></section>
+
+<section class="band"><div class="wrap cols">
+  <div>
+    <h2>Как считаем шанс</h2>
+    <ul class="how">
+      <li><b>Небо.</b> Средняя ясность с 18:00 до 03:00. Без ясного неба сияния не видно, поэтому это главный множитель.</li>
+      <li><b>Космос.</b> Максимальный прогноз Kp за ночь. На широте Ура-Губы (69° с. ш.) сияние видно уже при Kp 2–3, а при Kp 4+ оно яркое и подвижное.</li>
+      <li><b>Луна.</b> Если она ярче 60 %, слабое сияние бледнеет, и шанс снижается на 12 %.</li>
+      <li><b>Вердикт:</b> от 55 % «Едем», от 30 % «Можно рискнуть», меньше 30 % «Ждём».</li>
+    </ul>
+    <p class="small">Честно о точности: облака и Kp надёжно прогнозируются только на 1–3 дня, поэтому решение принимается за день-два до поездки.</p>
+  </div>
+  <div>
+    <h2>Проверить вживую</h2>
+    <div class="btns">
+      <a class="btn alt" href="https://www.swpc.noaa.gov/products/aurora-30-minute-forecast">Овал сияния, 30 мин</a>
+      <a class="btn alt" href="https://www.swpc.noaa.gov/products/3-day-forecast">Kp на 3 дня</a>
+      <a class="btn alt" href="https://www.yr.no/en/forecast/daily-table/69.288,32.800">Облака на yr.no</a>
+    </div>
+    <p class="small" id="src"></p>
+  </div>
+</div></section>
+<footer class="band"><div class="wrap">Прогноз обновляется каждые 3 часа. Это оценка вероятности, а не обещание: сияние капризное.</div></footer>
+
+<script id="seed" type="application/json">{"updated":"2026-11-26T19:20:00Z","place":{"name":"Ура-Губа","lat":69.288,"lon":32.8,"fromAirportKm":55,"fromAirportMin":60},"sources":{"kpIssued":"2026-11-26T00:30:00Z","kpNote":"NOAA SWPC: G1 (слабая буря) вероятна 26–27 ноября из-за высокоскоростного потока из корональной дыры","weather":"MET Norway (yr.no), прогноз для Ура-Губы"},"kp":[["2026-11-26T00",3.0],["2026-11-26T03",3.33],["2026-11-26T06",2.67],["2026-11-26T09",2.0],["2026-11-26T12",2.33],["2026-11-26T15",2.67],["2026-11-26T18",3.67],["2026-11-26T21",5.0],["2026-11-27T00",4.33],["2026-11-27T03",5.0],["2026-11-27T06",3.67],["2026-11-27T09",3.0],["2026-11-27T12",2.67],["2026-11-27T15",2.67],["2026-11-27T18",2.67],["2026-11-27T21",3.67],["2026-11-28T00",3.67],["2026-11-28T03",3.33],["2026-11-28T06",3.0],["2026-11-28T09",3.0],["2026-11-28T12",2.33],["2026-11-28T15",3.0],["2026-11-28T18",3.33],["2026-11-28T21",3.33]],"hourly":[["2026-11-26T19",1.4,94,8.6],["2026-11-26T20",1.6,96,9.1],["2026-11-26T21",1.4,95,8.3],["2026-11-26T22",1.5,96,8.0],["2026-11-26T23",1.4,93,7.9],["2026-11-27T00",1.2,95,7.6],["2026-11-27T01",1.3,90,6.7],["2026-11-27T02",0.8,90,5.3],["2026-11-27T03",0.7,98,5.6],["2026-11-27T04",0.8,96,6.5],["2026-11-27T05",0.7,94,4.7],["2026-11-27T06",0.6,85,4.5],["2026-11-27T07",0.6,88,3.6],["2026-11-27T08",-0.1,78,3.3],["2026-11-27T09",-0.8,53,3.7],["2026-11-27T10",-1.1,52,4.7],["2026-11-27T11",-0.9,68,4.5],["2026-11-27T12",-1.3,66,5.1],["2026-11-27T13",-0.9,91,5.9],["2026-11-27T14",-1.1,93,4.5],["2026-11-27T15",-1.7,67,4.8],["2026-11-27T16",-2.7,39,3.5],["2026-11-27T17",-3.7,9,3.3],["2026-11-27T18",-4.5,0,3.2],["2026-11-27T19",-5.0,3,3.6],["2026-11-27T20",-5.3,0,3.8],["2026-11-27T21",-5.6,2,4.4],["2026-11-27T22",-5.9,1,4.3],["2026-11-27T23",-6.0,0,4.3],["2026-11-28T00",-5.9,0,4.8],["2026-11-28T01",-5.8,0,5.2],["2026-11-28T02",-5.6,0,5.4],["2026-11-28T03",-5.5,0,5.9],["2026-11-28T04",-5.5,0,6.1],["2026-11-28T05",-5.4,0,6.0],["2026-11-28T06",-5.4,0,6.0],["2026-11-28T07",-5.6,20,6.0],["2026-11-28T08",-5.7,20,6.0],["2026-11-28T09",-5.8,16,6.1],["2026-11-28T10",-6.0,26,6.7],["2026-11-28T11",-6.4,100,6.5],["2026-11-28T12",-6.3,100,6.2],["2026-11-28T13",-6.2,98,6.5],["2026-11-28T14",-5.9,96,6.9],["2026-11-28T15",-5.8,97,6.8],["2026-11-28T16",-5.4,100,7.0],["2026-11-28T17",-5.0,100,7.1],["2026-11-28T18",-4.6,100,6.7],["2026-11-28T19",-4.5,100,6.5],["2026-11-28T20",-4.3,92,6.8],["2026-11-28T21",-4.3,87,6.5],["2026-11-28T22",-4.0,92,7.0],["2026-11-28T23",-3.5,98,6.2],["2026-11-29T00",-3.0,99,6.3]],"tickets":{"2026-11-27":{"out":{"from":3420,"flight":"Smartavia 5N 507 или «Россия» FV 6343 (09:10 → 11:15)"}},"2026-11-28":{"out":{"from":3420,"flight":"Smartavia 5N 507"}},"checked":"2026-11-26","note":"Цены «от», за одного, в одну сторону, по данным агрегаторов. Обратный рейс и точную цену смотрите по кнопке."}}</script>
+<script>
+{
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const MSK=3*3600e3;
+const utc=s=>Date.parse(s.length===13?s+':00:00Z':s);
+const ymd=ms=>new Date(ms+MSK).toISOString().slice(0,10);
+const DOW=['вс','пн','вт','ср','чт','пт','сб'];
+const dlabel=d=>{const x=new Date(d+'T12:00:00Z');return DOW[x.getUTCDay()]+' '+d.slice(8,10)+'.'+d.slice(5,7)};
+const fmtTime=ms=>new Date(ms+MSK).toISOString().slice(11,16);
+const moonIll=ms=>{const age=((ms-Date.UTC(2000,0,6,18,14))/864e5)%29.530588853;return (1-Math.cos(2*Math.PI*age/29.530588853))/2};
+const act=kp=>{const p=[[0,.15],[1,.35],[2,.6],[3,.8],[4,.92],[5,1]];if(kp>=5)return 1;for(let i=1;i<p.length;i++)if(kp<=p[i][0]){const[a,b]=p[i-1],[c,e]=p[i];return b+(kp-a)/(c-a)*(e-b)}return 1};
+const feels=(t,v)=>{const k=v*3.6;return k<4.8||t>10?t:13.12+.6215*t-11.37*k**.16+.3965*t*k**.16};
+const kpWord=k=>k>=5?'буря':k>=4?'активно':k>=3?'умеренно':k>=2?'слабо':'тихо';
+
+function nightOf(D,data){
+  const start=utc(D+'T15'),hours=[];
+  for(let i=0;i<10;i++){const t=start+i*3600e3;const h=data.hourly.find(r=>utc(r[0])===t);hours.push({t,h})}
+  const have=hours.filter(x=>x.h);
+  if(have.length<5)return null;
+  const sky=have.reduce((s,x)=>s+(1-x.h[2]/100),0)/have.length;
+  const kps=data.kp.filter(r=>{const t=utc(r[0]);return t+3*3600e3>start&&t<start+10*3600e3}).map(r=>r[1]);
+  const kp=kps.length?Math.max(...kps):null;
+  const ill=moonIll(start+6*3600e3);
+  const chance=kp==null?null:Math.round(100*sky*act(kp)*(ill>.6?.88:1));
+  const clear=have.filter(x=>x.h[2]<=30);
+  const tmin=Math.min(...have.map(x=>x.h[1])),wmax=Math.max(...have.map(x=>x.h[3]));
+  const fmin=Math.min(...have.map(x=>feels(x.h[1],x.h[3])));
+  return {D,hours,sky,kp,ill,chance,clear,tmin,wmax,fmin};
+}
+const verdictOf=c=>c==null?['Нет данных','no']:c>=55?['Едем!','go']:c>=30?['Можно рискнуть','maybe']:['Ждём','no'];
+
+function render(data){
+  const now=Date.now(),today=ymd(now);
+  const days=[...new Set(data.hourly.map(r=>ymd(utc(r[0]))))].filter(d=>d>=today).slice(0,3);
+  const nights=days.map(d=>nightOf(d,data)).filter(Boolean);
+  const tomorrow=ymd(now+864e5);
+  const cand=nights.filter(n=>n.D>=tomorrow&&n.chance!=null);
+  const best=cand.sort((a,b)=>b.chance-a.chance)[0]||null;
+  const [vw,vc]=best?verdictOf(best.chance):['Ждём','no'];
+  const rel=d=>d===today?'сегодня':d===tomorrow?'завтра':'';
+  $('verdict').textContent=best&&vc!=='no'?vw:'Ждём';
+  $('verdict').style.color=vc==='go'?'var(--go)':vc==='maybe'?'var(--maybe)':'var(--ink)';
+  $('sum').textContent=best?(vc==='no'?'В ближайшие ночи хороших окон нет: лучшая ночь '+dlabel(best.D)+' даёт '+best.chance+' %.':'Лучшая ночь '+(rel(best.D)?rel(best.D)+', ':'')+dlabel(best.D)+': шанс '+best.chance+' %, ясно '+best.clear.length+' ч из 10, Kp до '+best.kp.toFixed(1)+'.'):'Прогноз на ближайшие ночи ещё не готов.';
+  $('meta').textContent='Обновлено '+new Date(utc(data.updated)+MSK).toISOString().slice(0,16).replace('T',' ')+' МСК · обновляется каждые 3 часа';
+  // sky picture follows the best chance
+  const c=best?best.chance/100:.1;
+  $('aur').style.opacity=(.15+.85*c).toFixed(2);
+  $('moon').setAttribute('opacity',best?(.25+.7*best.ill).toFixed(2):'.5');
+  let st='';for(let i=0;i<70;i++){const x=(i*173)%1200,y=(i*97)%330,r=i%7?0.9:1.7;st+=`<circle cx="${x}" cy="${y}" r="${r}" opacity="${(.3+(i%5)/8).toFixed(2)}"/>`}
+  $('stars').innerHTML=st;
+
+  $('nights').innerHTML=nights.map(n=>{
+    const[w,cl]=verdictOf(n.chance);
+    const bars=n.hours.map(x=>x.h?`<i class="${x.h[2]>30?'cl':''}" style="height:${Math.max(4,100-x.h[2])}%" title="${fmtTime(x.t)}: облачность ${x.h[2]} %"></i>`:'<i class="cl" style="height:4%"></i>').join('');
+    const hrs=n.hours.map((x,i)=>`<span>${i%3===0?fmtTime(x.t).slice(0,2):''}</span>`).join('');
+    const note=n.D===today?'<p class="small">Сегодня уже не успеть.</p>':'';
+    return `<article class="card ${best&&n.D===best.D&&cl!=='no'?'best':''}">
+      <div class="row"><h3>${esc(dlabel(n.D))}${rel(n.D)?' · '+rel(n.D):''}</h3><span class="tag" style="color:var(--${cl})">${esc(w)}</span></div>
+      <div class="row" style="margin-top:10px"><span class="pct">${n.chance==null?'—':n.chance+' %'}</span><span class="small">шанс увидеть</span></div>
+      <div class="bars" aria-label="Ясность неба по часам">${bars}</div><div class="hrs">${hrs}</div>
+      <div class="facts">
+        <div><b>Небо</b>ясно ${n.clear.length} ч из 10</div>
+        <div><b>Kp, максимум</b>${n.kp==null?'нет прогноза':n.kp.toFixed(1)+' · '+kpWord(n.kp)}<div class="kpm"><i style="width:${n.kp==null?0:Math.min(100,n.kp/6*100)}%"></i></div></div>
+        <div><b>Температура</b>до ${Math.round(n.tmin)}°, по ощущению ${Math.round(n.fmin)}°</div>
+        <div><b>Ветер и луна</b>до ${Math.round(n.wmax)} м/с · луна ${Math.round(n.ill*100)} %</div>
+      </div>${note}</article>`}).join('');
+
+  // plan
+  const P=data.place;
+  if(best&&vc!=='no'){
+    const next=new Date(Date.parse(best.D+'T12:00:00Z')+864e5).toISOString().slice(0,10);
+    const w0=best.clear[0]?fmtTime(best.clear[0].t):'—',w1=best.clear.length?fmtTime(best.clear[best.clear.length-1].t+3600e3):'—';
+    $('plan-h').textContent='План: '+dlabel(best.D)+' → '+dlabel(next);
+    const steps=[['09:10','Вылет из Пулково, утренний рейс. В Мурманске около 11:15.'],['12:00','Обед и прогулка по Мурманску: набережная, ледокол «Ленин», «Алёша».'],['16:00','Трансфер в Ура-Губу: около '+P.fromAirportKm+' км и '+P.fromAirportMin+' минут на машине. Заселение в домик.'],[w0,'Начало ясного окна. Выходим смотреть на небо, ищем сияние на севере над губой.'],[w1,'Небо ясное как минимум до этого времени. Пик сияния часто бывает около полуночи, поэтому рано не уходите.'],['утро','Выспаться, вернуться в аэропорт и улететь в Петербург.']];
+    $('plan').innerHTML=steps.map(s=>`<li><time>${esc(s[0])}</time><span>${esc(s[1])}</span></li>`).join('');
+  } else {
+    $('plan').innerHTML='<li><time>—</time><span>Ясной ночи с хорошим шансом пока нет. Как только появится, здесь будет план по часам.</span></li>';
+  }
+  // tickets
+  const T=data.tickets||{},D=best?best.D:tomorrow;
+  const back=new Date(Date.parse(D+'T12:00:00Z')+864e5).toISOString().slice(0,10);
+  const dm=s=>s.slice(8,10)+s.slice(5,7);
+  const E=T[D]||{};
+  const rub=n=>Math.round(n).toLocaleString('ru-RU')+' ₽';
+  const hm=iso=>iso?iso.slice(11,16):'';
+  const fl=o=>[o.flight,hm(o.dep)?'вылет '+hm(o.dep):'',o.transfers?'с пересадкой':'прямой'].filter(Boolean).join(' · ');
+  let h=`<div class="small">${esc(dlabel(D))} → ${esc(dlabel(back))}</div>`;
+  if(E.rt&&E.rt.price){h+=`<div class="price">${esc(rub(E.rt.price*2))}</div><div class="small">туда-обратно на двоих (${esc(rub(E.rt.price))} с человека) · ${esc(fl(E.rt))}</div>`}
+  else if(E.out&&E.back&&E.out.price&&E.back.price){const sum=E.out.price+E.back.price;h+=`<div class="price">${esc(rub(sum*2))}</div><div class="small">туда-обратно на двоих, двумя билетами</div>`}
+  else if(E.out&&(E.out.price||E.out.from)){h+=`<div class="price">от ${esc(rub(E.out.price||E.out.from))}</div><div class="small">за одного, только туда${E.out.flight?' · '+esc(E.out.flight):''}</div>`}
+  else h+='<div class="price">цена по кнопке</div><div class="small">На эти даты Авиасейлс пока ничего не нашёл в своей базе.</div>';
+  if(E.out&&E.out.price)h+=`<div class="small">Туда: ${esc(rub(E.out.price))} · ${esc(fl(E.out))}</div>`;
+  if(E.back&&E.back.price)h+=`<div class="small">Обратно: ${esc(rub(E.back.price))} · ${esc(fl(E.back))}</div>`;
+  $('tix').innerHTML=h;
+  const avLink=(E.rt&&E.rt.link&&/^https:\/\/www\.aviasales\.ru\//.test(E.rt.link))?E.rt.link:`https://www.aviasales.ru/search/LED${dm(D)}MMK${dm(back)}2`;
+  const L=[['Авиасейлс',avLink,''],['Яндекс Путешествия',`https://travel.yandex.ru/avia/search/result/?fromId=c2&toId=c23&when=${D}&return_date=${back}&adult_seats=2&klass=economy`,'alt'],['Домики в Ура-Губе','https://yandex.ru/maps/?text='+encodeURIComponent('Ура-Губа гостевые домики'),'alt'],['Маршрут из аэропорта',`https://yandex.ru/maps/?rtext=68.7838,32.7559~${P.lat},${P.lon}&rtt=auto`,'alt']];
+  $('links').innerHTML=L.map(l=>`<a class="btn ${l[2]}" href="${esc(l[1])}">${esc(l[0])}</a>`).join('');
+  $('tixnote').textContent=(T.note||'')+(T.checked?' Проверено '+T.checked+'.':'')+((data.errors||[]).length?' Часть источников при последнем обновлении не ответила, показаны прошлые данные.':'');
+  $('src').textContent='Источники: '+data.sources.weather+'; NOAA SWPC, прогноз Kp от '+new Date(utc(data.sources.kpIssued)+MSK).toISOString().slice(0,16).replace('T',' ')+' МСК. '+data.sources.kpNote+'.';
+}
+
+let seed=null;try{seed=JSON.parse($('seed').textContent)}catch(e){}
+fetch('data.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw 0;return r.json()}).then(render).catch(()=>{
+  if(seed&&seed.hourly.length)render(seed);else{$('verdict').textContent='Нет данных';$('sum').textContent='Не удалось загрузить прогноз. Попробуйте обновить страницу.'}
+});
+}
+</script>
+</body>
+</html>
