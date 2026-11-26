@@ -25,25 +25,26 @@ h1{font-size:clamp(32px,6vw,52px)}h2{font-size:clamp(22px,3.4vw,30px);margin-bot
 a{color:var(--go)}
 .band{padding:clamp(28px,4vw,64px) max(5vw,16px)}
 .wrap{max-width:1240px;margin:0 auto}
-.hero{position:relative;padding:0;min-height:520px;display:grid;overflow:hidden}
+.hero{position:relative;padding:0;min-height:clamp(240px,36vh,340px);display:grid;overflow:hidden}
 .hero svg{position:absolute;inset:0;width:100%;height:100%}
-.hero .txt{position:relative;align-self:end;padding:clamp(28px,4vw,56px) max(5vw,16px);max-width:1240px;width:100%;margin:0 auto}
+.hero .txt{position:relative;align-self:end;padding:20px max(5vw,16px);max-width:1240px;width:100%;margin:0 auto}
 .kick{color:var(--mute);font-size:14px;margin-bottom:10px}
-.verdict{font-size:clamp(40px,8vw,76px);font-family:Unbounded,sans-serif;font-weight:700;line-height:1;margin:6px 0 12px}
-.big{font-size:clamp(20px,3vw,26px);font-weight:600;max-width:40ch}
-.meta{color:var(--mute);font-size:14px;margin-top:14px}
+.verdict{font-size:clamp(38px,6vw,60px);font-family:Unbounded,sans-serif;font-weight:700;line-height:1;margin:4px 0 10px}
+.big{font-size:clamp(17px,2.2vw,21px);font-weight:600;max-width:46ch}
+.meta{color:var(--mute);font-size:13px;margin-top:8px}
 .nights{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px}
-.card{background:var(--bg2);border:1px solid var(--line);border-radius:18px;padding:20px}
+.card{background:var(--bg2);border:1px solid var(--line);border-radius:18px;padding:16px 18px}
+.band.first{padding-top:20px}.band.first h2{margin-bottom:12px}
 .card.best{border-color:var(--go)}
 .row{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
-.pct{font:700 40px/1 Unbounded,sans-serif}
+.pct{font:700 34px/1 Unbounded,sans-serif}
 .tag{font-size:14px;font-weight:800;padding:4px 10px;border-radius:99px;background:#ffffff12;white-space:nowrap}
-.bars{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin:16px 0 4px;height:70px;align-items:end}
+.bars{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin:12px 0 4px;height:46px;align-items:end}
 .bars i{display:block;border-radius:4px 4px 2px 2px;background:var(--go);min-height:3px}
 .bars i.cl{background:#4a5d69}
 .hrs{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;font-size:13px;color:var(--mute);text-align:center}
-.facts{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;margin-top:16px;font-size:15px}
-.facts b{display:block;font-size:13px;color:var(--mute);font-weight:600}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;margin-top:12px;font-size:14px;line-height:1.35}
+.facts b{display:block;font-size:12px;white-space:nowrap;color:var(--mute);font-weight:600}
 .kpm{height:8px;border-radius:9px;background:#ffffff14;margin-top:6px;overflow:hidden}.kpm i{display:block;height:100%;background:var(--go)}
 .plan{list-style:none;padding:0;margin:0;display:grid;gap:2px}
 .plan li{display:grid;grid-template-columns:5.5em 1fr;gap:16px;padding:12px 0;border-top:1px solid var(--line)}
@@ -58,30 +59,38 @@ a{color:var(--go)}
 ul.how{padding-left:1.1em;margin:0}ul.how li{margin:6px 0}
 footer{color:var(--mute);font-size:14px}
 @media(prefers-reduced-motion:no-preference){.curtain{animation:sway 9s ease-in-out infinite alternate;transform-origin:50% 100%}@keyframes sway{to{transform:skewX(-6deg) translateX(2%)}}}
-@media(max-width:600px){.hero{min-height:560px}.plan li{grid-template-columns:4.6em 1fr}}
+@media(max-width:600px){#moon{display:none}.hero{min-height:470px}.hero .txt{align-self:start}.plan li{grid-template-columns:4.6em 1fr}}
 </style>
 </head>
 <body>
 <header class="hero" id="hero">
-  <svg id="sky" viewBox="0 0 1200 560" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <svg id="sky" viewBox="0 0 1600 380" preserveAspectRatio="xMaxYMax slice" aria-hidden="true">
     <defs>
-      <linearGradient id="g-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#050b12"/><stop offset="1" stop-color="#0d2230"/></linearGradient>
+      <linearGradient id="g-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#040910"/><stop offset="1" stop-color="#0e2533"/></linearGradient>
       <linearGradient id="g-aur" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9ffd9" stop-opacity="0"/><stop offset=".45" stop-color="#5ff0a0" stop-opacity=".75"/><stop offset="1" stop-color="#2bbf86" stop-opacity="0"/></linearGradient>
-      <filter id="blur"><feGaussianBlur stdDeviation="14"/></filter>
-      <linearGradient id="g-sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#123040"/><stop offset="1" stop-color="#08131c"/></linearGradient>
+      <filter id="blur"><feGaussianBlur stdDeviation="12"/></filter>
+      <linearGradient id="g-sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16394a"/><stop offset="1" stop-color="#0a1c27"/></linearGradient>
+      <radialGradient id="g-lamp"><stop offset="0" stop-color="#ffd98a" stop-opacity=".55"/><stop offset="1" stop-color="#ffd98a" stop-opacity="0"/></radialGradient>
     </defs>
-    <rect width="1200" height="560" fill="url(#g-sky)"/>
+    <rect width="1600" height="380" fill="url(#g-sky)"/>
     <g id="stars" fill="#eaf2f4"></g>
     <g id="aur" filter="url(#blur)"><g class="curtain">
-      <path d="M-40 300 C 180 140, 380 260, 600 150 S 980 80, 1240 210 L1240 320 C 980 200, 760 300, 600 260 S 200 260, -40 380Z" fill="url(#g-aur)"/>
-      <path d="M100 240 C 320 90, 520 200, 700 110 S 1000 60, 1180 140 L1180 200 C 1000 120, 820 210, 700 180 S 320 170, 100 300Z" fill="url(#g-aur)" opacity=".7"/>
+      <path d="M-40 170 C 260 40, 520 150, 820 70 S 1300 20, 1640 120 L1640 230 C 1300 130, 1000 220, 820 190 S 260 180, -40 270Z" fill="url(#g-aur)"/>
+      <path d="M120 130 C 420 20, 700 110, 940 40 S 1340 10, 1580 70 L1580 120 C 1340 60, 1100 140, 940 120 S 420 100, 120 190Z" fill="url(#g-aur)" opacity=".7"/>
     </g></g>
-    <circle id="moon" cx="1010" cy="96" r="22" fill="#f4f1e6" opacity=".85"/>
-    <path d="M0 430 L120 380 L230 405 L360 350 L470 392 L600 362 L720 398 L860 340 L990 386 L1100 360 L1200 380 L1200 560 L0 560Z" fill="#0a1a24"/>
-    <path d="M0 430 L120 380 L230 405 L360 350 L470 392 L600 362 L720 398 L860 340 L990 386 L1100 360 L1200 380" fill="none" stroke="#d9e9ef" stroke-opacity=".35" stroke-width="2"/>
-    <rect y="455" width="1200" height="105" fill="url(#g-sea)"/>
-    <g fill="#d6f8e6" opacity=".18"><rect x="180" y="470" width="300" height="3" rx="2"/><rect x="560" y="490" width="380" height="3" rx="2"/><rect x="300" y="515" width="240" height="2" rx="2"/></g>
-    <g fill="#061017"><path d="M842 455 l18 -34 l18 34z"/><rect x="848" y="455" width="24" height="16"/><rect x="855" y="459" width="8" height="8" fill="#ffd98a" opacity=".9"/></g>
+    <circle id="moon" cx="1470" cy="128" r="15" fill="#f4f1e6" opacity=".85"/>
+    <path d="M0 262 L150 232 L300 252 L470 214 L620 248 L790 224 L950 256 L1120 210 L1290 246 L1440 226 L1600 240 L1600 300 L0 300Z" fill="#0a1a24"/>
+    <path d="M0 262 L150 232 L300 252 L470 214 L620 248 L790 224 L950 256 L1120 210 L1290 246 L1440 226 L1600 240" fill="none" stroke="#d9e9ef" stroke-opacity=".3" stroke-width="2"/>
+    <rect y="290" width="1600" height="50" fill="url(#g-sea)"/>
+    <g fill="#8ff5c0" opacity=".22"><rect x="380" y="300" width="380" height="3" rx="2"/><rect x="900" y="312" width="420" height="3" rx="2"/><rect x="620" y="324" width="260" height="2" rx="1"/></g>
+    <path d="M0 338 C 300 328, 700 342, 1000 333 S 1400 327, 1600 334 L1600 380 L0 380Z" fill="#13293a"/>
+    <path d="M0 338 C 300 328, 700 342, 1000 333 S 1400 327, 1600 334" fill="none" stroke="#cfe3ea" stroke-opacity=".45" stroke-width="2"/>
+    <ellipse cx="1322" cy="346" rx="60" ry="12" fill="url(#g-lamp)"/>
+    <g fill="#050d13"><path d="M1292 344 L1322 296 L1352 344Z"/><rect x="1316" y="322" width="12" height="12" fill="#ffd98a"/></g>
+    <g fill="#050d13" stroke="#2c5263" stroke-width="1">
+      <g transform="translate(1406 352) scale(1.25)"><circle cx="0" cy="-33" r="5.5"/><path d="M-7 -11 L-6 -25 Q0 -29 6 -25 L7 -11Z"/><path d="M-4 -11 L-4 0 M4 -11 L4 0" stroke="#050d13" stroke-width="3.5" stroke-linecap="round"/><path d="M5 -24 L18 -42" stroke="#050d13" stroke-width="3.5" stroke-linecap="round"/></g>
+      <g transform="translate(1440 353) scale(1.25)"><circle cx="0" cy="-31" r="5.5"/><circle cx="1" cy="-38.5" r="2.2"/><path d="M-7 -10 L-6 -23 Q0 -27 6 -23 L7 -10Z"/><path d="M-4 -10 L-4 0 M4 -10 L4 0" stroke="#050d13" stroke-width="3.5" stroke-linecap="round"/><path d="M-6 -21 L-11 -12" stroke="#050d13" stroke-width="3.2" stroke-linecap="round"/></g>
+    </g>
   </svg>
   <div class="txt">
     <div class="kick">Ура-Губа, Кольский полуостров · Охота за сиянием</div>
@@ -91,7 +100,7 @@ footer{color:var(--mute);font-size:14px}
   </div>
 </header>
 
-<section class="band"><div class="wrap">
+<section class="band first"><div class="wrap">
   <h2>Ближайшие ночи</h2>
   <div class="nights" id="nights"></div>
   <p class="small">Столбики показывают ясность неба по часам с 18:00 до 03:00: зелёный значит ясно, серый значит облачно. Время московское.</p>
@@ -115,7 +124,7 @@ footer{color:var(--mute);font-size:14px}
     <h2>Как считаем шанс</h2>
     <ul class="how">
       <li><b>Небо.</b> Средняя ясность с 18:00 до 03:00. Без ясного неба сияния не видно, поэтому это главный множитель.</li>
-      <li><b>Космос.</b> Максимальный прогноз Kp за ночь. На широте Ура-Губы (69° с. ш.) сияние видно уже при Kp 2–3, а при Kp 4+ оно яркое и подвижное.</li>
+      <li><b>Космос.</b> Максимальный прогноз Kp за ночь. <b>Kp</b> — индекс геомагнитной активности по шкале от 0 до 9: насколько сильно поток частиц от Солнца раскачивает магнитное поле Земли. Чем выше Kp, тем ярче сияние и тем южнее его видно. Для Ура-Губы (69° с. ш.): Kp 2–3 — слабое сияние, видно на фото и глазами в тёмном месте; Kp 4 — яркое и подвижное; Kp 5 и выше — магнитная буря (G1), сияние на полнеба. Вспышка или выброс на Солнце долетает до Земли за 1–3 суток, это и попадает в прогноз Kp.</li>
       <li><b>Луна.</b> Если она ярче 60 %, слабое сияние бледнеет, и шанс снижается на 12 %.</li>
       <li><b>Вердикт:</b> от 55 % «Едем», от 30 % «Можно рискнуть», меньше 30 % «Ждём».</li>
     </ul>
@@ -147,7 +156,7 @@ const fmtTime=ms=>new Date(ms+MSK).toISOString().slice(11,16);
 const moonIll=ms=>{const age=((ms-Date.UTC(2000,0,6,18,14))/864e5)%29.530588853;return (1-Math.cos(2*Math.PI*age/29.530588853))/2};
 const act=kp=>{const p=[[0,.15],[1,.35],[2,.6],[3,.8],[4,.92],[5,1]];if(kp>=5)return 1;for(let i=1;i<p.length;i++)if(kp<=p[i][0]){const[a,b]=p[i-1],[c,e]=p[i];return b+(kp-a)/(c-a)*(e-b)}return 1};
 const feels=(t,v)=>{const k=v*3.6;return k<4.8||t>10?t:13.12+.6215*t-11.37*k**.16+.3965*t*k**.16};
-const kpWord=k=>k>=5?'буря':k>=4?'активно':k>=3?'умеренно':k>=2?'слабо':'тихо';
+const kpWord=k=>k>=5?'буря':k>=4?'высокая':k>=3?'умеренная':k>=2?'слабая':'тихо';
 
 function nightOf(D,data){
   const start=utc(D+'T15'),hours=[];
@@ -177,13 +186,13 @@ function render(data){
   const rel=d=>d===today?'сегодня':d===tomorrow?'завтра':'';
   $('verdict').textContent=best&&vc!=='no'?vw:'Ждём';
   $('verdict').style.color=vc==='go'?'var(--go)':vc==='maybe'?'var(--maybe)':'var(--ink)';
-  $('sum').textContent=best?(vc==='no'?'В ближайшие ночи хороших окон нет: лучшая ночь '+dlabel(best.D)+' даёт '+best.chance+' %.':'Лучшая ночь '+(rel(best.D)?rel(best.D)+', ':'')+dlabel(best.D)+': шанс '+best.chance+' %, ясно '+best.clear.length+' ч из 10, Kp до '+best.kp.toFixed(1)+'.'):'Прогноз на ближайшие ночи ещё не готов.';
+  $('sum').textContent=best?(vc==='no'?'В ближайшие ночи хороших окон нет: лучшая ночь '+dlabel(best.D)+' даёт '+best.chance+' %.':'Лучшая ночь '+(rel(best.D)?rel(best.D)+', ':'')+dlabel(best.D)+': шанс '+best.chance+' %, ясно '+best.clear.length+' ч из 10, магнитная активность Kp до '+best.kp.toFixed(1)+' ('+kpWord(best.kp)+').'):'Прогноз на ближайшие ночи ещё не готов.';
   $('meta').textContent='Обновлено '+new Date(utc(data.updated)+MSK).toISOString().slice(0,16).replace('T',' ')+' МСК · обновляется каждые 3 часа';
   // sky picture follows the best chance
   const c=best?best.chance/100:.1;
   $('aur').style.opacity=(.15+.85*c).toFixed(2);
   $('moon').setAttribute('opacity',best?(.25+.7*best.ill).toFixed(2):'.5');
-  let st='';for(let i=0;i<70;i++){const x=(i*173)%1200,y=(i*97)%330,r=i%7?0.9:1.7;st+=`<circle cx="${x}" cy="${y}" r="${r}" opacity="${(.3+(i%5)/8).toFixed(2)}"/>`}
+  let st='';for(let i=0;i<90;i++){const x=(i*173)%1600,y=(i*97)%215,r=i%7?0.9:1.7;st+=`<circle cx="${x}" cy="${y}" r="${r}" opacity="${(.3+(i%5)/8).toFixed(2)}"/>`}
   $('stars').innerHTML=st;
 
   $('nights').innerHTML=nights.map(n=>{
@@ -196,10 +205,10 @@ function render(data){
       <div class="row" style="margin-top:10px"><span class="pct">${n.chance==null?'—':n.chance+' %'}</span><span class="small">шанс увидеть</span></div>
       <div class="bars" aria-label="Ясность неба по часам">${bars}</div><div class="hrs">${hrs}</div>
       <div class="facts">
-        <div><b>Небо</b>ясно ${n.clear.length} ч из 10</div>
-        <div><b>Kp, максимум</b>${n.kp==null?'нет прогноза':n.kp.toFixed(1)+' · '+kpWord(n.kp)}<div class="kpm"><i style="width:${n.kp==null?0:Math.min(100,n.kp/6*100)}%"></i></div></div>
-        <div><b>Температура</b>до ${Math.round(n.tmin)}°, по ощущению ${Math.round(n.fmin)}°</div>
-        <div><b>Ветер и луна</b>до ${Math.round(n.wmax)} м/с · луна ${Math.round(n.ill*100)} %</div>
+        <div><b>Небо</b>ясно ${n.clear.length} из 10 ч</div>
+        <div><b>Активность Kp</b>${n.kp==null?'нет прогноза':n.kp.toFixed(1)+' · '+kpWord(n.kp)}<div class="kpm"><i style="width:${n.kp==null?0:Math.min(100,n.kp/6*100)}%"></i></div></div>
+        <div><b>Мороз</b>${Math.round(n.tmin)}°, ощущается ${Math.round(n.fmin)}°</div>
+        <div><b>Ветер и луна</b>${Math.round(n.wmax)} м/с · луна ${Math.round(n.ill*100)} %</div>
       </div>${note}</article>`}).join('');
 
   // plan
@@ -208,7 +217,9 @@ function render(data){
     const next=new Date(Date.parse(best.D+'T12:00:00Z')+864e5).toISOString().slice(0,10);
     const w0=best.clear[0]?fmtTime(best.clear[0].t):'—',w1=best.clear.length?fmtTime(best.clear[best.clear.length-1].t+3600e3):'—';
     $('plan-h').textContent='План: '+dlabel(best.D)+' → '+dlabel(next);
-    const steps=[['09:10','Вылет из Пулково, утренний рейс. В Мурманске около 11:15.'],['12:00','Обед и прогулка по Мурманску: набережная, ледокол «Ленин», «Алёша».'],['16:00','Трансфер в Ура-Губу: около '+P.fromAirportKm+' км и '+P.fromAirportMin+' минут на машине. Заселение в домик.'],[w0,'Начало ясного окна. Выходим смотреть на небо, ищем сияние на севере над губой.'],[w1,'Небо ясное как минимум до этого времени. Пик сияния часто бывает около полуночи, поэтому рано не уходите.'],['утро','Выспаться, вернуться в аэропорт и улететь в Петербург.']];
+    const T0=(data.tickets||{})[best.D]||{},o0=[T0.out,T0.rt].find(o=>o&&o.dep&&!o.transfers);
+    const depT=o0?o0.dep.slice(11,16):'09:10',arrT=o0?new Date(Date.parse(o0.dep)+125*60e3+MSK).toISOString().slice(11,16):'11:15';
+    const steps=[[depT,'Вылет из Пулково прямым рейсом'+(o0&&o0.flight?' '+o0.flight:'')+'. В Мурманске около '+arrT+'.'],['12:00','Обед и прогулка по Мурманску: набережная, ледокол «Ленин», «Алёша».'],['16:00','Трансфер в Ура-Губу: около '+P.fromAirportKm+' км и '+P.fromAirportMin+' минут на машине. Заселение в домик.'],[w0,'Начало ясного окна. Выходим смотреть на небо, ищем сияние на севере над губой.'],[w1,'Небо ясное как минимум до этого времени. Пик сияния часто бывает около полуночи, поэтому рано не уходите.'],['утро','Выспаться, вернуться в аэропорт и улететь в Петербург.']];
     $('plan').innerHTML=steps.map(s=>`<li><time>${esc(s[0])}</time><span>${esc(s[1])}</span></li>`).join('');
   } else {
     $('plan').innerHTML='<li><time>—</time><span>Ясной ночи с хорошим шансом пока нет. Как только появится, здесь будет план по часам.</span></li>';
@@ -217,23 +228,24 @@ function render(data){
   const T=data.tickets||{},D=best?best.D:tomorrow;
   const back=new Date(Date.parse(D+'T12:00:00Z')+864e5).toISOString().slice(0,10);
   const dm=s=>s.slice(8,10)+s.slice(5,7);
-  const E=T[D]||{};
+  const E0=T[D]||{},ok=o=>o&&(o.price||o.from)&&!o.transfers&&(o.ret?o.rtransfers===0:true)?o:null;
+  const E={rt:ok(E0.rt),out:ok(E0.out),back:ok(E0.back)};
   const rub=n=>Math.round(n).toLocaleString('ru-RU')+' ₽';
   const hm=iso=>iso?iso.slice(11,16):'';
   const tr=n=>n==null?'':n?'с пересадкой':'прямой';
   const fl=o=>[o.flight,hm(o.dep)?'вылет '+hm(o.dep):'',o.ret?('туда '+tr(o.transfers)+(o.rtransfers!=null?', обратно '+tr(o.rtransfers):'')+(hm(o.ret)?', обратно в '+hm(o.ret):'')):tr(o.transfers)].filter(Boolean).join(' · ');
   let h=`<div class="small">${esc(dlabel(D))} → ${esc(dlabel(back))}</div>`;
-  if(E.rt&&E.rt.price){h+=`<div class="price">${esc(rub(E.rt.price*2))}</div><div class="small">туда-обратно на двоих (${esc(rub(E.rt.price))} с человека) · ${esc(fl(E.rt))}</div>`}
+  if(E.rt&&E.rt.price){h+=`<div class="price">${esc(rub(E.rt.price*2))}</div><div class="small">туда-обратно на двоих, то есть ${esc(rub(E.rt.price))} с человека · ${esc(fl(E.rt))}</div>`}
   else if(E.out&&E.back&&E.out.price&&E.back.price){const sum=E.out.price+E.back.price;h+=`<div class="price">${esc(rub(sum*2))}</div><div class="small">туда-обратно на двоих, двумя билетами</div>`}
   else if(E.out&&(E.out.price||E.out.from)){h+=`<div class="price">от ${esc(rub(E.out.price||E.out.from))}</div><div class="small">за одного, только туда${E.out.flight?' · '+esc(E.out.flight):''}</div>`}
   else h+='<div class="price">цена по кнопке</div><div class="small">На эти даты Авиасейлс пока ничего не нашёл в своей базе.</div>';
-  if(E.out&&E.out.price)h+=`<div class="small">Туда: ${esc(rub(E.out.price))} · ${esc(fl(E.out))}</div>`;
-  if(E.back&&E.back.price)h+=`<div class="small">Обратно: ${esc(rub(E.back.price))} · ${esc(fl(E.back))}</div>`;
+  if(E.out&&E.out.price)h+=`<div class="small">Только туда: ${esc(rub(E.out.price))} с человека · ${esc(fl(E.out))}</div>`;
+  if(E.back&&E.back.price)h+=`<div class="small">Только обратно: ${esc(rub(E.back.price))} с человека · ${esc(fl(E.back))}</div>`;
   $('tix').innerHTML=h;
   const avLink=(E.rt&&E.rt.link&&/^https:\/\/www\.aviasales\.ru\//.test(E.rt.link))?E.rt.link:`https://www.aviasales.ru/search/LED${dm(D)}MMK${dm(back)}2`;
   const L=[['Авиасейлс',avLink,''],['Яндекс Путешествия',`https://travel.yandex.ru/avia/search/result/?fromId=c2&toId=c23&when=${D}&return_date=${back}&adult_seats=2&klass=economy`,'alt'],['Домики в Ура-Губе','https://yandex.ru/maps/?text='+encodeURIComponent('Ура-Губа гостевые домики'),'alt'],['Маршрут из аэропорта',`https://yandex.ru/maps/?rtext=68.7838,32.7559~${P.lat},${P.lon}&rtt=auto`,'alt']];
   $('links').innerHTML=L.map(l=>`<a class="btn ${l[2]}" href="${esc(l[1])}">${esc(l[0])}</a>`).join('');
-  $('tixnote').textContent=(T.note||'')+(T.checked?' Проверено '+T.checked+'.':'')+((data.errors||[]).length?' Часть источников при последнем обновлении не ответила, показаны прошлые данные.':'');
+  $('tixnote').textContent=(E.rt||E.out||E.back?'Только прямые рейсы. Это самые дешёвые билеты, которые пользователи Авиасейлса находили за последние 2–7 дней, поэтому при покупке цена может отличаться.':(T.note||''))+(T.checked?' Проверено '+T.checked+'.':'')+((data.errors||[]).length?' Часть источников при последнем обновлении не ответила, показаны прошлые данные.':'');
   $('src').textContent='Источники: '+data.sources.weather+'; NOAA SWPC, прогноз Kp от '+new Date(utc(data.sources.kpIssued)+MSK).toISOString().slice(0,16).replace('T',' ')+' МСК. '+data.sources.kpNote+'.';
 }
 

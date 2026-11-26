@@ -67,7 +67,7 @@ def weather():
 
 
 def tp(token, **params):
-    q = urllib.parse.urlencode({"currency": "rub", "sorting": "price", "limit": 3, "market": "ru", **params})
+    q = urllib.parse.urlencode({"currency": "rub", "sorting": "price", "limit": 3, "market": "ru", "direct": "true", **params})
     res = json.loads(get("https://api.travelpayouts.com/aviasales/v3/prices_for_dates?" + q,
                          {"X-Access-Token": token}))
     return res.get("data") or []
@@ -105,8 +105,8 @@ def tickets(days):
             entry["back"] = offer(bk[0])
         res[d] = entry
     res["checked"] = dt.datetime.now(MSK).strftime("%Y-%m-%d %H:%M")
-    res["note"] = ("Цены Авиасейлса за одного: самые дешёвые билеты, которые находили пользователи "
-                   "за последние 2–7 дней. Перед покупкой цена может отличаться.")
+    res["note"] = ("Только прямые рейсы: самые дешёвые билеты, которые пользователи Авиасейлса "
+                   "находили за последние 2–7 дней. При покупке цена может отличаться.")
     return res
 
 
