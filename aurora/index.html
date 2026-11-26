@@ -293,7 +293,7 @@ function render(data){
   if(rt){
     h+=`<div class="price">${esc(rub(rt.price*2))}</div><div class="small">${esc(carrier(rt))}: туда ${esc(hm(rt.dep))}, обратно ${esc(dd(rt.ret))} в ${esc(hm(rt.ret))}</div>`;
     if(opts.length>1)h+='<div class="small" style="margin-top:10px">Другие перевозчики:</div>'+opts.slice(1,4).map(o=>`<div class="small">${esc(carrier(o))} — ${esc(rub(o.price*2))} · туда ${esc(hm(o.dep))}, обратно ${esc(hm(o.ret))}</div>`).join('');
-    else h+='<div class="small" style="margin-top:10px">Других прямых вариантов туда-обратно на эти даты Авиасейлс сейчас не знает.</div>';
+    else h+='<div class="small" style="margin-top:10px">В базе Авиасейлса на эти даты есть только этот вариант. Все прямые рейсы с ценами (Smartavia, «Россия», Аэрофлот) — <a href="https://rasp.yandex.ru/plane/saint-petersburg--murmansk">в Яндекс Расписаниях</a>.</div>';
   } else h+='<div class="price">цена по кнопке</div><div class="small">Прямых билетов туда-обратно на эти даты в базе Авиасейлса пока нет.</div>';
   $('tix').innerHTML=h;
   const avLink=rt&&rt.link&&/^https:\/\/www\.aviasales\.ru\//.test(rt.link)?rt.link:`https://www.aviasales.ru/search/LED${dm(D)}MMK${dm(back)}2`;
