@@ -87,83 +87,41 @@ def cloud_models():
 
 AIRLINES = {"5N": "Smartavia", "SU": "Аэрофлот", "FV": "Россия", "DP": "Победа", "A4": "Азимут",
             "WZ": "Red Wings", "UT": "ЮТэйр", "N4": "Nordwind", "S7": "S7", "YC": "Ямал"}
-FLIGHT_RE = r"\b(" + "|".join(AIRLINES) + r")[\s\u00a0\-]?(\d{3,4})\b"
 
 
-def enclosing_object(text, pos, limit=6000):
-    """Текст ближайшего JSON-объекта {...}, внутри которого стоит pos."""
-    depth, start = 0, None
-    for j in range(pos, max(-1, pos - limit), -1):
-        c = text[j]
-        if c == "}":
-            depth += 1
-        elif c == "{":
-            if depth == 0:
-                start = j
-                break
-            depth -= 1
-    if start is None:
-        return text[max(0, pos - 300): pos + 300]
-    depth = 0
-    for k in range(start, min(len(text), start + limit)):
-        c = text[k]
-        if c == "{":
-            depth += 1
-        elif c == "}":
-            depth -= 1
-            if depth == 0:
-                return text[start:k + 1]
-    return text[start:start + limit]
-
-
-def rasp_schedule(from_id, to_id, date):
-    """Прямые рейсы на дату из Яндекс Расписаний: [{"flight": "FV 6343", "dep": "09:10", "arr": "11:15"}]."""
-    url = "https://rasp.yandex.ru/search/plane/?" + urllib.parse.urlencode(
-        {"fromId": from_id, "toId": to_id, "when": date})
-    page = get(url, {"Accept-Language": "ru-RU,ru;q=0.9"})
-    dbg = os.environ.get("AURORA_DEBUG_DIR")
-    if dbg:  # сырая страница для отладки разбора
-        os.makedirs(dbg, exist_ok=True)
-        open(os.path.join(dbg, f"rasp_{from_id}_{to_id}_{date}.html"), "w", encoding="utf-8").write(page)
-    if re.search(r"captcha|showcaptcha", page[:20000], re.I) and "5N" not in page and "FV" not in page:
-        raise RuntimeError("капча")
+def rasp_schedule(from_id, to_id, date, key):
+    """Прямые рейсы на дату через официальное API Яндекс Расписаний."""
+    url = "https://api.rasp.yandex.net/v3.0/search/?" + urllib.parse.urlencode({
+        "apikey": key, "format": "json", "from": from_id, "to": to_id, "lang": "ru_RU",
+        "date": date, "transport_types": "plane", "limit": 100})
+    data = json.loads(get(url))
     found = {}
-    # 1) данные внутри страницы (JSON): номер рейса рядом с ISO-временем вылета и прилёта
-    ms = list(re.finditer(r'"number"\s*:\s*"([A-Z0-9]{2})[\s\u00a0]?(\d{3,4})"', page))
-    for i, m in enumerate(ms):
-        code, num = m.group(1), m.group(2)
-        if code not in AIRLINES:
+    for seg in data.get("segments", []):
+        th = seg.get("thread") or {}
+        num = (th.get("number") or "").replace("\u00a0", " ").strip()
+        code = num.split(" ")[0] if num else ""
+        if code not in AIRLINES or seg.get("has_transfers"):
             continue
-        # окно — JSON-объект, в котором лежит этот номер рейса
-        win = enclosing_object(page, m.start())
-        dep = re.search(r'"departure(?:LocalDt|Dt)?"\s*:\s*"(\d{4}-\d\d-\d\dT(\d\d:\d\d))', win)
-        arr = re.search(r'"arrival(?:LocalDt|Dt)?"\s*:\s*"(\d{4}-\d\d-\d\dT(\d\d:\d\d))', win)
-        if dep and arr and dep.group(1).startswith(date):
-            found.setdefault(f"{code} {num}", {"dep": dep.group(2), "arr": arr.group(2)})
-    # 2) запасной путь: видимый текст — номер рейса и два времени после него
-    if not found:
-        text = re.sub(r"<[^>]+>", " ", page)
-        text = re.sub(r"\s+", " ", html.unescape(text))
-        for m in re.finditer(FLIGHT_RE, text):
-            times = re.findall(r"\b([01]\d|2[0-3]):([0-5]\d)\b", text[m.end(): m.end() + 400])
-            if len(times) >= 2:
-                found.setdefault(f"{m.group(1)} {m.group(2)}",
-                                 {"dep": ":".join(times[0]), "arr": ":".join(times[1])})
-    # убираем код-шеринг: SU 6343 — это тот же рейс, что FV 6343
+        dep, arr = seg.get("departure") or "", seg.get("arrival") or ""
+        found[num] = {"dep": dep[11:16], "arr": arr[11:16],
+                      "airline": AIRLINES.get(code) or (th.get("carrier") or {}).get("title", code)}
     out = []
     for f, t in sorted(found.items(), key=lambda x: x[1]["dep"]):
-        code, num = f.split()
-        if code == "SU" and f"FV {num}" in found:
+        code, n = f.split(" ", 1)
+        if code == "SU" and f"FV {n}" in found:  # код-шеринг: тот же самолёт
             continue
-        out.append({"flight": f, "airline": AIRLINES[code], **t})
+        out.append({"flight": f, **t})
     return out
 
 
 def schedules(days):
+    key = os.environ.get("YANDEX_RASP_KEY")
+    if not key:
+        return None
     res = {}
     for d in days:
         back = (dt.date.fromisoformat(d) + dt.timedelta(days=1)).isoformat()
-        res[d] = {"out": rasp_schedule("c2", "c23", d), "back": rasp_schedule("c23", "c2", back)}
+        res[d] = {"out": rasp_schedule("c2", "c23", d, key), "back": rasp_schedule("c23", "c2", back, key)}
         time.sleep(1)
     return res
 
@@ -244,7 +202,9 @@ def main(path):
     today = dt.datetime.now(MSK).date()
     days = [(today + dt.timedelta(days=i)).isoformat() for i in (1, 2, 3)]
     try:
-        data["schedule"] = schedules(days)
+        sch = schedules(days)
+        if sch is not None:
+            data["schedule"] = sch
     except Exception as e:
         errors.append(f"schedule: {e}")
     try:
