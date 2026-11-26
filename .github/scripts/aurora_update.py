@@ -113,9 +113,15 @@ def tickets(days):
     for d in days:
         back = (dt.date.fromisoformat(d) + dt.timedelta(days=1)).isoformat()
         entry = {}
-        rt = tp(token, origin="LED", destination="MMK", departure_at=d, return_at=back, one_way="false")
+        rt = tp(token, origin="LED", destination="MMK", departure_at=d, return_at=back, one_way="false", limit=30)
         if rt:
             entry["rt"] = offer(rt[0])
+            best = {}
+            for o in rt:  # самый дешёвый вариант у каждого перевозчика
+                a = o.get("airline")
+                if a and (a not in best or o.get("price", 1e9) < best[a].get("price", 1e9)):
+                    best[a] = o
+            entry["rt_options"] = [dict(offer(o), airline=a) for a, o in sorted(best.items(), key=lambda x: x[1].get("price", 1e9))]
         out = tp(token, origin="LED", destination="MMK", departure_at=d, one_way="true")
         if out:
             entry["out"] = offer(out[0])

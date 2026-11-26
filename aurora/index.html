@@ -276,41 +276,56 @@ function render(data){
         <div><b>Луна</b>${esc(moonTxt(n))}</div>
       </div>${note}</article>`}).join('');
 
-  // plan
-  const P=data.place;
+  // tickets
+  const P=data.place,T=data.tickets||{},D=best?best.D:tomorrow;
+  const back=new Date(Date.parse(D+'T12:00:00Z')+864e5).toISOString().slice(0,10);
+  const dm=s=>s.slice(8,10)+s.slice(5,7);
+  const AIR={'5N':'Smartavia','SU':'Аэрофлот','FV':'Россия','DP':'Победа','A4':'Азимут','WZ':'Red Wings','UT':'ЮТэйр','N4':'Nordwind','S7':'S7','YC':'Ямал','R3':'Якутия'};
+  const carrier=o=>{const c=o.airline||(o.flight||'').split(' ')[0];return AIR[c]||c||'—'};
+  const okRT=o=>o&&o.price&&!o.transfers&&o.rtransfers===0&&o.ret?o:null;
+  const E0=T[D]||{};
+  const opts=(E0.rt_options||[E0.rt]).map(okRT).filter(Boolean).sort((x,y)=>x.price-y.price);
+  const rt=opts[0]||null;
+  const rub=n=>Math.round(n).toLocaleString('ru-RU')+' ₽';
+  const hm=iso=>iso?iso.slice(11,16):'';
+  const dd=iso=>dlabel(iso.slice(0,10));
+  let h=`<div class="small">${esc(dlabel(D))} → ${esc(dlabel(back))} · прямые рейсы туда-обратно на двоих</div>`;
+  if(rt){
+    h+=`<div class="price">${esc(rub(rt.price*2))}</div><div class="small">${esc(carrier(rt))}: туда ${esc(hm(rt.dep))}, обратно ${esc(dd(rt.ret))} в ${esc(hm(rt.ret))}</div>`;
+    if(opts.length>1)h+='<div class="small" style="margin-top:10px">Другие перевозчики:</div>'+opts.slice(1,4).map(o=>`<div class="small">${esc(carrier(o))} — ${esc(rub(o.price*2))} · туда ${esc(hm(o.dep))}, обратно ${esc(hm(o.ret))}</div>`).join('');
+    else h+='<div class="small" style="margin-top:10px">Других прямых вариантов туда-обратно на эти даты Авиасейлс сейчас не знает.</div>';
+  } else h+='<div class="price">цена по кнопке</div><div class="small">Прямых билетов туда-обратно на эти даты в базе Авиасейлса пока нет.</div>';
+  $('tix').innerHTML=h;
+  const avLink=rt&&rt.link&&/^https:\/\/www\.aviasales\.ru\//.test(rt.link)?rt.link:`https://www.aviasales.ru/search/LED${dm(D)}MMK${dm(back)}2`;
+  const L=[['Авиасейлс',avLink,''],['Домики в Ура-Губе','https://yandex.ru/maps/?text='+encodeURIComponent('Ура-Губа гостевые домики'),'alt'],['Маршрут из аэропорта',`https://yandex.ru/maps/?rtext=68.7838,32.7559~${P.lat},${P.lon}&rtt=auto`,'alt']];
+  $('links').innerHTML=L.map(l=>`<a class="btn ${l[2]}" href="${esc(l[1])}">${esc(l[0])}</a>`).join('');
+  $('tixnote').textContent='Цены из базы Авиасейлса'+(T.checked?', проверено '+T.checked.slice(8,10)+'.'+T.checked.slice(5,7)+' в '+T.checked.slice(11,16):'')+'. При покупке могут отличаться.'+((data.errors||[]).length?' Часть источников при последнем обновлении не ответила.':'');
+
+  // plan — по выбранным билетам
   if(best&&vc!=='no'){
-    const next=new Date(Date.parse(best.D+'T12:00:00Z')+864e5).toISOString().slice(0,10);
+    const hhmm=ms=>fmtTime(ms);
+    const depMs=rt?Date.parse(rt.dep):utc(best.D+'T06')+10*60e3;
+    const arrMs=depMs+125*60e3;
+    const retMs=rt?Date.parse(rt.ret):utc(back+'T06')+60*60e3;
     const w0=best.clear[0]?fmtTime(best.clear[0].t):'—',w1=best.clear.length?fmtTime(best.clear[best.clear.length-1].t+3600e3):'—';
-    $('plan-h').textContent='План: '+dlabel(best.D)+' → '+dlabel(next);
-    const T0=(data.tickets||{})[best.D]||{},o0=[T0.out,T0.rt].find(o=>o&&o.dep&&!o.transfers);
-    const depT=o0?o0.dep.slice(11,16):'09:10',arrT=o0?new Date(Date.parse(o0.dep)+125*60e3+MSK).toISOString().slice(11,16):'11:15';
-    const steps=[[depT,'Вылет из Пулково прямым рейсом'+(o0&&o0.flight?' '+o0.flight:'')+'. В Мурманске около '+arrT+'.'],['12:00','Обед и прогулка по Мурманску: набережная, ледокол «Ленин», «Алёша».'],['16:00','Трансфер в Ура-Губу: около '+P.fromAirportKm+' км и '+P.fromAirportMin+' минут на машине. Заселение в домик.'],[w0,'Начало ясного окна. Выходим смотреть на небо, ищем сияние на севере над губой.'],[w1,'Небо ясное как минимум до этого времени. Пик сияния часто бывает около полуночи, поэтому рано не уходите.'],['утро','Выспаться, вернуться в аэропорт и улететь в Петербург.']];
+    const walk=Math.max(arrMs+60*60e3,utc(best.D+'T09'));
+    const toUra=Math.max(arrMs+3*3600e3,utc(best.D+'T13'));
+    const leave=retMs-(P.fromAirportMin+90)*60e3;
+    const retLocalH=new Date(retMs+MSK).getUTCHours();
+    $('plan-h').textContent='План: '+dlabel(best.D)+' → '+dlabel(back);
+    const steps=[
+      [hhmm(depMs),'Вылет из Пулково'+(rt?', '+carrier(rt):'')+'. В Мурманске около '+hhmm(arrMs)+'.'],
+      [hhmm(walk),'Обед и прогулка по Мурманску: набережная, ледокол «Ленин», «Алёша».'],
+      [hhmm(toUra),'Трансфер в Ура-Губу: около '+P.fromAirportKm+' км, '+P.fromAirportMin+' минут на машине. Заселение в домик.'],
+      [w0,'Начало ясного окна. Выходим смотреть на небо, ищем сияние на севере над губой.'],
+      [w1,'Небо ясное как минимум до этого времени. Пик сияния часто около полуночи, рано не уходите.']];
+    if(retLocalH>=14)steps.push(['день','Выспаться, позавтракать, погулять по берегу губы.']);
+    steps.push([hhmm(leave),'Выезд в аэропорт: дорога около часа плюс запас на регистрацию.']);
+    steps.push([hhmm(retMs),'Вылет в Петербург'+(rt?', '+carrier(rt):'')+'. Дома около '+hhmm(retMs+125*60e3)+'.']);
     $('plan').innerHTML=steps.map(s=>`<li><time>${esc(s[0])}</time><span>${esc(s[1])}</span></li>`).join('');
   } else {
     $('plan').innerHTML='<li><time>—</time><span>Ясной ночи с хорошим шансом пока нет. Как только появится, здесь будет план по часам.</span></li>';
   }
-  // tickets
-  const T=data.tickets||{},D=best?best.D:tomorrow;
-  const back=new Date(Date.parse(D+'T12:00:00Z')+864e5).toISOString().slice(0,10);
-  const dm=s=>s.slice(8,10)+s.slice(5,7);
-  const E0=T[D]||{},ok=o=>o&&(o.price||o.from)&&!o.transfers&&(o.ret?o.rtransfers===0:true)?o:null;
-  const E={rt:ok(E0.rt),out:ok(E0.out),back:ok(E0.back)};
-  const rub=n=>Math.round(n).toLocaleString('ru-RU')+' ₽';
-  const hm=iso=>iso?iso.slice(11,16):'';
-  const tr=n=>n==null?'':n?'с пересадкой':'прямой';
-  const fl=o=>[o.flight,hm(o.dep)?'вылет '+hm(o.dep):'',o.ret?((!o.transfers&&o.rtransfers===0?'оба рейса прямые':'туда '+tr(o.transfers)+', обратно '+tr(o.rtransfers))+(hm(o.ret)?' · обратно в '+hm(o.ret):'')):tr(o.transfers)].filter(Boolean).join(' · ');
-  let h=`<div class="small">${esc(dlabel(D))} → ${esc(dlabel(back))}</div>`;
-  if(E.rt&&E.rt.price){h+=`<div class="price">${esc(rub(E.rt.price*2))}</div><div class="small">туда-обратно на двоих, то есть ${esc(rub(E.rt.price))} с человека · ${esc(fl(E.rt))}</div>`}
-  else if(E.out&&E.back&&E.out.price&&E.back.price){const sum=E.out.price+E.back.price;h+=`<div class="price">${esc(rub(sum*2))}</div><div class="small">туда-обратно на двоих, двумя билетами</div>`}
-  else if(E.out&&(E.out.price||E.out.from)){h+=`<div class="price">от ${esc(rub(E.out.price||E.out.from))}</div><div class="small">за одного, только туда${E.out.flight?' · '+esc(E.out.flight):''}</div>`}
-  else h+='<div class="price">цена по кнопке</div><div class="small">На эти даты Авиасейлс пока ничего не нашёл в своей базе.</div>';
-  if(E.out&&E.out.price)h+=`<div class="small">Только туда: ${esc(rub(E.out.price))} с человека · ${esc(fl(E.out))}</div>`;
-  if(E.back&&E.back.price)h+=`<div class="small">Только обратно: ${esc(rub(E.back.price))} с человека · ${esc(fl(E.back))}</div>`;
-  $('tix').innerHTML=h;
-  const avLink=(E.rt&&E.rt.link&&/^https:\/\/www\.aviasales\.ru\//.test(E.rt.link))?E.rt.link:`https://www.aviasales.ru/search/LED${dm(D)}MMK${dm(back)}2`;
-  const L=[['Авиасейлс',avLink,''],['Яндекс Путешествия',`https://travel.yandex.ru/avia/search/result/?fromId=c2&toId=c23&when=${D}&return_date=${back}&adult_seats=2&klass=economy`,'alt'],['Домики в Ура-Губе','https://yandex.ru/maps/?text='+encodeURIComponent('Ура-Губа гостевые домики'),'alt'],['Маршрут из аэропорта',`https://yandex.ru/maps/?rtext=68.7838,32.7559~${P.lat},${P.lon}&rtt=auto`,'alt']];
-  $('links').innerHTML=L.map(l=>`<a class="btn ${l[2]}" href="${esc(l[1])}">${esc(l[0])}</a>`).join('');
-  $('tixnote').textContent=(E.rt||E.out||E.back?'Только прямые рейсы. Это самые дешёвые билеты, которые пользователи Авиасейлса находили за последние 2–7 дней, поэтому при покупке цена может отличаться.':(T.note||''))+(T.checked?' Проверено '+T.checked+'.':'')+((data.errors||[]).length?' Часть источников при последнем обновлении не ответила, показаны прошлые данные.':'');
   $('src').textContent='Источники: '+data.sources.weather+'; NOAA SWPC, прогноз Kp от '+new Date(utc(data.sources.kpIssued)+MSK).toISOString().slice(0,16).replace('T',' ')+' МСК. '+data.sources.kpNote+'.';
 }
 
