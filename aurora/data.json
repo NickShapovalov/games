@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-26T19:36:00Z",
+ "updated": "2026-11-26T19:53:00Z",
  "place": {
   "name": "Ура-Губа",
   "lat": 69.288,
@@ -10,7 +10,7 @@
  "sources": {
   "kpIssued": "2026-11-26T12:30:00Z",
   "kpNote": "NOAA SWPC: G1 (Minor) geomagnetic storms are likely by late on 26 Nov and continuing into the early portions of the 27 Nov UTC-day due to recurrent, positive polarity CH HSS effects.",
-  "weather": "MET Norway (yr.no), прогноз для Ура-Губы"
+  "weather": "MET Norway (yr.no) и модели ECMWF, ICON, GFS (Open-Meteo), прогноз для Ура-Губы"
  },
  "kp": [
   [
@@ -551,28 +551,31 @@
  "tickets": {
   "2026-11-27": {
    "rt": {
-    "price": 6941,
+    "price": 7475,
     "flight": "5N 507",
     "dep": "2026-11-27T08:10:00+03:00",
-    "ret": "2026-11-28T21:45:00+03:00",
+    "ret": "2026-11-28T21:00:00+03:00",
     "transfers": 0,
-    "link": "https://www.aviasales.ru/search/LED2711MMK28111?t=DP17957670001795774500000125LEDMMK17959023001795948200000765MMKSVOLED_e4ae6f936af751ecc322c86e2df56099_6941&search_date=26112026&expected_price_uuid=01a2190f-b8e2-8030-6956-e8a8a7c25f3f&static_fare_key=TY%7CP0%7CH1%7CL0%7CCH1%7CR0%7CTBC0&itinerary_key=YW5NKSninl71iAyZE3HZ1Q&expected_price_source=share&expected_price_currency=rub&expected_price=6941"
+    "rtransfers": 0,
+    "link": "https://www.aviasales.ru/search/LED2711MMK28111?t=5N17957670001795774500000125LEDMMK17958996001795907100000125MMKLED_6c36f82cc0e688ce283f63ec0465b65f_7475&search_date=26112026&expected_price_uuid=01a2195d-7f58-8031-2b8c-f7f610c23dcd&static_fare_key=TY%7CP1%7CH1%7CL0%7CCH1%7CR0%7CTBC0&itinerary_key=kdON7A-zMZdH9GLMTx8W4Q&expected_price_source=share&expected_price_currency=rub&expected_price=7475"
    },
    "out": {
-    "price": 3402,
+    "price": 2620,
     "flight": "5N 507",
     "dep": "2026-11-27T08:10:00+03:00",
     "ret": null,
     "transfers": 0,
-    "link": "https://www.aviasales.ru/search/LED2711MMK1?t=5N17957670001795774500000125LEDMMK_9e0e5436294866de7ca34e1701b601c3_3402&search_date=26112026&expected_price_uuid=01a2195a-2389-8030-ed44-f9e90961cab4&static_fare_key=TY%7CP1%7CH1%7CL0%7CCH1%7CR0%7CTBC0&itinerary_key=fI6j66rAbqI9Gaxszry_Zg&expected_price_source=share&expected_price_currency=rub&expected_price=3402"
+    "rtransfers": 0,
+    "link": "https://www.aviasales.ru/search/LED2711MMK1?t=5N17957670001795774500000125LEDMMK_9e0e5436294866de7ca34e1701b601c3_2620&search_date=26112026&expected_price_uuid=01a21963-243e-8030-6ab5-42aae177d350&static_fare_key=TY%7CP1%7CH1%7CL0%7CCH1%7CR0%7CTBC0&itinerary_key=fI6j66rAbqI9Gaxszry_Zg&expected_price_source=share&expected_price_currency=rub&expected_price=2620"
    },
    "back": {
-    "price": 3699,
-    "flight": "DP 5856",
-    "dep": "2026-11-28T21:45:00+03:00",
+    "price": 4860,
+    "flight": "5N 508",
+    "dep": "2026-11-28T21:00:00+03:00",
     "ret": null,
-    "transfers": 1,
-    "link": "https://www.aviasales.ru/search/MMK2811LED1?t=DP17959023001795948200000765MMKSVOLED_1b7aa569bdec6cee59f92abedea6b243_3698&search_date=26112026&expected_price_uuid=01a21955-d748-8030-a97d-2221f0081999&static_fare_key=TY%7CP0%7CH1%7CL0%7CCH1%7CR0%7CTBC0&itinerary_key=ZxhdmloKYWJTmutjCzXGZQ&expected_price_source=share&expected_price_currency=rub&expected_price=3699"
+    "transfers": 0,
+    "rtransfers": 0,
+    "link": "https://www.aviasales.ru/search/MMK2811LED1?t=5N17958996001795907100000125MMKLED_2ab4fa738806780afbca09a2b6556996_4860&search_date=26112026&expected_price_uuid=01a2196a-c281-8031-65b4-71b984afa4a6&static_fare_key=TY%7CP1%7CH1%7CL0%7CCH1%7CR0%7CTBC0&itinerary_key=aGw1KHyYOOAf_TlUfn--RQ&expected_price_source=share&expected_price_currency=rub&expected_price=4860"
    }
   },
   "2026-11-28": {
@@ -582,6 +585,7 @@
     "dep": "2026-11-28T10:05:00+03:00",
     "ret": "2026-11-29T11:15:00+03:00",
     "transfers": 0,
+    "rtransfers": 0,
     "link": "https://www.aviasales.ru/search/LED2811MMK29111?t=5N17958603001795867800000125LEDMMK17959509001795958400000125MMKLED_209b10ae13832aa60363685f87fe3c95_8275&search_date=26112026&expected_price_uuid=01a21925-d878-8030-ae24-440825309b1d&static_fare_key=TY%7CP1%7CH1%7CL0%7CCH1%7CR0%7CTBC0&itinerary_key=Ci5ZJCwX9VZTFL2tUpM10w&expected_price_source=share&expected_price_currency=rub&expected_price=8276"
    },
    "out": {
@@ -590,45 +594,532 @@
     "dep": "2026-11-28T10:05:00+03:00",
     "ret": null,
     "transfers": 0,
-    "link": "https://www.aviasales.ru/search/LED2811MMK1?t=5N17958603001795867800000125LEDMMK_5856a5e85fc3c37768953c16f9db0566_2620&search_date=26112026&expected_price_uuid=01a2195a-34a8-8030-abd9-db818ec7898b&static_fare_key=TY%7CP1%7CH1%7CL0%7CCH1%7CR0%7CTBC0&itinerary_key=-e6G5ZLcOBQQJslMOir4JQ&expected_price_source=share&expected_price_currency=rub&expected_price=2620"
+    "rtransfers": 0,
+    "link": "https://www.aviasales.ru/search/LED2811MMK1?t=5N17958603001795867800000125LEDMMK_5856a5e85fc3c37768953c16f9db0566_2620&search_date=26112026&expected_price_uuid=01a21968-8478-8031-2b07-dde5bdcff2bf&static_fare_key=TY%7CP1%7CH1%7CL0%7CCH1%7CR0%7CTBC0&itinerary_key=-e6G5ZLcOBQQJslMOir4JQ&expected_price_source=share&expected_price_currency=rub&expected_price=2620"
    },
    "back": {
-    "price": 4830,
-    "flight": "DP 6856",
-    "dep": "2026-11-29T21:45:00+03:00",
+    "price": 4860,
+    "flight": "5N 508",
+    "dep": "2026-11-29T11:15:00+03:00",
     "ret": null,
-    "transfers": 1,
-    "link": "https://www.aviasales.ru/search/MMK2911LED1?t=DP17959887001796113800002085MMKSVOLED_b4b024cebfd76b9d682d44f1fcc6ee73_4830&search_date=26112026&expected_price_uuid=01a21959-a412-8030-2664-312b340a3d20&static_fare_key=TY%7CP0%7CH1%7CL0%7CCH1%7CR0%7CTBC0&itinerary_key=CxIRs6u_2mV6ow4FE8Z_iQ&expected_price_source=share&expected_price_currency=rub&expected_price=4830"
+    "transfers": 0,
+    "rtransfers": 0,
+    "link": "https://www.aviasales.ru/search/MMK2911LED1?t=5N17959509001795958400000125MMKLED_587a1c02e34a68223f04fdb5cc70613a_4860&search_date=26112026&expected_price_uuid=01a21969-e8d4-8031-6810-f81d5e284ca3&static_fare_key=TY%7CP1%7CH1%7CL0%7CCH1%7CR0%7CTBC0&itinerary_key=W2KGrPkhNW5NqXA7efhkIA&expected_price_source=share&expected_price_currency=rub&expected_price=4860"
    }
   },
   "2026-11-29": {
    "rt": {
-    "price": 9111,
+    "price": 9931,
     "flight": "5N 507",
     "dep": "2026-11-29T08:30:00+03:00",
-    "ret": "2026-11-30T21:45:00+03:00",
+    "ret": "2026-11-30T12:40:00+03:00",
     "transfers": 0,
-    "link": "https://www.aviasales.ru/search/LED2911MMK30111?t=DP17959410001795948500000125LEDMMK17960751001796113800000645MMKSVOLED_086ba54ab4d7798c9fa04ebafe3da6d9_9119&search_date=26112026&expected_price_uuid=01a2188a-810a-8030-6170-fe69e2232f2a&static_fare_key=TY%7CP0%7CH1%7CL0%7CCH1%7CR0%7CTBC0&itinerary_key=ybgEJnT2c48HU47T7erwzQ&expected_price_source=share&expected_price_currency=rub&expected_price=9111"
+    "rtransfers": 0,
+    "link": "https://www.aviasales.ru/search/LED2911MMK30111?t=5N17959410001795948500000125LEDMMK17960424001796049900000125MMKLED_23a4dca540309598c242c5e4d835b662_9940&search_date=26112026&expected_price_uuid=01a2188a-810a-8030-6170-fe69e2232f2a&static_fare_key=TY%7CP1%7CH1%7CL0%7CCH1%7CR0%7CTBC0&itinerary_key=CHGInrQqLzrrdPYg5o-iKg&expected_price_source=share&expected_price_currency=rub&expected_price=9931"
    },
    "out": {
-    "price": 4221,
+    "price": 4220,
     "flight": "5N 507",
     "dep": "2026-11-29T08:30:00+03:00",
     "ret": null,
     "transfers": 0,
-    "link": "https://www.aviasales.ru/search/LED2911MMK1?t=5N17959410001795948500000125LEDMMK_087ed63726fe124f092318fdb714fedc_4220&search_date=26112026&expected_price_uuid=01a21951-5733-8031-25b0-1db5d237a60b&static_fare_key=TY%7CP1%7CH1%7CL0%7CCH1%7CR0%7CTBC0&itinerary_key=8twgmUamUn73AE8_On8lxQ&expected_price_source=share&expected_price_currency=rub&expected_price=4221"
+    "rtransfers": 0,
+    "link": "https://www.aviasales.ru/search/LED2911MMK1?t=5N17959410001795948500000125LEDMMK_087ed63726fe124f092318fdb714fedc_4220&search_date=26112026&expected_price_uuid=01a21964-8b5d-8031-64b6-d97fc913389b&static_fare_key=TY%7CP1%7CH1%7CL0%7CCH1%7CR0%7CTBC0&itinerary_key=8twgmUamUn73AE8_On8lxQ&expected_price_source=share&expected_price_currency=rub&expected_price=4220"
    },
    "back": {
-    "price": 4600,
-    "flight": "DP 5856",
-    "dep": "2026-11-30T21:45:00+03:00",
+    "price": 6530,
+    "flight": "FV 6342",
+    "dep": "2026-11-30T15:10:00+03:00",
     "ret": null,
-    "transfers": 1,
-    "link": "https://www.aviasales.ru/search/MMK3011LED1?t=DP17960751001796113800000645MMKSVOLED_5fd0e0798b5169d191a1d870954b28ec_4599&search_date=26112026&expected_price_uuid=01a2194b-ea57-8031-6f81-f132e9c54af3&static_fare_key=TY%7CP0%7CH1%7CL0%7CCH1%7CR0%7CTBC0&itinerary_key=ddR4ktFdBmwwCbZyERtoYQ&expected_price_source=share&expected_price_currency=rub&expected_price=4600"
+    "transfers": 0,
+    "rtransfers": 0,
+    "link": "https://www.aviasales.ru/search/MMK3011LED1?t=SU17960514001796058300000115MMKLED_1e75adf447be80a4320cb32d8c461749_6530&search_date=26112026&expected_price_uuid=01a2195f-e4b5-8030-e33d-d0ea2f641f18&static_fare_key=TY%7CP1%7CH1%7CL0%7CCH1%7CR0%7CTBC0&itinerary_key=YHG-JPm6LxT0s0nEdu40pQ&expected_price_source=share&expected_price_currency=rub&expected_price=6530"
    }
   },
-  "checked": "2026-11-26 22:36",
-  "note": "Цены Авиасейлса за одного: самые дешёвые билеты, которые находили пользователи за последние 2–7 дней. Перед покупкой цена может отличаться."
+  "checked": "2026-11-26 22:53",
+  "note": "Только прямые рейсы: самые дешёвые билеты, которые пользователи Авиасейлса находили за последние 2–7 дней. При покупке цена может отличаться."
  },
- "errors": []
+ "errors": [],
+ "clouds": {
+  "2026-11-26T00": {
+   "ecmwf": 66,
+   "icon": 59,
+   "gfs": 100
+  },
+  "2026-11-26T01": {
+   "ecmwf": 69,
+   "icon": 50,
+   "gfs": 100
+  },
+  "2026-11-26T02": {
+   "ecmwf": 72,
+   "icon": 91,
+   "gfs": 100
+  },
+  "2026-11-26T03": {
+   "ecmwf": 77,
+   "icon": 93,
+   "gfs": 100
+  },
+  "2026-11-26T04": {
+   "ecmwf": 83,
+   "icon": 95,
+   "gfs": 100
+  },
+  "2026-11-26T05": {
+   "ecmwf": 91,
+   "icon": 99,
+   "gfs": 100
+  },
+  "2026-11-26T06": {
+   "ecmwf": 95,
+   "icon": 100,
+   "gfs": 100
+  },
+  "2026-11-26T07": {
+   "ecmwf": 94,
+   "icon": 100,
+   "gfs": 100
+  },
+  "2026-11-26T08": {
+   "ecmwf": 91,
+   "icon": 100,
+   "gfs": 100
+  },
+  "2026-11-26T09": {
+   "ecmwf": 86,
+   "icon": 100,
+   "gfs": 100
+  },
+  "2026-11-26T10": {
+   "ecmwf": 79,
+   "icon": 100,
+   "gfs": 100
+  },
+  "2026-11-26T11": {
+   "ecmwf": 70,
+   "icon": 97,
+   "gfs": 100
+  },
+  "2026-11-26T12": {
+   "ecmwf": 67,
+   "icon": 99,
+   "gfs": 100
+  },
+  "2026-11-26T13": {
+   "ecmwf": 74,
+   "icon": 90,
+   "gfs": 100
+  },
+  "2026-11-26T14": {
+   "ecmwf": 87,
+   "icon": 86,
+   "gfs": 100
+  },
+  "2026-11-26T15": {
+   "ecmwf": 97,
+   "icon": 54,
+   "gfs": 100
+  },
+  "2026-11-26T16": {
+   "ecmwf": 100,
+   "icon": 55,
+   "gfs": 100
+  },
+  "2026-11-26T17": {
+   "ecmwf": 99,
+   "icon": 78,
+   "gfs": 100
+  },
+  "2026-11-26T18": {
+   "ecmwf": 98,
+   "icon": 81,
+   "gfs": 100
+  },
+  "2026-11-26T19": {
+   "ecmwf": 97,
+   "icon": 94,
+   "gfs": 100
+  },
+  "2026-11-26T20": {
+   "ecmwf": 95,
+   "icon": 90,
+   "gfs": 100
+  },
+  "2026-11-26T21": {
+   "ecmwf": 92,
+   "icon": 94,
+   "gfs": 100
+  },
+  "2026-11-26T22": {
+   "ecmwf": 87,
+   "icon": 77,
+   "gfs": 100
+  },
+  "2026-11-26T23": {
+   "ecmwf": 81,
+   "icon": 71,
+   "gfs": 100
+  },
+  "2026-11-27T00": {
+   "ecmwf": 78,
+   "icon": 91,
+   "gfs": 100
+  },
+  "2026-11-27T01": {
+   "ecmwf": 81,
+   "icon": 93,
+   "gfs": 100
+  },
+  "2026-11-27T02": {
+   "ecmwf": 87,
+   "icon": 96,
+   "gfs": 100
+  },
+  "2026-11-27T03": {
+   "ecmwf": 89,
+   "icon": 98,
+   "gfs": 100
+  },
+  "2026-11-27T04": {
+   "ecmwf": 82,
+   "icon": 97,
+   "gfs": 100
+  },
+  "2026-11-27T05": {
+   "ecmwf": 71,
+   "icon": 99,
+   "gfs": 100
+  },
+  "2026-11-27T06": {
+   "ecmwf": 63,
+   "icon": 90,
+   "gfs": 100
+  },
+  "2026-11-27T07": {
+   "ecmwf": 61,
+   "icon": 77,
+   "gfs": 96
+  },
+  "2026-11-27T08": {
+   "ecmwf": 61,
+   "icon": 58,
+   "gfs": 93
+  },
+  "2026-11-27T09": {
+   "ecmwf": 59,
+   "icon": 80,
+   "gfs": 88
+  },
+  "2026-11-27T10": {
+   "ecmwf": 53,
+   "icon": 85,
+   "gfs": 88
+  },
+  "2026-11-27T11": {
+   "ecmwf": 44,
+   "icon": 52,
+   "gfs": 99
+  },
+  "2026-11-27T12": {
+   "ecmwf": 38,
+   "icon": 35,
+   "gfs": 85
+  },
+  "2026-11-27T13": {
+   "ecmwf": 37,
+   "icon": 70,
+   "gfs": 41
+  },
+  "2026-11-27T14": {
+   "ecmwf": 38,
+   "icon": 69,
+   "gfs": 72
+  },
+  "2026-11-27T15": {
+   "ecmwf": 36,
+   "icon": 36,
+   "gfs": 25
+  },
+  "2026-11-27T16": {
+   "ecmwf": 25,
+   "icon": 39,
+   "gfs": 31
+  },
+  "2026-11-27T17": {
+   "ecmwf": 12,
+   "icon": 23,
+   "gfs": 34
+  },
+  "2026-11-27T18": {
+   "ecmwf": 9,
+   "icon": 0,
+   "gfs": 20
+  },
+  "2026-11-27T19": {
+   "ecmwf": 28,
+   "icon": 0,
+   "gfs": 20
+  },
+  "2026-11-27T20": {
+   "ecmwf": 57,
+   "icon": 0,
+   "gfs": 15
+  },
+  "2026-11-27T21": {
+   "ecmwf": 77,
+   "icon": 0,
+   "gfs": 14
+  },
+  "2026-11-27T22": {
+   "ecmwf": 78,
+   "icon": 2,
+   "gfs": 12
+  },
+  "2026-11-27T23": {
+   "ecmwf": 71,
+   "icon": 1,
+   "gfs": 11
+  },
+  "2026-11-28T00": {
+   "ecmwf": 67,
+   "icon": 0,
+   "gfs": 5
+  },
+  "2026-11-28T01": {
+   "ecmwf": 73,
+   "icon": 39,
+   "gfs": 12
+  },
+  "2026-11-28T02": {
+   "ecmwf": 82,
+   "icon": 46,
+   "gfs": 8
+  },
+  "2026-11-28T03": {
+   "ecmwf": 89,
+   "icon": 28,
+   "gfs": 7
+  },
+  "2026-11-28T04": {
+   "ecmwf": 92,
+   "icon": 38,
+   "gfs": 6
+  },
+  "2026-11-28T05": {
+   "ecmwf": 94,
+   "icon": 33,
+   "gfs": 8
+  },
+  "2026-11-28T06": {
+   "ecmwf": 94,
+   "icon": 38,
+   "gfs": 13
+  },
+  "2026-11-28T07": {
+   "ecmwf": 92,
+   "icon": 51,
+   "gfs": 24
+  },
+  "2026-11-28T08": {
+   "ecmwf": 88,
+   "icon": 43,
+   "gfs": 21
+  },
+  "2026-11-28T09": {
+   "ecmwf": 86,
+   "icon": 42,
+   "gfs": 20
+  },
+  "2026-11-28T10": {
+   "ecmwf": 88,
+   "icon": 85,
+   "gfs": 28
+  },
+  "2026-11-28T11": {
+   "ecmwf": 92,
+   "icon": 56,
+   "gfs": 71
+  },
+  "2026-11-28T12": {
+   "ecmwf": 95,
+   "icon": 97,
+   "gfs": 100
+  },
+  "2026-11-28T13": {
+   "ecmwf": 95,
+   "icon": 88,
+   "gfs": 100
+  },
+  "2026-11-28T14": {
+   "ecmwf": 94,
+   "icon": 98,
+   "gfs": 100
+  },
+  "2026-11-28T15": {
+   "ecmwf": 94,
+   "icon": 75,
+   "gfs": 100
+  },
+  "2026-11-28T16": {
+   "ecmwf": 95,
+   "icon": 100,
+   "gfs": 100
+  },
+  "2026-11-28T17": {
+   "ecmwf": 97,
+   "icon": 100,
+   "gfs": 100
+  },
+  "2026-11-28T18": {
+   "ecmwf": 97,
+   "icon": 97,
+   "gfs": 100
+  },
+  "2026-11-28T19": {
+   "ecmwf": 95,
+   "icon": 90,
+   "gfs": 100
+  },
+  "2026-11-28T20": {
+   "ecmwf": 91,
+   "icon": 75,
+   "gfs": 100
+  },
+  "2026-11-28T21": {
+   "ecmwf": 89,
+   "icon": 83,
+   "gfs": 100
+  },
+  "2026-11-28T22": {
+   "ecmwf": 91,
+   "icon": 93,
+   "gfs": 100
+  },
+  "2026-11-28T23": {
+   "ecmwf": 95,
+   "icon": 91,
+   "gfs": 100
+  },
+  "2026-11-29T00": {
+   "ecmwf": 98,
+   "icon": 92,
+   "gfs": 100
+  },
+  "2026-11-29T01": {
+   "ecmwf": 99,
+   "icon": 99,
+   "gfs": 100
+  },
+  "2026-11-29T02": {
+   "ecmwf": 100,
+   "icon": 100,
+   "gfs": 100
+  },
+  "2026-11-29T03": {
+   "ecmwf": 100,
+   "icon": 100,
+   "gfs": 100
+  },
+  "2026-11-29T04": {
+   "ecmwf": 100,
+   "icon": 100,
+   "gfs": 100
+  },
+  "2026-11-29T05": {
+   "ecmwf": 100,
+   "icon": 100,
+   "gfs": 100
+  },
+  "2026-11-29T06": {
+   "ecmwf": 100,
+   "icon": 100,
+   "gfs": 100
+  },
+  "2026-11-29T07": {
+   "ecmwf": 100,
+   "icon": 100,
+   "gfs": 100
+  },
+  "2026-11-29T08": {
+   "ecmwf": 100,
+   "icon": 100,
+   "gfs": 97
+  },
+  "2026-11-29T09": {
+   "ecmwf": 100,
+   "icon": 100,
+   "gfs": 94
+  },
+  "2026-11-29T10": {
+   "ecmwf": 100,
+   "icon": 100,
+   "gfs": 100
+  },
+  "2026-11-29T11": {
+   "ecmwf": 100,
+   "icon": 100,
+   "gfs": 72
+  },
+  "2026-11-29T12": {
+   "ecmwf": 100,
+   "icon": 100,
+   "gfs": 57
+  },
+  "2026-11-29T13": {
+   "ecmwf": 78,
+   "icon": 100,
+   "gfs": 24
+  },
+  "2026-11-29T14": {
+   "ecmwf": 47,
+   "icon": 100,
+   "gfs": 16
+  },
+  "2026-11-29T15": {
+   "ecmwf": 22,
+   "icon": 99,
+   "gfs": 16
+  },
+  "2026-11-29T16": {
+   "ecmwf": 7,
+   "icon": 100,
+   "gfs": 19
+  },
+  "2026-11-29T17": {
+   "ecmwf": 0,
+   "icon": 84,
+   "gfs": 18
+  },
+  "2026-11-29T18": {
+   "ecmwf": 3,
+   "icon": 99,
+   "gfs": 23
+  },
+  "2026-11-29T19": {
+   "ecmwf": 30,
+   "icon": 95,
+   "gfs": 28
+  },
+  "2026-11-29T20": {
+   "ecmwf": 71,
+   "icon": 91,
+   "gfs": 35
+  },
+  "2026-11-29T21": {
+   "ecmwf": 100,
+   "icon": 87,
+   "gfs": 25
+  },
+  "2026-11-29T22": {
+   "ecmwf": 100,
+   "icon": 83,
+   "gfs": 95
+  },
+  "2026-11-29T23": {
+   "ecmwf": 100,
+   "icon": 78,
+   "gfs": 100
+  }
+ }
 }
