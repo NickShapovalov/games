@@ -81,6 +81,7 @@ def offer(o):
         "dep": o.get("departure_at"),
         "ret": o.get("return_at"),
         "transfers": o.get("transfers"),
+        "rtransfers": o.get("return_transfers"),
         "link": ("https://www.aviasales.ru" + link) if link.startswith("/") else None,
     }
 

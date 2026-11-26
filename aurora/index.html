@@ -220,7 +220,8 @@ function render(data){
   const E=T[D]||{};
   const rub=n=>Math.round(n).toLocaleString('ru-RU')+' ₽';
   const hm=iso=>iso?iso.slice(11,16):'';
-  const fl=o=>[o.flight,hm(o.dep)?'вылет '+hm(o.dep):'',o.transfers?'с пересадкой':'прямой'].filter(Boolean).join(' · ');
+  const tr=n=>n==null?'':n?'с пересадкой':'прямой';
+  const fl=o=>[o.flight,hm(o.dep)?'вылет '+hm(o.dep):'',o.ret?('туда '+tr(o.transfers)+(o.rtransfers!=null?', обратно '+tr(o.rtransfers):'')+(hm(o.ret)?', обратно в '+hm(o.ret):'')):tr(o.transfers)].filter(Boolean).join(' · ');
   let h=`<div class="small">${esc(dlabel(D))} → ${esc(dlabel(back))}</div>`;
   if(E.rt&&E.rt.price){h+=`<div class="price">${esc(rub(E.rt.price*2))}</div><div class="small">туда-обратно на двоих (${esc(rub(E.rt.price))} с человека) · ${esc(fl(E.rt))}</div>`}
   else if(E.out&&E.back&&E.out.price&&E.back.price){const sum=E.out.price+E.back.price;h+=`<div class="price">${esc(rub(sum*2))}</div><div class="small">туда-обратно на двоих, двумя билетами</div>`}
