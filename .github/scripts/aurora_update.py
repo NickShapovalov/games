@@ -91,7 +91,7 @@ AIRLINES = {"5N": "Smartavia", "SU": "Аэрофлот", "FV": "Россия", "
 
 def rasp_schedule(from_id, to_id, date, key):
     """Прямые рейсы на дату через официальное API Яндекс Расписаний."""
-    url = "https://api.rasp.yandex.net/v3.0/search/?" + urllib.parse.urlencode({
+    url = "https://api.rasp.yandex-net.ru/v3.0/search/?" + urllib.parse.urlencode({
         "apikey": key, "format": "json", "from": from_id, "to": to_id, "lang": "ru_RU",
         "date": date, "transport_types": "plane", "limit": 100})
     data = json.loads(get(url))

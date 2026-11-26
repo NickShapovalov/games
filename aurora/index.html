@@ -299,7 +299,7 @@ function render(data){
   const S=(data.schedule||{})[D];
   if(S&&(S.out||[]).length){
     const pick=(list,iso)=>list.map(f=>{const mine=rt&&iso&&f.dep===hm(iso)&&carrier(rt)===f.airline;return `<li${mine?' class="mine"':''}><span>${esc(f.dep)} → ${esc(f.arr)}</span><span>${esc(f.airline)} ${esc(f.flight)}${mine?' ✓':''}</span></li>`}).join('');
-    h+=`<div class="sched"><div><b>Все прямые туда, ${esc(dlabel(D))}</b><ul>${pick(S.out,rt&&rt.dep)}</ul></div><div><b>Все прямые обратно, ${esc(dlabel(back))}</b><ul>${pick(S.back||[],rt&&rt.ret)}</ul></div></div><div class="small">Цены других рейсов смотри по кнопке Авиасейлса: в его бесплатной базе есть только самый дешёвый вариант.</div>`;
+    h+=`<div class="sched"><div><b>Все прямые туда, ${esc(dlabel(D))}</b><ul>${pick(S.out,rt&&rt.dep)}</ul></div><div><b>Все прямые обратно, ${esc(dlabel(back))}</b><ul>${pick(S.back||[],rt&&rt.ret)}</ul></div></div><div class="small">Данные предоставлены сервисом <a href="https://rasp.yandex.ru/">Яндекс.Расписания</a>. Цены других рейсов смотри по кнопке Авиасейлса: в его бесплатной базе есть только самый дешёвый вариант.</div>`;
   } else if(rt&&opts.length<2){h+='<div class="small" style="margin-top:10px">Все прямые рейсы с ценами — <a href="https://rasp.yandex.ru/plane/saint-petersburg--murmansk">в Яндекс Расписаниях</a>.</div>'}
   $('tix').innerHTML=h;
   const avLink=rt&&rt.link&&/^https:\/\/www\.aviasales\.ru\//.test(rt.link)?rt.link:`https://www.aviasales.ru/search/LED${dm(D)}MMK${dm(back)}2`;
