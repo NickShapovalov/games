@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-26T20:03:00Z",
+ "updated": "2026-11-26T20:16:00Z",
  "place": {
   "name": "Ура-Губа",
   "lat": 69.288,
@@ -115,12 +115,6 @@
   ]
  ],
  "hourly": [
-  [
-   "2026-11-26T19",
-   1.4,
-   94,
-   8.6
-  ],
   [
    "2026-11-26T20",
    1.6,
@@ -546,6 +540,12 @@
    -0.3,
    100,
    6.3
+  ],
+  [
+   "2026-12-03T18",
+   -0.5,
+   100,
+   7.5
   ]
  ],
  "tickets": {
@@ -557,7 +557,7 @@
     "ret": "2026-11-28T21:00:00+03:00",
     "transfers": 0,
     "rtransfers": 0,
-    "link": "https://www.aviasales.ru/search/LED2711MMK28111?t=5N17957670001795774500000125LEDMMK17958996001795907100000125MMKLED_6c36f82cc0e688ce283f63ec0465b65f_7475&search_date=26112026&expected_price_uuid=01a2195d-7f58-8031-2b8c-f7f610c23dcd&static_fare_key=TY%7CP1%7CH1%7CL0%7CCH1%7CR0%7CTBC0&itinerary_key=kdON7A-zMZdH9GLMTx8W4Q&expected_price_source=share&expected_price_currency=rub&expected_price=7474"
+    "link": "https://www.aviasales.ru/search/LED2711MMK28111?t=5N17957670001795774500000125LEDMMK17958996001795907100000125MMKLED_6c36f82cc0e688ce283f63ec0465b65f_7475&search_date=26112026&expected_price_uuid=01a21976-f188-8031-2b81-66d6ed0143c2&static_fare_key=TY%7CP1%7CH1%7CL0%7CCH1%7CR0%7CTBC0&itinerary_key=kdON7A-zMZdH9GLMTx8W4Q&expected_price_source=share&expected_price_currency=rub&expected_price=7474"
    },
    "rt_options": [
     {
@@ -567,7 +567,7 @@
      "ret": "2026-11-28T21:00:00+03:00",
      "transfers": 0,
      "rtransfers": 0,
-     "link": "https://www.aviasales.ru/search/LED2711MMK28111?t=5N17957670001795774500000125LEDMMK17958996001795907100000125MMKLED_6c36f82cc0e688ce283f63ec0465b65f_7475&search_date=26112026&expected_price_uuid=01a2195d-7f58-8031-2b8c-f7f610c23dcd&static_fare_key=TY%7CP1%7CH1%7CL0%7CCH1%7CR0%7CTBC0&itinerary_key=kdON7A-zMZdH9GLMTx8W4Q&expected_price_source=share&expected_price_currency=rub&expected_price=7474",
+     "link": "https://www.aviasales.ru/search/LED2711MMK28111?t=5N17957670001795774500000125LEDMMK17958996001795907100000125MMKLED_6c36f82cc0e688ce283f63ec0465b65f_7475&search_date=26112026&expected_price_uuid=01a21976-f188-8031-2b81-66d6ed0143c2&static_fare_key=TY%7CP1%7CH1%7CL0%7CCH1%7CR0%7CTBC0&itinerary_key=kdON7A-zMZdH9GLMTx8W4Q&expected_price_source=share&expected_price_currency=rub&expected_price=7474",
      "airline": "5N"
     }
    ],
@@ -578,7 +578,7 @@
     "ret": null,
     "transfers": 0,
     "rtransfers": 0,
-    "link": "https://www.aviasales.ru/search/LED2711MMK1?t=5N17957670001795774500000125LEDMMK_9e0e5436294866de7ca34e1701b601c3_2620&search_date=26112026&expected_price_uuid=01a21971-4ce6-8030-20a1-9925182a0c1f&static_fare_key=TY%7CP1%7CH1%7CL0%7CCH1%7CR0%7CTBC0&itinerary_key=fI6j66rAbqI9Gaxszry_Zg&expected_price_source=share&expected_price_currency=rub&expected_price=2620"
+    "link": "https://www.aviasales.ru/search/LED2711MMK1?t=5N17957670001795774500000125LEDMMK_9e0e5436294866de7ca34e1701b601c3_2620&search_date=26112026&expected_price_uuid=01a2197d-b8ce-8030-2094-abfb2e66036e&static_fare_key=TY%7CP1%7CH1%7CL0%7CCH1%7CR0%7CTBC0&itinerary_key=fI6j66rAbqI9Gaxszry_Zg&expected_price_source=share&expected_price_currency=rub&expected_price=2620"
    },
    "back": {
     "price": 4859,
@@ -587,7 +587,7 @@
     "ret": null,
     "transfers": 0,
     "rtransfers": 0,
-    "link": "https://www.aviasales.ru/search/MMK2811LED1?t=5N17958996001795907100000125MMKLED_2ab4fa738806780afbca09a2b6556996_4860&search_date=26112026&expected_price_uuid=01a21971-d50d-8030-e63f-7ec455785a3a&static_fare_key=TY%7CP1%7CH1%7CL0%7CCH1%7CR0%7CTBC0&itinerary_key=aGw1KHyYOOAf_TlUfn--RQ&expected_price_source=share&expected_price_currency=rub&expected_price=4859"
+    "link": "https://www.aviasales.ru/search/MMK2811LED1?t=5N17958996001795907100000125MMKLED_2ab4fa738806780afbca09a2b6556996_4860&search_date=26112026&expected_price_uuid=01a21979-c615-8030-a9f2-0d4b3acdb810&static_fare_key=TY%7CP1%7CH1%7CL0%7CCH1%7CR0%7CTBC0&itinerary_key=aGw1KHyYOOAf_TlUfn--RQ&expected_price_source=share&expected_price_currency=rub&expected_price=4859"
    }
   },
   "2026-11-28": {
@@ -619,7 +619,7 @@
     "ret": null,
     "transfers": 0,
     "rtransfers": 0,
-    "link": "https://www.aviasales.ru/search/LED2811MMK1?t=5N17958603001795867800000125LEDMMK_5856a5e85fc3c37768953c16f9db0566_2620&search_date=26112026&expected_price_uuid=01a2196f-8bcb-8030-222d-5da7f460a998&static_fare_key=TY%7CP1%7CH1%7CL0%7CCH1%7CR0%7CTBC0&itinerary_key=-e6G5ZLcOBQQJslMOir4JQ&expected_price_source=share&expected_price_currency=rub&expected_price=2620"
+    "link": "https://www.aviasales.ru/search/LED2811MMK1?t=5N17958603001795867800000125LEDMMK_5856a5e85fc3c37768953c16f9db0566_2620&search_date=26112026&expected_price_uuid=01a2197a-f460-8031-6630-e8cf6dca92d8&static_fare_key=TY%7CP1%7CH1%7CL0%7CCH1%7CR0%7CTBC0&itinerary_key=-e6G5ZLcOBQQJslMOir4JQ&expected_price_source=share&expected_price_currency=rub&expected_price=2620"
    },
    "back": {
     "price": 4859,
@@ -628,7 +628,7 @@
     "ret": null,
     "transfers": 0,
     "rtransfers": 0,
-    "link": "https://www.aviasales.ru/search/MMK2911LED1?t=5N17959509001795958400000125MMKLED_587a1c02e34a68223f04fdb5cc70613a_4860&search_date=26112026&expected_price_uuid=01a21969-e8d4-8031-6810-f81d5e284ca3&static_fare_key=TY%7CP1%7CH1%7CL0%7CCH1%7CR0%7CTBC0&itinerary_key=W2KGrPkhNW5NqXA7efhkIA&expected_price_source=share&expected_price_currency=rub&expected_price=4859"
+    "link": "https://www.aviasales.ru/search/MMK2911LED1?t=5N17959509001795958400000125MMKLED_587a1c02e34a68223f04fdb5cc70613a_4860&search_date=26112026&expected_price_uuid=01a2197b-3b0b-8030-a406-7e03cde53e70&static_fare_key=TY%7CP1%7CH1%7CL0%7CCH1%7CR0%7CTBC0&itinerary_key=W2KGrPkhNW5NqXA7efhkIA&expected_price_source=share&expected_price_currency=rub&expected_price=4859"
    }
   },
   "2026-11-29": {
@@ -660,7 +660,7 @@
     "ret": null,
     "transfers": 0,
     "rtransfers": 0,
-    "link": "https://www.aviasales.ru/search/LED2911MMK1?t=5N17959410001795948500000125LEDMMK_087ed63726fe124f092318fdb714fedc_4220&search_date=26112026&expected_price_uuid=01a21964-8b5d-8031-64b6-d97fc913389b&static_fare_key=TY%7CP1%7CH1%7CL0%7CCH1%7CR0%7CTBC0&itinerary_key=8twgmUamUn73AE8_On8lxQ&expected_price_source=share&expected_price_currency=rub&expected_price=4219"
+    "link": "https://www.aviasales.ru/search/LED2911MMK1?t=5N17959410001795948500000125LEDMMK_087ed63726fe124f092318fdb714fedc_4220&search_date=26112026&expected_price_uuid=01a21979-e7a8-8030-66b7-4753221cf901&static_fare_key=TY%7CP1%7CH1%7CL0%7CCH1%7CR0%7CTBC0&itinerary_key=8twgmUamUn73AE8_On8lxQ&expected_price_source=share&expected_price_currency=rub&expected_price=4219"
    },
    "back": {
     "price": 6519,
@@ -669,13 +669,15 @@
     "ret": null,
     "transfers": 0,
     "rtransfers": 0,
-    "link": "https://www.aviasales.ru/search/MMK3011LED1?t=SU17960721001796078700000110MMKLED_52c471b9ea71c1539d511f5e68f25c00_6520&search_date=26112026&expected_price_uuid=01a21973-1b12-8030-6b0c-13d197c0f1d7&static_fare_key=TY%7CP1%7CH1%7CL0%7CCH1%7CR0%7CTBC0&itinerary_key=l2nKcmTYWvU1lOzPPEfn_Q&expected_price_source=share&expected_price_currency=rub&expected_price=6519"
+    "link": "https://www.aviasales.ru/search/MMK3011LED1?t=SU17960721001796078700000110MMKLED_52c471b9ea71c1539d511f5e68f25c00_6520&search_date=26112026&expected_price_uuid=01a21975-100b-8030-29c3-bf5e00ececeb&static_fare_key=TY%7CP1%7CH1%7CL0%7CCH1%7CR0%7CTBC0&itinerary_key=l2nKcmTYWvU1lOzPPEfn_Q&expected_price_source=share&expected_price_currency=rub&expected_price=6519"
    }
   },
-  "checked": "2026-11-26 23:03",
+  "checked": "2026-11-26 23:16",
   "note": "Только прямые рейсы: самые дешёвые билеты, которые пользователи Авиасейлса находили за последние 2–7 дней. При покупке цена может отличаться."
  },
- "errors": [],
+ "errors": [
+  "schedule: капча"
+ ],
  "clouds": {
   "2026-11-26T00": {
    "ecmwf": 66,
