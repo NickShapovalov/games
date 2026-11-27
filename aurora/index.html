@@ -32,6 +32,8 @@ a{color:var(--go)}
 .verdict{font-size:clamp(38px,6vw,60px);font-family:Unbounded,sans-serif;font-weight:700;line-height:1;margin:4px 0 10px}
 .big{font-size:clamp(17px,2.2vw,21px);font-weight:600;max-width:46ch}
 .meta{color:var(--mute);font-size:13px;margin-top:8px}
+.storm{display:inline-block;margin-top:10px;padding:8px 14px;border-radius:12px;background:#ffb347;color:#1d1204;font-weight:800;font-size:15px}
+.meta.old{color:#ffb347}
 .nights{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px}
 .card{background:var(--bg2);border:1px solid var(--line);border-radius:18px;padding:16px 18px}
 .band.first{padding-top:20px}.band.first h2{margin-bottom:12px}
@@ -136,6 +138,7 @@ footer{color:var(--mute);font-size:14px}
     <div class="kick">Ура-Губа, Кольский полуостров · Охота за сиянием</div>
     <div class="verdict" id="verdict">Считаю…</div>
     <div class="big" id="sum"></div>
+    <div class="storm" id="storm" hidden></div>
     <div class="meta" id="meta"></div>
   </div>
 </header>
@@ -180,7 +183,7 @@ footer{color:var(--mute);font-size:14px}
     <p class="small" id="src"></p>
   </div>
 </div></section>
-<footer class="band"><div class="wrap">Прогноз обновляется каждые 3 часа. Это оценка вероятности, а не обещание: сияние капризное.</div></footer>
+<footer class="band"><div class="wrap">Прогноз обновляется каждый час. Это оценка вероятности, а не обещание: сияние капризное.</div></footer>
 
 <script id="seed" type="application/json">{"updated":"2026-11-26T19:20:00Z","place":{"name":"Ура-Губа","lat":69.288,"lon":32.8,"fromAirportKm":55,"fromAirportMin":60},"sources":{"kpIssued":"2026-11-26T00:30:00Z","kpNote":"NOAA SWPC: G1 (слабая буря) вероятна 26–27 ноября из-за высокоскоростного потока из корональной дыры","weather":"MET Norway (yr.no), прогноз для Ура-Губы"},"kp":[["2026-11-26T00",3.0],["2026-11-26T03",3.33],["2026-11-26T06",2.67],["2026-11-26T09",2.0],["2026-11-26T12",2.33],["2026-11-26T15",2.67],["2026-11-26T18",3.67],["2026-11-26T21",5.0],["2026-11-27T00",4.33],["2026-11-27T03",5.0],["2026-11-27T06",3.67],["2026-11-27T09",3.0],["2026-11-27T12",2.67],["2026-11-27T15",2.67],["2026-11-27T18",2.67],["2026-11-27T21",3.67],["2026-11-28T00",3.67],["2026-11-28T03",3.33],["2026-11-28T06",3.0],["2026-11-28T09",3.0],["2026-11-28T12",2.33],["2026-11-28T15",3.0],["2026-11-28T18",3.33],["2026-11-28T21",3.33]],"hourly":[["2026-11-26T19",1.4,94,8.6],["2026-11-26T20",1.6,96,9.1],["2026-11-26T21",1.4,95,8.3],["2026-11-26T22",1.5,96,8.0],["2026-11-26T23",1.4,93,7.9],["2026-11-27T00",1.2,95,7.6],["2026-11-27T01",1.3,90,6.7],["2026-11-27T02",0.8,90,5.3],["2026-11-27T03",0.7,98,5.6],["2026-11-27T04",0.8,96,6.5],["2026-11-27T05",0.7,94,4.7],["2026-11-27T06",0.6,85,4.5],["2026-11-27T07",0.6,88,3.6],["2026-11-27T08",-0.1,78,3.3],["2026-11-27T09",-0.8,53,3.7],["2026-11-27T10",-1.1,52,4.7],["2026-11-27T11",-0.9,68,4.5],["2026-11-27T12",-1.3,66,5.1],["2026-11-27T13",-0.9,91,5.9],["2026-11-27T14",-1.1,93,4.5],["2026-11-27T15",-1.7,67,4.8],["2026-11-27T16",-2.7,39,3.5],["2026-11-27T17",-3.7,9,3.3],["2026-11-27T18",-4.5,0,3.2],["2026-11-27T19",-5.0,3,3.6],["2026-11-27T20",-5.3,0,3.8],["2026-11-27T21",-5.6,2,4.4],["2026-11-27T22",-5.9,1,4.3],["2026-11-27T23",-6.0,0,4.3],["2026-11-28T00",-5.9,0,4.8],["2026-11-28T01",-5.8,0,5.2],["2026-11-28T02",-5.6,0,5.4],["2026-11-28T03",-5.5,0,5.9],["2026-11-28T04",-5.5,0,6.1],["2026-11-28T05",-5.4,0,6.0],["2026-11-28T06",-5.4,0,6.0],["2026-11-28T07",-5.6,20,6.0],["2026-11-28T08",-5.7,20,6.0],["2026-11-28T09",-5.8,16,6.1],["2026-11-28T10",-6.0,26,6.7],["2026-11-28T11",-6.4,100,6.5],["2026-11-28T12",-6.3,100,6.2],["2026-11-28T13",-6.2,98,6.5],["2026-11-28T14",-5.9,96,6.9],["2026-11-28T15",-5.8,97,6.8],["2026-11-28T16",-5.4,100,7.0],["2026-11-28T17",-5.0,100,7.1],["2026-11-28T18",-4.6,100,6.7],["2026-11-28T19",-4.5,100,6.5],["2026-11-28T20",-4.3,92,6.8],["2026-11-28T21",-4.3,87,6.5],["2026-11-28T22",-4.0,92,7.0],["2026-11-28T23",-3.5,98,6.2],["2026-11-29T00",-3.0,99,6.3]],"tickets":{"2026-11-27":{"out":{"from":3420,"flight":"Smartavia 5N 507 или «Россия» FV 6343 (09:10 → 11:15)"}},"2026-11-28":{"out":{"from":3420,"flight":"Smartavia 5N 507"}},"checked":"2026-11-26","note":"Цены «от», за одного, в одну сторону, по данным агрегаторов. Обратный рейс и точную цену смотрите по кнопке."}}</script>
 <script>
@@ -234,24 +237,31 @@ function nightOf(D,data){
   const clear=have.filter(x=>x.cloud<=30);
   const tmin=Math.min(...have.map(x=>x.h[1])),wmax=Math.max(...have.map(x=>x.h[3]));
   const fmin=Math.min(...have.map(x=>feels(x.h[1],x.h[3])));
-  return {D,hours,sky,kp,ill,chance,clear,tmin,wmax,fmin,per,conf,agree,upH};
+  return {D,hours,sky,kp,ill,chance,clear,tmin,wmax,fmin,per,conf,agree,upH,storm:kp!=null&&kp>=6&&clear.length>=2};
 }
-const verdictOf=(c,conf)=>c==null?['Нет данных','no']:c>=55&&conf!=='низкое'?['Едем!','go']:c>=30?['Можно рискнуть','maybe']:['Ждём','no'];
+const verdictOf=(c,conf,st)=>c==null?['Нет данных','no']:st&&c<55?['Буря — можно рискнуть','maybe']:c>=55&&conf!=='низкое'?['Едем!','go']:c>=30?['Можно рискнуть','maybe']:['Ждём','no'];
 
 function render(data){
   const now=Date.now(),today=ymd(now);
   const days=[...new Set(data.hourly.map(r=>ymd(utc(r[0]))))].filter(d=>d>=today).slice(0,3);
   const nights=days.map(d=>nightOf(d,data)).filter(Boolean);
   const tomorrow=ymd(now+864e5);
-  const cand=nights.filter(n=>n.D>=tomorrow&&n.chance!=null);
+  const STORM=6;
+  const lastFlight=(((data.schedule||{})[today]||{}).out||[]).map(f=>f.dep).sort().pop()||'17:55';
+  const canToday=fmtTime(now)<=String(Number(lastFlight.slice(0,2))-2).padStart(2,'0')+lastFlight.slice(2);
+  const cand=nights.filter(n=>(n.D>=tomorrow||(n.D===today&&canToday))&&n.chance!=null);
   const best=cand.sort((a,b)=>b.chance-a.chance)[0]||null;
   const moonTxt=n=>{if(!n.upH.length)return Math.round(n.ill*100)+' %, не мешает';if(n.upH.length===10)return Math.round(n.ill*100)+' %, всю ночь';const a=n.upH[0].t,b=n.upH[n.upH.length-1].t+3600e3;return Math.round(n.ill*100)+' %, '+fmtTime(a).slice(0,2)+'–'+fmtTime(b).slice(0,2)+' ч'};
-  const [vw,vc]=best?verdictOf(best.chance,best.conf):['Ждём','no'];
+  const [vw,vc]=best?verdictOf(best.chance,best.conf,best.storm):['Ждём','no'];
   const rel=d=>d===today?'сегодня':d===tomorrow?'завтра':'';
   $('verdict').textContent=best&&vc!=='no'?vw:'Ждём';
   $('verdict').style.color=vc==='go'?'var(--go)':vc==='maybe'?'var(--maybe)':'var(--ink)';
   $('sum').textContent=best?(vc==='no'?'В ближайшие ночи хороших окон нет: лучшая ночь '+dlabel(best.D)+' даёт '+best.chance+' %.':'Лучшая ночь '+(rel(best.D)?rel(best.D)+', ':'')+dlabel(best.D)+': шанс '+best.chance+' %, ясно '+best.clear.length+' ч из 10, магнитная активность Kp до '+best.kp.toFixed(1)+' ('+kpWord(best.kp)+').'):'Прогноз на ближайшие ночи ещё не готов.';
-  $('meta').textContent='Обновлено '+new Date(utc(data.updated)+MSK).toISOString().slice(0,16).replace('T',' ')+' МСК · обновляется каждые 3 часа';
+  $('meta').textContent='Обновлено '+new Date(utc(data.updated)+MSK).toISOString().slice(0,16).replace('T',' ')+' МСК · обновляется каждый час';
+  const age=(now-utc(data.updated))/36e5;
+  if(age>6){$('meta').textContent+=' · данные устарели на '+Math.round(age)+' ч';$('meta').classList.add('old')}
+  const storms=nights.filter(n=>n.kp!=null&&n.kp>=STORM&&(n.D>=tomorrow||(n.D===today&&canToday)));
+  if(storms.length){const sn=storms.sort((a,b)=>b.kp-a.kp)[0];$('storm').hidden=false;$('storm').textContent='Мощная буря: Kp до '+sn.kp.toFixed(1)+' в ночь на '+dlabel(sn.D)+(sn.clear.length?', ясно '+sn.clear.length+' из 10 ч. Сияние будет на полнеба и пробивается даже в разрывы облаков.':', но по прогнозу небо закрыто. Следим за облаками.')}else $('storm').hidden=true;
   // sky picture follows the best chance
   const c=best?best.chance/100:.1;
   $('aur').style.opacity=(.15+.85*c).toFixed(2);
@@ -260,10 +270,10 @@ function render(data){
   $('stars').innerHTML=st;
 
   $('nights').innerHTML=nights.map(n=>{
-    const[w,cl]=verdictOf(n.chance,n.conf);
+    const[w,cl]=verdictOf(n.chance,n.conf,n.storm);
     const bars=n.hours.map(x=>x.cloud!=null?`<i class="${x.cloud>30?'cl':''}" style="height:${Math.max(4,100-x.cloud)}%" title="${fmtTime(x.t)}: облачность ${x.cloud} % (${esc(MODELS.filter(([k])=>x.m[k]!=null).map(([k,nm])=>nm+' '+x.m[k]+' %').join(', '))})"></i>`:'<i class="cl" style="height:4%"></i>').join('');
     const hrs=n.hours.map((x,i)=>`<span>${i%3===0?fmtTime(x.t).slice(0,2):''}</span>`).join('');
-    const note=n.D===today?'<p class="small">Сегодня уже не успеть.</p>':'';
+    const note=n.D===today?(canToday?'<p class="small">Сегодня ещё можно успеть: последний прямой рейс в '+esc(lastFlight)+'.</p>':'<p class="small">Сегодня уже не успеть.</p>'):'';
     return `<article class="card ${best&&n.D===best.D&&cl!=='no'?'best':''}">
       <div class="row"><h3>${esc(dlabel(n.D))}${rel(n.D)?' · '+rel(n.D):''}</h3><span class="tag" style="color:var(--${cl})">${esc(w)}</span></div>
       <div class="row" style="margin-top:10px"><span class="pct">${n.chance==null?'—':n.chance+' %'}</span><span class="small">шанс увидеть</span></div>
