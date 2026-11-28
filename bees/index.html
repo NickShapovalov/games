@@ -102,16 +102,17 @@ button.big.grey{background:#ccc;box-shadow:0 4px 0 #999}
 <div class="btn" id="bAct">🪓<span id="actHint"></span></div>
 
 <div id="toast"></div>
-<div id="ver">v4.2</div>
+<div id="ver">v4.3</div>
 
 <div class="overlay" id="start">
   <div class="card">
     <h1>🐝 Спасение мира от пчёл 🦊</h1>
     <button class="big" id="play">Играть!</button>
-    <p>Держи стрелку и жми 🪓 — лисёнок копает <b>нору</b> в ту сторону. Закрой вход <b>люком</b> 🚪 и поставь <b>лестницу</b> 🪜. Ночью злые пчёлы 🐝 капают <b style="color:#d9a6ff">фиолетовым мёдом</b> — звери становятся злыми. Прячься!</p>
+    <p>Держи стрелку и жми 🪓 — лисёнок копает <b>нору</b> в ту сторону. Закрой вход <b>люком</b> 🚪 и поставь <b>лестницу</b> 🪜. Ночью злые пчёлы 🐝 капают <b style="color:#d9a6ff">фиолетовым мёдом</b> — звери становятся злыми. Собери <b style="color:#ffd23f">золотой мёд</b> 🍯 в улье добрых пчёл и вылечи их!</p>
     <details>
       <summary>Как играть</summary>
       <p>Руби деревья 🌳 и камни 🪨 (🪓) и <b>обустраивай нору</b> 🏠: каждый новый день открывается новая вещь — кухня, кровать, телевизор…</p>
+      <p>🍯 Золотой мёд: подойди к дереву с ульем и жми 🪓. Рядом с фиолетовым зверем 🪓 вылечит его — он станет другом 💛. Рядом с фиолетовой лужей — очистит землю.</p>
       <p>🪓 рядом с деревом или камнем — рубить, рядом со злым зверем — оттолкнуть. Стрелка + 🪓 — копать (держи 🪓, чтобы копать дальше). Через люк лисёнок пролезает, а звери и мёд — нет. По лестнице: ▲ вверх, ▼ вниз.</p>
       <p class="small">Компьютер: стрелки или WASD — ходить, ↑/пробел — прыжок, E — 🪓 (со стрелкой — копать), 1 люк, 2 лестница, 3 нора, 4 убрать, Esc — выйти.<br>Телефон и планшет: слева крестовина (можно вести пальцем), справа 🪓; люк, лестница и мебель — кнопки сверху.</p>
     </details>
@@ -159,7 +160,7 @@ const FURN=[
 ];
 const FBY=Object.fromEntries(FURN.map(f=>[f.id,f]));
 // grid: null air, 'e' earth, 'b' bedrock, 'n' tunnel, {t:'wood'|'stone'|'hatch',under:null|'n'}
-let family={vixen:false,cubs:0},npcs=[];
+let family={vixen:false,cubs:0},npcs=[],friends=[],puddles=[],hive=null,goodBees=[];
 let grid,res,furn,fox,animals,bees,honey,nodes,particles,floats,day,phase,ptime,warned,spawnLeft,spawnTimer,beesLeft;
 let tool=null,running=false,camX=0,hover=null,painting=false,lastCell='';
 let camShake=0,dpr=1,cssW=0,cssH=0,scale=1,viewW=0,camY=0,visH=600;
@@ -178,7 +179,7 @@ if(window.visualViewport)visualViewport.addEventListener('resize',resize);
 function hillTop(c){if(c>=28&&c<=32)return 9;if((c>=25&&c<=27)||(c>=33&&c<=35))return 10;if((c>=22&&c<=24)||(c>=36&&c<=38))return 11;return SURF}
 function newWorld(){
   grid=[];for(let r=0;r<ROWS;r++){const row=[];for(let c=0;c<COLS;c++)row.push(r>=ROWS-1?'b':(r>=hillTop(c)?'e':null));grid.push(row)}
-  res={wood:0,stone:0};furn=[];day=1;family={vixen:false,cubs:0};
+  res={wood:0,stone:0,honey:0};furn=[];day=1;family={vixen:false,cubs:0};friends=[];
 }
 function surfaceRow(c){if(c<0)c=0;if(c>=COLS)c=COLS-1;for(let r=0;r<ROWS;r++)if(grid[r][c])return r;return ROWS}
 function initRun(){
@@ -190,13 +191,16 @@ function initRun(){
   phase='day';ptime=0;warned=false;spawnLeft=0;spawnTimer=0;beesLeft=0;
   spawnAnimal(false);spawnAnimal(false);
   npcs=[];if(family.vixen)spawnNpc('vixen');for(let i=0;i<family.cubs;i++)spawnNpc('cub');
+  puddles=[];hive={x:41*T+T/2,y:SURF*T,stock:2,regen:0};
+  goodBees=[0,1,2].map(i=>({a:i*2.1,r:28+i*8,sp:1.6+i*.4}));
+  for(const k of friends)spawnAnimal(false,k,true);
 }
 const SAVEKEY='bees-v2';
 const ENC={wood:'w',stone:'s',hatch:'h',ladder:'l'},DEC={w:'wood',s:'stone',h:'hatch',l:'ladder'};
-function save(){try{localStorage.setItem(SAVEKEY,JSON.stringify({g:grid.map(r=>r.map(g=>g===null?'.':typeof g==='object'?(g.under==='n'?ENC[g.t].toUpperCase():ENC[g.t]):g).join('')),res,day,furn,family}))}catch(e){}}
+function save(){try{localStorage.setItem(SAVEKEY,JSON.stringify({g:grid.map(r=>r.map(g=>g===null?'.':typeof g==='object'?(g.under==='n'?ENC[g.t].toUpperCase():ENC[g.t]):g).join('')),res,day,furn,family,friends}))}catch(e){}}
 function load(){try{const s=JSON.parse(localStorage.getItem(SAVEKEY));if(!s||!s.g)return false;
   grid=s.g.map(r=>[...r].map(ch=>{if(ch==='.')return null;if(DEC[ch])return{t:DEC[ch],under:null};const lo=ch.toLowerCase();if(DEC[lo])return{t:DEC[lo],under:'n'};return ch}));
-  res=s.res||{wood:0,stone:0};day=s.day||1;furn=s.furn||[];family=s.family||{vixen:false,cubs:0};return true}catch(e){return false}}
+  res=s.res||{wood:0,stone:0};res.honey=res.honey||0;day=s.day||1;furn=s.furn||[];family=s.family||{vixen:false,cubs:0};friends=s.friends||[];return true}catch(e){return false}}
 
 // ---------- collision ----------
 function solid(c,r,kind){if(c<0||c>=COLS)return true;if(r>=ROWS)return true;if(r<0)return false;
@@ -257,6 +261,7 @@ const SFX={
   infect(){tone(480,.45,'sine',.1,.5);tone(505,.45,'triangle',.07,.45)},
   push(){noise(.2,.35,1400);tone(500,.15,'sine',.08,.5)},
   jump(){tone(380,.11,'sine',.08,1.7)},
+  cure(){[659,784,988,1318].forEach((f,i)=>tone(f,.2,'sine',.14,1,i*.08));tone(1760,.4,'triangle',.06,1,.35)},
   heal(){tone(880,.12,'sine',.12,1.3);tone(1320,.15,'sine',.1,1,.1)},
   night(){tone(220,.7,'triangle',.16,.8);tone(165,.9,'triangle',.13,.8,.35)},
   love(){[523,659,784,1046,1318].forEach((f,i)=>tone(f,.25,'sine',.15,1,i*.11));tone(1568,.5,'triangle',.08,1,.6)},
@@ -267,12 +272,12 @@ function buzz(p){if(muted)return;try{navigator.vibrate&&navigator.vibrate(p)}cat
 function visible(x){return x>camX-40&&x<camX+viewW+40}
 
 // ---------- spawning ----------
-function spawnAnimal(atEdge){
-  const ks=Object.keys(KINDS);const k=ks[Math.floor(Math.random()*ks.length)];const K=KINDS[k];
+function spawnAnimal(atEdge,kind,friend){
+  const ks=Object.keys(KINDS);const k=kind||ks[Math.floor(Math.random()*ks.length)];const K=KINDS[k];
   let x,dir;
   if(atEdge){const left=Math.random()<.5;x=left?4:W-K.w-4;dir=left?1:-1}
   else{let tries=0;do{x=(2+Math.random()*55)*T;tries++}while(Math.abs(x-fox.x)<300&&tries<20);dir=Math.random()<.5?-1:1}
-  const a={k,w:K.w,h:K.h,sp:K.sp,jump:K.jump,kbk:K.kbk,x,y:0,vy:0,inf:false,dir,wander:2+Math.random()*2,idle:false,stun:0,kb:0,onGround:false,hop:1+Math.random(),walk:Math.random()*6,seed:Math.random()*10,vx:0};
+  const a={k,w:K.w,h:K.h,sp:K.sp,jump:K.jump,kbk:K.kbk,x,y:0,vy:0,inf:false,dir,wander:2+Math.random()*2,idle:false,stun:0,kb:0,onGround:false,hop:1+Math.random(),walk:Math.random()*6,seed:Math.random()*10,vx:0,friend:!!friend,glow:0};
   a.y=surfaceRow(Math.floor((x+a.w/2)/T))*T-a.h-0.5;freeUp(a,'enemy');
   animals.push(a);
 }
@@ -304,8 +309,10 @@ function tryDig(){
 function doAction(){
   if(!running)return;
   if(tryDig())return;
+  const cx=fox.x+fox.w/2,cy=fox.y+fox.h/2;
+  if(useHoney(cx,cy))return;
   fox.swing=0.2;startChop('axe',.36);
-  const cx=fox.x+fox.w/2,cy=fox.y+fox.h/2;let pushed=false;
+  let pushed=false;
   for(const a of animals){if(!a.inf)continue;const ex=a.x+a.w/2,ey=a.y+a.h/2;
     if(Math.abs(ex-cx)<80&&Math.abs(ey-cy)<80){a.kb=(ex>cx?1:-1)*420*a.kbk;a.stun=1.3;burst(ex,ey,'#c77dff',8);pushed=true}}
   if(pushed){sfx('push');buzz(30);return}
@@ -319,6 +326,29 @@ function doAction(){
         sfx('get');buzz([40,40,60]);save();renderPanel()}
       return}}
 }
+// ---------- золотой мёд ----------
+function nearInfected(cx,cy){let best=null,bd=1e9;for(const a of animals){if(!a.inf)continue;const d=Math.hypot(a.x+a.w/2-cx,a.y+a.h/2-cy);if(d<95&&d<bd){bd=d;best=a}}return best}
+function nearPuddle(cx,cy){return puddles.find(q=>Math.abs(q.x-cx)<70&&Math.abs(q.y-(fox.y+fox.h))<40)}
+function nearHive(cx,cy){return hive&&phase==='day'&&Math.abs(hive.x-cx)<60&&Math.abs(hive.y-(fox.y+fox.h))<60}
+function splashGold(x,y,n){for(let i=0;i<n;i++)particles.push({x,y,vx:(Math.random()-.5)*300,vy:-Math.random()*300,life:.9,color:Math.random()<.5?'#ffd23f':'#fff3a0'})}
+function useHoney(cx,cy){
+  const a=nearInfected(cx,cy);
+  if(a&&res.honey>0){res.honey--;startChop('jar',.4);if(Math.abs(a.x+a.w/2-cx)>4)fox.face=a.x+a.w/2>cx?1:-1;
+    a.inf=false;a.friend=true;a.stun=0;a.kb=0;a.glow=2.5;friends.push(a.k);
+    splashGold(a.x+a.w/2,a.y+a.h/2,24);floats.push({x:a.x+a.w/2,y:a.y-14,text:'Спасибо! 💛',life:2});
+    sfx('cure');buzz([40,30,40,30,120]);save();
+    toast(friends.length===1?'💛 Ты спас первого зверя! Теперь он твой друг':'💛 Спасено зверей: '+friends.length,2.4);return true}
+  if(a&&res.honey<=0&&!a._hinted){a._hinted=true;toast('🍯 Нужен золотой мёд, чтобы вылечить. Он в улье на дереве!',2.4)}
+  const q=nearPuddle(cx,cy);
+  if(q&&res.honey>0&&!a){res.honey--;startChop('jar',.4);const before=puddles.length;
+    puddles=puddles.filter(z=>Math.hypot(z.x-q.x,z.y-q.y)>130);
+    splashGold(q.x,q.y-6,20);floats.push({x:q.x,y:q.y-30,text:'✨ Чисто!',life:1.5});sfx('cure');buzz(60);return true}
+  if(nearHive(cx,cy)&&!a){
+    startChop('jar',.4);fox.face=hive.x>cx?1:-1;
+    if(hive.stock>0){hive.stock--;res.honey++;splashGold(hive.x+6,hive.y-118,12);floats.push({x:hive.x,y:hive.y-140,text:'+1 🍯',life:1.4});sfx('get');buzz([30,30,30]);save()}
+    else toast('🐝 Добрые пчёлы ещё делают мёд — загляни попозже',1.8);
+    return true}
+  return false}
 function startChop(kind,dur){fox.chop=dur;fox.chopDur=dur;fox.chopKind=kind}
 function faceTo(c){const cx=c*T+T/2;if(Math.abs(cx-(fox.x+fox.w/2))>6)fox.face=cx>fox.x+fox.w/2?1:-1}
 function cellAt(wx,wy){return{c:Math.floor(wx/T),r:Math.floor(wy/T)}}
@@ -370,10 +400,11 @@ function buildAt(c,r,drag){
 function deny(m,sec){sfx('deny');toast(m,sec)}
 function endNight(){
   for(const a of animals)if(a.inf)burst(a.x+a.w/2,a.y+a.h/2,'#c77dff',14);
-  animals=animals.filter(a=>!a.inf).slice(0,4);
+  animals=animals.filter(a=>a.friend).concat(animals.filter(a=>!a.inf&&!a.friend).slice(0,3));
   for(const b of bees)b.leaving=true;honey=[];
   phase='day';ptime=0;warned=false;fox.hearts=MAXH;day++;spawnLeft=0;beesLeft=0;
-  while(animals.length<2)spawnAnimal(false);
+  while(animals.filter(a=>!a.friend).length<2)spawnAnimal(false);
+  if(hive)hive.stock=Math.max(hive.stock,2);
   save();renderPanel();
 }
 function unlocked(f){return f.need==='vixen'?family.vixen:day>=f.day}
@@ -443,7 +474,7 @@ function update(dt,t){
   // fox
   const mv=(keys.right?1:0)-(keys.left?1:0);
   if(mv)fox.face=mv;
-  fox.vx=mv*220+fox.kb;fox.kb*=Math.pow(.01,dt);if(Math.abs(fox.kb)<5)fox.kb=0;
+  fox.vx=mv*(fox.sticky?95:220)+fox.kb;fox.kb*=Math.pow(.01,dt);if(Math.abs(fox.kb)<5)fox.kb=0;
   const onL=onLadder(fox);
   if(onL){fox.vy=keys.jump?-170:keys.down?160:40;fox.climbing=true}
   else{
@@ -482,14 +513,17 @@ function update(dt,t){
       if(hx&&sp>0){if(!a.inf&&Math.random()<.3)a.dir*=-1;else a.vy=a.jump}
       else if(a.k==='roo'&&sp>0&&a.hop<=0){a.vy=a.jump*.8;a.hop=1+Math.random()}
     }
+    if(a.glow>0)a.glow-=dt;
+    if(!a.inf&&!a.friend&&a.onGround){const q=puddles.find(z=>Math.abs(z.x-ex)<z.r+a.w/2-4&&Math.abs(z.y-(a.y+a.h))<8);if(q){a.inf=true;burst(ex,a.y+a.h,'#c77dff',12);if(visible(ex))sfx('infect')}}
+    if(a.friend&&Math.random()<dt*.06&&Math.abs(ex-fcx)<200)floats.push({x:ex,y:a.y-8,text:'💛',life:1.1});
     if(a.inf&&a.stun<=0&&overlap(fox,a,6)){hurtFox(ex);if(phase==='day')break}
   }
   // bees
   for(const b of bees){
     if(b.leaving){b.y-=140*dt;b.x+=b.dir*60*dt;continue}
     b.retarget-=dt;
-    if(b.retarget<=0||!b.target||(b.target!==fox&&(b.target.inf||!animals.includes(b.target)))){
-      const healthy=animals.filter(a=>!a.inf);
+    if(b.retarget<=0||!b.target||(b.target!==fox&&(b.target.inf||b.target.friend||!animals.includes(b.target)))){
+      const healthy=animals.filter(a=>!a.inf&&!a.friend);
       if(healthy.length&&Math.random()<.7){let best=null,bd=1e9;for(const a of healthy){const d=Math.abs(a.x-b.x);if(d<bd){bd=d;best=a}}b.target=best}
       else b.target=fox;
       b.retarget=6;
@@ -507,11 +541,17 @@ function update(dt,t){
   for(const h of honey){
     h.vy+=900*dt;h.y+=h.vy*dt;
     const c=Math.floor(h.x/T),r=Math.floor(h.y/T);
-    if(r>=ROWS||(r>=0&&solid(c,r,'honey'))){h.dead=true;burst(h.x,h.y-4,'#a64dff',6);if(visible(h.x))sfx('splat');continue}
-    for(const a of animals){if(!a.inf&&inRect(h.x,h.y,a)){a.inf=true;h.dead=true;burst(h.x,h.y,'#c77dff',14);if(visible(h.x))sfx('infect');break}}
+    if(r>=ROWS||(r>=0&&solid(c,r,'honey'))){h.dead=true;burst(h.x,h.y-4,'#a64dff',6);if(visible(h.x))sfx('splat');
+      if(r>=0&&r<ROWS&&grid[r][c]==='e'&&(r===0||!grid[r-1][c])){const y=r*T,q=puddles.find(z=>Math.abs(z.x-h.x)<28&&z.y===y);
+        if(q){q.r=Math.min(30,q.r+3)}else if(puddles.length<16)puddles.push({x:h.x,y,r:14,c,row:r,seed:Math.random()*6})}
+      continue}
+    for(const a of animals){if(a.friend&&inRect(h.x,h.y,a)){h.dead=true;splashGold(h.x,h.y,6);break}if(!a.inf&&inRect(h.x,h.y,a)){a.inf=true;h.dead=true;burst(h.x,h.y,'#c77dff',14);if(visible(h.x))sfx('infect');break}}
     if(!h.dead&&inRect(h.x,h.y,fox)){h.dead=true;burst(h.x,h.y,'#c77dff',10);hurtFox(h.x)}
   }
   honey=honey.filter(h=>!h.dead);
+  puddles=puddles.filter(q=>grid[q.row]&&grid[q.row][q.c]==='e'&&(q.row===0||!grid[q.row-1][q.c]));
+  if(hive){if(hive.stock<3){hive.regen+=dt;if(hive.regen>=20){hive.regen=0;hive.stock++}}for(const g of goodBees)g.a+=dt*g.sp}
+  fox.sticky=fox.onGround&&puddles.some(q=>Math.abs(q.x-(fox.x+fox.w/2))<q.r+fox.w/2-4&&Math.abs(q.y-(fox.y+fox.h))<8);
   for(const p of particles){p.vy+=800*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.life-=dt}
   particles=particles.filter(p=>p.life>0);
   for(const f of floats){f.y-=40*dt;f.life-=dt}
@@ -600,6 +640,10 @@ function drawFox(f,t){
   ctx.restore();
 }
 function drawTool(kind,p){
+  if(kind==='jar'){ctx.save();ctx.translate(15,-21);ctx.rotate(p<.5?-p*2:-1);
+    line(-8,4,-2,2,'#d9721a',4);rect(-5,-7,11,13,'rgba(255,196,40,.95)');rect(-6,-10,13,3.5,'#c98b2f');ctx.strokeStyle='#a46a10';ctx.lineWidth=1;ctx.strokeRect(-5,-7,11,13);circ(-1.5,-2,1.6,'#fff8c0');
+    if(p>.45&&p<.9){ctx.fillStyle='#ffd23f';for(let i=0;i<3;i++){ctx.beginPath();ctx.arc(9+i*4,-4+i*5*(p-.4)*4,2,0,7);ctx.fill()}}
+    ctx.restore();return}
   let a=p<.4?lerp(-.4,-2.5,p/.4):p<.58?lerp(-2.5,.85,(p-.4)/.18):lerp(.85,.35,(p-.58)/.42);
   if(p>.4&&p<.62){ctx.strokeStyle='rgba(255,255,255,.55)';ctx.lineWidth=3;ctx.beginPath();ctx.arc(9,-18,24,-2.3,.8);ctx.stroke()}
   ctx.save();ctx.translate(9,-18);ctx.rotate(a);
@@ -807,6 +851,19 @@ function draw(t){
 
   const shx=camShake>0?(Math.random()-.5)*4:0,shy=camShake>0?(Math.random()-.5)*3:0;
   ctx.setTransform(dpr*scale,0,0,dpr*scale,(-camX+shx)*dpr*scale,(-camY+shy)*dpr*scale);
+  if(hive){const hx=hive.x,hy=hive.y;
+    emoji('🌳',hx,hy-58,124);
+    ctx.save();ctx.translate(hx+8,hy-112);line(0,-14,0,-6,'#6b4320',2);
+    for(let i=0;i<4;i++){const w=22-Math.abs(i-1.5)*5;ctx.beginPath();ctx.ellipse(0,-2+i*6,w/2,4,0,0,7);P(i%2?'#f2b632':'#ffcf4a','#b07a12',1)}
+    circ(0,12,3,'#5a3a10');
+    if(hive.stock>0){ctx.globalAlpha=.85;circ(-6,20,2.5,'#ffd23f');ctx.globalAlpha=1}
+    ctx.restore();
+    if(phase==='day')for(const g of goodBees){const bx=hx+8+Math.cos(g.a)*g.r,by=hy-110+Math.sin(g.a*1.3)*g.r*.5;
+      ctx.save();ctx.translate(bx,by);ctx.scale(Math.cos(g.a+1.57)>0?.45:-.45,.45);
+      ctx.globalAlpha=.7;E(-2,-10,7,10,-.4+Math.sin(t*40)*.4,'#eef8ff');ctx.globalAlpha=1;
+      ctx.save();ctx.beginPath();ctx.ellipse(0,0,15,11,0,0,7);ctx.clip();rect(-16,-12,32,24,'#ffd84a');rect(-8,-12,5,24,'#3a2a10');rect(2,-12,5,24,'#3a2a10');ctx.restore();
+      circ(15,0,8,'#3a2a10');circ(18,-2,2.2,'#fff');circ(18.5,-2,1.1,'#000');ctx.strokeStyle='#ff9b9b';ctx.lineWidth=1.6;ctx.beginPath();ctx.arc(16,2,3,.2,2.6);ctx.stroke();ctx.restore()}
+    for(let i=0;i<hive.stock;i++)emoji('🍯',hx-14+i*14,hy-150,13)}
   for(const nd of nodes){
     const sh=nd.shake>0?Math.sin(nd.shake*80)*4:0;
     if(nd.kind==='tree'){
@@ -822,6 +879,9 @@ function draw(t){
   const c0=Math.max(0,Math.floor(camX/T)-1),c1=Math.min(COLS-1,Math.ceil((camX+viewW)/T)+1);
   for(let r=0;r<ROWS;r++)for(let c=c0;c<=c1;c++){const cell=grid[r][c];if(cell)drawCell(cell,c,r)}
   for(const f of furn)drawFurn(f,t);
+  for(const q of puddles){const w=q.r+Math.sin(t*2+q.seed)*1.5;ctx.beginPath();ctx.ellipse(q.x,q.y+1,w,5,0,0,7);P('rgba(150,60,220,.85)','#5b1a8c',1);
+    ctx.globalAlpha=.6;E(q.x-w*.35,q.y-.5,w*.25,1.4,0,'#e7c6ff');ctx.globalAlpha=1;
+    const bp=(t*.8+q.seed)%1;if(bp<.6){ctx.strokeStyle='rgba(220,170,255,'+(0.8-bp)+')';ctx.lineWidth=1;ctx.beginPath();ctx.arc(q.x+Math.sin(q.seed)*w*.4,q.y-2-bp*6,1.5+bp*2,0,7);ctx.stroke()}}
   if(n>0){ctx.fillStyle='rgba(15,0,45,'+(.35*n)+')';ctx.fillRect(camX-10,0,viewW+20,H)}
   // lamp glow
   for(const f of furn)if(f.id==='lamp'){const lx=f.c*T+20,ly=f.r*T+10;const gr=ctx.createRadialGradient(lx,ly,4,lx,ly,130);
@@ -845,6 +905,7 @@ function draw(t){
   // animals
   for(const a of animals){
     const ex=a.x+a.w/2,ey=a.y+a.h/2;
+    if(a.friend&&a.glow>0){const R=Math.max(a.w,a.h);const gr=ctx.createRadialGradient(ex,ey,4,ex,ey,R);gr.addColorStop(0,'rgba(255,210,60,'+Math.min(.7,a.glow*.3)+')');gr.addColorStop(1,'rgba(255,210,60,0)');ctx.fillStyle=gr;ctx.beginPath();ctx.arc(ex,ey,R,0,7);ctx.fill()}
     if(a.inf){const R=Math.max(a.w,a.h)*.9;const gr=ctx.createRadialGradient(ex,ey,4,ex,ey,R);gr.addColorStop(0,'rgba(190,80,255,.55)');gr.addColorStop(1,'rgba(190,80,255,0)');
       ctx.fillStyle=gr;ctx.beginPath();ctx.arc(ex,ey,R,0,7);ctx.fill()}
     ctx.save();ctx.translate(ex,a.y+a.h);ctx.scale(a.dir,1);
@@ -852,6 +913,7 @@ function draw(t){
     ctx.restore();
     if(a.inf)circ(ex+(a.dir>0?-8:8),a.y+a.h-2+Math.sin(t*4+ex)*2,3.5,'#b44dff');
     if(a.stun>0)emoji('💫',ex,a.y-10,20);
+    if(a.friend)emoji('💛',ex,a.y-8+Math.sin(t*3+a.seed)*2,12);
   }
   for(const h of honey){circ(h.x,h.y,6,'#a64dff');tri(h.x-5,h.y-2,h.x,h.y-14,h.x+5,h.y-2,'#a64dff')}
   for(const b of bees){ctx.save();ctx.translate(b.x+b.w/2,b.y+b.h/2+Math.sin(t*12+b.wob)*2);ctx.scale(b.dir,1);drawBee(b,t);ctx.restore()}
@@ -866,10 +928,10 @@ let hudCache='';
 function hud(){
   const tot=phase==='day'?DAY:NIGHT;const fill=document.getElementById('dayFill');
   fill.style.width=(100*ptime/tot)+'%';fill.style.background=phase==='day'?'#ffb400':'#8a4dff';
-  const s=fox.hearts+'|'+res.wood+'|'+res.stone+'|'+day+'|'+phase+'|'+furn.length;
+  const s=fox.hearts+'|'+res.wood+'|'+res.stone+'|'+res.honey+'|'+friends.length+'|'+day+'|'+phase+'|'+furn.length;
   if(s===hudCache)return;hudCache=s;
   document.getElementById('hearts').textContent='❤️'.repeat(Math.max(0,fox.hearts))+'🤍'.repeat(Math.max(0,MAXH-fox.hearts));
-  document.getElementById('res').textContent='🪵 '+res.wood+'  🪨 '+res.stone+'  ⭐ '+furn.length;
+  document.getElementById('res').textContent='🪵 '+res.wood+'  🪨 '+res.stone+'  🍯 '+res.honey+'  💛 '+friends.length+'  ⭐ '+furn.length;
   document.getElementById('day').textContent=(phase==='day'?'☀️ День ':'🌙 Ночь ')+day;
 }
 const panel=document.getElementById('furnPanel');
@@ -925,10 +987,13 @@ bAct.addEventListener('pointerdown',e=>{e.preventDefault();bAct.classList.add('o
 // подсказка на кнопке: что сейчас сделает 🪓
 function actLabel(){if(!fox)return'';const tg=digTarget();if(tg&&grid[tg.r]&&grid[tg.r][tg.c]==='e')return'копать';
   const cx=fox.x+fox.w/2,cy=fox.y+fox.h/2;
+  if(res&&res.honey>0&&nearInfected(cx,cy))return'вылечить';
   if(animals&&animals.some(a=>a.inf&&Math.abs(a.x+a.w/2-cx)<80&&Math.abs(a.y+a.h/2-cy)<80))return'толкнуть';
+  if(res&&res.honey>0&&nearPuddle(cx,cy))return'очистить';
+  if(nearHive(cx,cy))return'мёд';
   if(nodes&&nodes.some(n=>n.down<=0&&Math.abs(n.x-cx)<55&&Math.abs(n.y-(fox.y+fox.h))<60))return'рубить';return''}
 const actHint=document.getElementById('actHint');let actHintTxt='';
-setInterval(()=>{const l=actLabel();if(l!==actHintTxt){actHintTxt=l;actHint.textContent=l;bAct.firstChild.textContent=l==='копать'?'⛏️':'🪓'}},150);
+setInterval(()=>{const l=actLabel();if(l!==actHintTxt){actHintTxt=l;actHint.textContent=l;bAct.firstChild.textContent=l==='копать'?'⛏️':(l==='вылечить'||l==='очистить'||l==='мёд')?'🍯':'🪓'}},150);
 
 function setTool(tl){tool=tl;
   document.querySelectorAll('.tool[data-tool]').forEach(b=>b.classList.toggle('sel',b.dataset.tool===tool));
