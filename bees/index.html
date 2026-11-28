@@ -102,7 +102,7 @@ button.big.grey{background:#ccc;box-shadow:0 4px 0 #999}
 <div class="btn" id="bAct">🪓<span id="actHint"></span></div>
 
 <div id="toast"></div>
-<div id="ver">v4.3</div>
+<div id="ver">v4.4</div>
 
 <div class="overlay" id="start">
   <div class="card">
@@ -398,7 +398,33 @@ function buildAt(c,r,drag){
   faceTo(c);startChop('hammer',.26);pay(cost);grid[r][c]={t:tool,under:g};sfx('place');buzz(12);burst(c*T+T/2,r*T+T/2,'#ffe08a',5);save();
 }
 function deny(m,sec){sfx('deny');toast(m,sec)}
+// ---------- друзья прячутся в нору ----------
+function burrowSpots(){const out=[];for(let r=1;r<ROWS-1;r++)for(let c=1;c<COLS-1;c++){
+  if(grid[r][c]!=='n')continue;const b=grid[r+1][c];if(!b||b==='n')continue;if(typeof b==='object'&&b.t==='ladder')continue;
+  out.push({c,r,free:!furnAt(c,r)})}return out}
+function burrowEntrance(){let best=null;
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){const g=grid[r][c];
+    if(g&&typeof g==='object'&&g.t==='hatch'){if(!best||Math.abs(c*T-fox.x)<Math.abs(best.c*T-fox.x))best={c,r}}}
+  if(best)return best;
+  for(let c=0;c<COLS;c++)for(let r=1;r<ROWS;r++)if(grid[r][c]==='n'&&!grid[r-1][c]){if(!best||Math.abs(c*T-fox.x)<Math.abs(best.c*T-fox.x))best={c,r};break}
+  return best}
+let noBurrowHint=false;
+function friendsGoHome(){const ent=burrowEntrance();
+  if(!ent&&animals.some(a=>a.friend)&&!noBurrowHint){noBurrowHint=true;toast('💛 Друзьям негде спрятаться — выкопай нору!',2.4)}
+  for(const a of animals)if(a.friend&&!a.inside){a.goHome=ent?{x:ent.c*T+T/2,t:6}:null}}
+function friendInside(a){const spots=burrowSpots();if(!spots.length){a.goHome=null;return}
+  const taken=animals.filter(o=>o.inside).map(o=>o.spot);
+  const pool=spots.filter(s=>s.free&&!taken.includes(s.c+','+s.r));const list=pool.length?pool:spots;
+  const sp=list[Math.floor(Math.random()*list.length)];
+  burst(a.x+a.w/2,a.y+a.h/2,'#ffd23f',14);
+  a.inside=true;a.goHome=null;a.spot=sp.c+','+sp.r;a.x=sp.c*T+T/2-a.w/2;a.y=(sp.r+1)*T-a.h-.5;a.vy=0;a.kb=0;a.stun=0;
+  burst(a.x+a.w/2,a.y+a.h,'#ffd23f',10);if(visible(a.x))floats.push({x:a.x+a.w/2,y:a.y-10,text:'🏠💤',life:1.4})}
+function friendsWakeUp(){const ent=burrowEntrance();
+  for(const a of animals)if(a.inside){a.inside=false;a.spot=null;
+    const c=ent?ent.c+(Math.random()<.5?-2:2):Math.floor(a.x/T);const cc=Math.max(1,Math.min(COLS-2,c));
+    a.x=cc*T+T/2-a.w/2;a.y=surfaceRow(cc)*T-a.h-.5;freeUp(a,'enemy');burst(a.x+a.w/2,a.y+a.h/2,'#ffd23f',10)}}
 function endNight(){
+  friendsWakeUp();for(const a of animals){a._triedHome=false;a.goHome=null}
   for(const a of animals)if(a.inf)burst(a.x+a.w/2,a.y+a.h/2,'#c77dff',14);
   animals=animals.filter(a=>a.friend).concat(animals.filter(a=>!a.inf&&!a.friend).slice(0,3));
   for(const b of bees)b.leaving=true;honey=[];
@@ -461,7 +487,7 @@ function caught(){
 function update(dt,t){
   ptime+=dt;
   if(phase==='day'){
-    if(!warned&&ptime>DAY-12){warned=true;toast('🌙 Скоро ночь! Прячься в нору!')}
+    if(!warned&&ptime>DAY-12){warned=true;friendsGoHome();toast('🌙 Скоро ночь! Прячься в нору!')}
     if(ptime>=DAY){phase='night';ptime=0;spawnLeft=2+day;beesLeft=Math.min(6,2+Math.floor(day/2));spawnTimer=1;sfx('night');toast('🌙 Ночь! Злые пчёлы летят с фиолетовым мёдом!')}
   }else{
     spawnTimer-=dt;
@@ -499,10 +525,14 @@ function update(dt,t){
   updateNpcs(dt);
   // animals
   for(const a of animals){
+    if(a.inside){if(a.glow>0)a.glow-=dt;continue}
+    if(a.friend&&phase==='night'&&!a.goHome&&!a._triedHome){a._triedHome=true;const ent=burrowEntrance();if(ent)a.goHome={x:ent.c*T+T/2,t:5}}
+    if(a.goHome){a.goHome.t-=dt;const dx=a.goHome.x-(a.x+a.w/2);a.dir=Math.sign(dx)||a.dir;a.idle=false;a.wander=1;
+      if(Math.abs(dx)<30||a.goHome.t<=0){friendInside(a);continue}}
     a.stun=Math.max(0,a.stun-dt);a.kb*=Math.pow(.02,dt);if(Math.abs(a.kb)<8)a.kb=0;
     const ex=a.x+a.w/2;let sp;
     if(a.inf){if(Math.abs(fcx-ex)>6)a.dir=Math.sign(fcx-ex);sp=a.sp}
-    else{a.wander-=dt;if(a.wander<=0){a.wander=2+Math.random()*3;a.dir=Math.random()<.5?-1:1;a.idle=Math.random()<.3}sp=a.idle?0:a.sp*.45}
+    else{a.wander-=dt;if(a.wander<=0){a.wander=2+Math.random()*3;a.dir=Math.random()<.5?-1:1;a.idle=Math.random()<.3}sp=a.goHome?a.sp*1.3:a.idle?0:a.sp*.45}
     const vx=(a.stun>0?0:a.dir*sp)+a.kb;a.vx=vx;
     if(Math.abs(vx)>1&&a.onGround)a.walk+=dt*Math.abs(vx)/8;
     a.vy=Math.min(a.vy+1500*dt,900);
@@ -579,7 +609,8 @@ function P(fill,stroke,lw){ctx.fillStyle=fill;ctx.fill();if(stroke){ctx.strokeSt
 function E(x,y,rx,ry,rot,fill,stroke,lw){ctx.beginPath();ctx.ellipse(x,y,rx,ry,rot||0,0,Math.PI*2);P(fill,stroke,lw)}
 function lg(x0,y0,x1,y1,c0,c1){const g=ctx.createLinearGradient(x0,y0,x1,y1);g.addColorStop(0,c0);g.addColorStop(1,c1);return g}
 function blinkAt(t,seed){return ((t+seed)%3.9)<0.13}
-function eye(x,y,r,blink,col){col=col||'#1b0c02';
+let SLEEP=false;
+function eye(x,y,r,blink,col){col=col||'#1b0c02';blink=blink||SLEEP;
   if(blink){ctx.strokeStyle=col;ctx.lineWidth=1.6;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(x-r,y);ctx.lineTo(x+r,y);ctx.stroke();return}
   circ(x,y,r,col);circ(x+r*.35,y-r*.35,r*.4,'#fff')}
 function leg(x,y,len,ang,col,w,foot){ctx.save();ctx.translate(x,y);ctx.rotate(ang);ctx.strokeStyle=col;ctx.lineWidth=w;ctx.lineCap='round';
@@ -908,12 +939,14 @@ function draw(t){
     if(a.friend&&a.glow>0){const R=Math.max(a.w,a.h);const gr=ctx.createRadialGradient(ex,ey,4,ex,ey,R);gr.addColorStop(0,'rgba(255,210,60,'+Math.min(.7,a.glow*.3)+')');gr.addColorStop(1,'rgba(255,210,60,0)');ctx.fillStyle=gr;ctx.beginPath();ctx.arc(ex,ey,R,0,7);ctx.fill()}
     if(a.inf){const R=Math.max(a.w,a.h)*.9;const gr=ctx.createRadialGradient(ex,ey,4,ex,ey,R);gr.addColorStop(0,'rgba(190,80,255,.55)');gr.addColorStop(1,'rgba(190,80,255,0)');
       ctx.fillStyle=gr;ctx.beginPath();ctx.arc(ex,ey,R,0,7);ctx.fill()}
-    ctx.save();ctx.translate(ex,a.y+a.h);ctx.scale(a.dir,1);
+    const sc=a.inside?Math.min(1,36/a.h):1;SLEEP=!!a.inside;
+    ctx.save();ctx.translate(ex,a.y+a.h);ctx.scale(a.dir*sc,sc);
     if(a.k==='boar')drawBoar(a,t);else if(a.k==='turtle')drawTurtle(a,t);else drawRoo(a,t);
-    ctx.restore();
+    ctx.restore();SLEEP=false;
+    if(a.inside)emoji('💤',ex+12,a.y+a.h-a.h*sc-6+Math.sin(t*2+a.seed)*2,14);
     if(a.inf)circ(ex+(a.dir>0?-8:8),a.y+a.h-2+Math.sin(t*4+ex)*2,3.5,'#b44dff');
     if(a.stun>0)emoji('💫',ex,a.y-10,20);
-    if(a.friend)emoji('💛',ex,a.y-8+Math.sin(t*3+a.seed)*2,12);
+    if(a.friend&&!a.inside)emoji('💛',ex,a.y-8+Math.sin(t*3+a.seed)*2,12);
   }
   for(const h of honey){circ(h.x,h.y,6,'#a64dff');tri(h.x-5,h.y-2,h.x,h.y-14,h.x+5,h.y-2,'#a64dff')}
   for(const b of bees){ctx.save();ctx.translate(b.x+b.w/2,b.y+b.h/2+Math.sin(t*12+b.wob)*2);ctx.scale(b.dir,1);drawBee(b,t);ctx.restore()}
